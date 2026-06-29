@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
+/* ThermoStat design tokens — ported faithfully from the Lovable draft.
+   Values are HSL triplets (used as `hsl(var(--token))`). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 40 20% 98%;        /* warm cream */
+  --foreground: 220 15% 10%;       /* near-black */
+  --card: 0 0% 100%;               /* white cards */
+  --card-foreground: 220 15% 10%;
+  --primary: 160 50% 30%;          /* deep green (good alignment) */
+  --primary-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;        /* red (poor alignment) */
+  --destructive-foreground: 0 0% 100%;
+  --accent: 160 50% 40%;
+  --muted: 220 10% 95%;
+  --muted-foreground: 220 5% 45%;  /* grey secondary text */
+  --border: 220 13% 90%;
+  --secondary: 220 10% 95%;
+  --ring: 160 50% 30%;
+  --input: 220 13% 90%;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-accent: hsl(var(--accent));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-secondary: hsl(var(--secondary));
+  --color-ring: hsl(var(--ring));
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
 }
