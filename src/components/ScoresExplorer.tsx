@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
 import type { CompanyScore } from "@/lib/scores";
 
@@ -70,7 +71,13 @@ export function ScoresExplorer({ scores }: { scores: CompanyScore[] }) {
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((c) => (
-            <ScoreCard key={c.company_id} c={c} />
+            <Link
+              key={c.company_id}
+              href={`/company/${c.company_id}`}
+              className="block transition hover:opacity-90"
+            >
+              <ScoreCard c={c} />
+            </Link>
           ))}
         </div>
       )}

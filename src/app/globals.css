@@ -1,23 +1,24 @@
 @import "tailwindcss";
 
-/* ThermoStat design tokens — ported faithfully from the Lovable draft.
+/* ThermoStat design tokens. Dark is the standard theme.
    Values are HSL triplets (used as `hsl(var(--token))`). */
 :root {
-  --background: 40 20% 98%;        /* warm cream */
-  --foreground: 220 15% 10%;       /* near-black */
-  --card: 0 0% 100%;               /* white cards */
-  --card-foreground: 220 15% 10%;
-  --primary: 160 50% 30%;          /* deep green (good alignment) */
-  --primary-foreground: 0 0% 100%;
-  --destructive: 0 72% 51%;        /* red (poor alignment) */
+  color-scheme: dark;
+  --background: 220 18% 9%;         /* deep slate, near-black */
+  --foreground: 40 20% 92%;         /* warm off-white */
+  --card: 220 16% 13%;              /* raised card surface */
+  --card-foreground: 40 20% 92%;
+  --primary: 160 52% 46%;           /* green (good alignment), brightened for dark */
+  --primary-foreground: 220 18% 9%;
+  --destructive: 0 72% 58%;         /* red (poor alignment) */
   --destructive-foreground: 0 0% 100%;
-  --accent: 160 50% 40%;
-  --muted: 220 10% 95%;
-  --muted-foreground: 220 5% 45%;  /* grey secondary text */
-  --border: 220 13% 90%;
-  --secondary: 220 10% 95%;
-  --ring: 160 50% 30%;
-  --input: 220 13% 90%;
+  --accent: 160 52% 50%;
+  --muted: 220 14% 17%;
+  --muted-foreground: 220 9% 62%;   /* grey secondary text, readable on dark */
+  --border: 220 12% 22%;
+  --secondary: 220 14% 17%;
+  --ring: 160 52% 46%;
+  --input: 220 12% 22%;
 }
 
 @theme inline {
