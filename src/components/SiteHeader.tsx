@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV = [
   { href: "/scores", label: "Scores" },
@@ -22,6 +23,7 @@ export function SiteHeader() {
               {n.label}
             </Link>
           ))}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

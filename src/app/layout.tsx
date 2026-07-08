@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     "ThermoStat turns a company's achieved emissions trajectory into a single temperature score versus IPCC pathways. Descriptive, based on reality not pledges.",
 };
 
+// Applies the saved theme before paint so there's no flash of the wrong theme.
+const themeScript = `try{if(localStorage.getItem('ts-theme')==='light'){document.documentElement.classList.add('light')}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,6 +27,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

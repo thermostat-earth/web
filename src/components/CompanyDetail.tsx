@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { VerticalThermometer } from "@/components/VerticalThermometer";
+import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyDetail as CompanyDetailData } from "@/lib/company";
 
@@ -97,9 +98,9 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             <thead>
               <tr className="border-b border-border text-left font-mono text-xs text-muted-foreground">
                 <th className="py-2 pr-4 font-normal">Year</th>
-                <th className="py-2 pr-4 text-right font-normal">Scope 1</th>
-                <th className="py-2 pr-4 text-right font-normal">Scope 2</th>
-                <th className="py-2 pr-4 text-right font-normal">Scope 3</th>
+                <th className="py-2 pr-4 text-right font-normal">Scope 1<InfoTip text={GLOSSARY.scope1} /></th>
+                <th className="py-2 pr-4 text-right font-normal">Scope 2<InfoTip text={GLOSSARY.scope2} /></th>
+                <th className="py-2 pr-4 text-right font-normal">Scope 3<InfoTip text={GLOSSARY.scope3} /></th>
                 <th className="py-2 pr-4 text-right font-normal">Total</th>
                 <th className="hidden w-1/3 py-2 sm:table-cell"></th>
               </tr>
