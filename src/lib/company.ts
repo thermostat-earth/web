@@ -19,36 +19,46 @@ export const SCOPE3_CATEGORIES: Record<number, string> = {
   15: "Investments",
 };
 
+export type Basis = "location" | "market";
+
 export type CompanyHeader = {
   company_id: string;
   company_name: string;
   sector: string;
   country_hq: string | null;
-  thermostat_score_location: number | null;
-  sector_median_score_location: number | null;
-  score_status: string;
-  score_above_max_location: boolean | null;
-  score_below_min_location: boolean | null;
   assessment_year_start: number | null;
   assessment_year_end: number | null;
+  location: BasisScore;
+  market: BasisScore;
+};
+
+export type BasisScore = {
+  score: number | null;
+  sectorMedian: number | null;
+  available: boolean;
+  aboveMax: boolean;
+  belowMin: boolean;
 };
 
 export type TrajectoryYear = {
   year: number;
-  reporting_year: number | null;
   scope1: number | null;
+  scope2_location: number | null;
   scope2_market: number | null;
   scope3: number | null;
-  total: number | null;
-  pathway_temp: number | null;
-  data_status: string | null;
+  total_location: number | null;
+  total_market: number | null;
+  inWindow: boolean;
+  reason: string | null; // why an out-of-window year was excluded
 };
 
 export type Scope3Category = {
   category: number;
   name: string;
+  material: boolean;
   reported: boolean;
   ghg: number | null;
+  notReportedReason: string | null;
   notes: string | null;
 };
 
@@ -70,33 +80,34 @@ export async function getCompanyIds(): Promise<string[]> {
   return (data ?? []).map((r) => (r as { company_id: string }).company_id);
 }
 
-// Pull everything a detail page needs. Internal QA fields (review_notes, reviewed_by)
-// are deliberately never selected — only clean, publishable provenance is surfaced.
+// Pull everything a detail page needs, for BOTH location and market bases so the
+// page can toggle between them. Internal QA fields (review_notes, reviewed_by)
+// are never selected — only clean, publishable provenance is surfaced.
 export async function getCompany(companyId: string): Promise<CompanyDetail | null> {
-  const { data: head } = await supabase
+  const { data: h } = await supabase
     .from("company_scores_public")
     .select(
-      "company_id, company_name, sector, country_hq, thermostat_score_location, sector_median_score_location, score_status, score_above_max_location, score_below_min_location, assessment_year_start, assessment_year_end",
+      "company_id, company_name, sector, country_hq, assessment_year_start, assessment_year_end, thermostat_score_location, thermostat_score_market, sector_median_score_location, sector_median_score_market, score_location_available, score_market_available, score_above_max_location, score_above_max_market, score_below_min_location, score_below_min_market",
     )
     .eq("company_id", companyId)
     .maybeSingle();
 
-  if (!head) return null;
+  if (!h) return null;
+  const head = h as Record<string, unknown>;
 
-  const [{ data: chartRows }, { data: scope3Rows }, { data: reviewRows }] =
+  const [{ data: chartRows }, { data: s3Rows }, { data: reviewRows }] =
     await Promise.all([
       supabase
         .from("company_charts_public")
         .select(
-          "year, reporting_year, scope1_ghg, scope2_market_ghg, scope3_ghg, total_ghg_market, pathway_temp, data_status",
+          "year, scope1_ghg, scope2_location_ghg, scope2_market_ghg, scope3_ghg, total_ghg_location, total_ghg_market, assessment_window_flag",
         )
         .eq("company_id", companyId)
         .order("year"),
       supabase
-        .from("scope3")
-        .select("year, reporting_year, category, reported, ghg, notes")
+        .from("scope3_with_required")
+        .select("year, reporting_year, category, reported, ghg, notes, not_reported_reason, effective_required")
         .eq("company_id", companyId),
-      // source_url only — reviewer names and review_notes are intentionally excluded.
       supabase
         .from("company_year_review")
         .select("year, source_url")
@@ -104,17 +115,32 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
         .order("year"),
     ]);
 
+  // Which years reported any Scope 3 at all — used to explain excluded years.
+  const s3All = (s3Rows ?? []).map((r) => r as Record<string, unknown>);
+  const yearsWithScope3 = new Set(
+    s3All.filter((r) => r.reported === true).map((r) => Number(r.year)),
+  );
+
   const trajectory: TrajectoryYear[] = (chartRows ?? []).map((r) => {
     const row = r as Record<string, unknown>;
+    const year = Number(row.year);
+    const inWindow = row.assessment_window_flag === true;
+    let reason: string | null = null;
+    if (!inWindow) {
+      reason = yearsWithScope3.has(year)
+        ? "Outside the most recent unbroken run of complete years"
+        : "No Scope 3 reported for this year";
+    }
     return {
-      year: Number(row.year),
-      reporting_year: num(row.reporting_year),
+      year,
       scope1: num(row.scope1_ghg),
+      scope2_location: num(row.scope2_location_ghg),
       scope2_market: num(row.scope2_market_ghg),
       scope3: num(row.scope3_ghg),
-      total: num(row.total_ghg_market),
-      pathway_temp: num(row.pathway_temp),
-      data_status: (row.data_status as string) ?? null,
+      total_location: num(row.total_ghg_location),
+      total_market: num(row.total_ghg_market),
+      inWindow,
+      reason,
     };
   });
 
@@ -122,11 +148,8 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     ? Math.max(...trajectory.map((t) => t.year))
     : null;
 
-  // Latest emissions year's scope-3 category breakdown, de-duplicated per category.
-  // A category can be restated across later reports — keep only the most recent
-  // figure (highest reporting_year), matching the scoring engine's snapshot, rather
-  // than stacking every year's row for the same category.
-  const s3All = (scope3Rows ?? []).map((r) => r as Record<string, unknown>);
+  // All 15 scope-3 categories for the latest emissions year, de-duplicated per
+  // category (keep the most recent restatement), each tagged with its state.
   const latestS3Year = s3All.length
     ? Math.max(...s3All.map((r) => Number(r.year)))
     : null;
@@ -138,18 +161,20 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
       byCat.set(cat, r);
     }
   }
-  const scope3: Scope3Category[] = [...byCat.values()]
-    .map((r) => ({
-      category: Number(r.category),
-      name: SCOPE3_CATEGORIES[Number(r.category)] ?? `Category ${r.category}`,
-      reported: r.reported === true,
-      ghg: num(r.ghg),
-      notes: (r.notes as string) || null,
-    }))
-    .sort((a, b) => a.category - b.category);
+  const scope3: Scope3Category[] = Array.from({ length: 15 }, (_, i) => i + 1).map((cat) => {
+    const r = byCat.get(cat);
+    return {
+      category: cat,
+      name: SCOPE3_CATEGORIES[cat],
+      material: r ? r.effective_required === true : false,
+      reported: r ? r.reported === true : false,
+      ghg: r ? num(r.ghg) : null,
+      notReportedReason: (r?.not_reported_reason as string) || null,
+      notes: (r?.notes as string) || null,
+    };
+  });
 
-  // Group sources by reporting year so every year is represented; a year with
-  // more than one source lists them together (rendered comma-separated).
+  // Group sources by reporting year so every year is represented.
   const yearMap = new Map<number, Set<string>>();
   for (const r of reviewRows ?? []) {
     const row = r as { year: number; source_url: string | null };
@@ -161,11 +186,28 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     .map(([year, set]) => ({ year, urls: [...set] }))
     .sort((a, b) => b.year - a.year);
 
-  return {
-    header: head as CompanyHeader,
-    trajectory,
-    latestYear,
-    scope3,
-    sources,
+  const header: CompanyHeader = {
+    company_id: head.company_id as string,
+    company_name: head.company_name as string,
+    sector: head.sector as string,
+    country_hq: (head.country_hq as string) ?? null,
+    assessment_year_start: num(head.assessment_year_start),
+    assessment_year_end: num(head.assessment_year_end),
+    location: {
+      score: num(head.thermostat_score_location),
+      sectorMedian: num(head.sector_median_score_location),
+      available: head.score_location_available === true,
+      aboveMax: head.score_above_max_location === true,
+      belowMin: head.score_below_min_location === true,
+    },
+    market: {
+      score: num(head.thermostat_score_market),
+      sectorMedian: num(head.sector_median_score_market),
+      available: head.score_market_available === true,
+      aboveMax: head.score_above_max_market === true,
+      belowMin: head.score_below_min_market === true,
+    },
   };
+
+  return { header, trajectory, latestYear, scope3, sources };
 }
