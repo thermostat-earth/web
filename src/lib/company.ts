@@ -52,14 +52,14 @@ export type Scope3Category = {
   notes: string | null;
 };
 
-export type SourceLink = { year: number; url: string };
+export type YearSources = { year: number; urls: string[] };
 
 export type CompanyDetail = {
   header: CompanyHeader;
   trajectory: TrajectoryYear[];
   latestYear: number | null;
   scope3: Scope3Category[];
-  sources: SourceLink[];
+  sources: YearSources[];
 };
 
 const num = (v: unknown): number | null =>
@@ -148,16 +148,17 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     }))
     .sort((a, b) => a.category - b.category);
 
-  // De-duplicate source links, keeping the most recent year per URL.
-  const byUrl = new Map<string, number>();
+  // Group sources by reporting year so every year is represented; a year with
+  // more than one source lists them together (rendered comma-separated).
+  const yearMap = new Map<number, Set<string>>();
   for (const r of reviewRows ?? []) {
     const row = r as { year: number; source_url: string | null };
     if (!row.source_url) continue;
-    const existing = byUrl.get(row.source_url);
-    if (existing == null || row.year > existing) byUrl.set(row.source_url, row.year);
+    if (!yearMap.has(row.year)) yearMap.set(row.year, new Set());
+    yearMap.get(row.year)!.add(row.source_url);
   }
-  const sources: SourceLink[] = [...byUrl.entries()]
-    .map(([url, year]) => ({ url, year }))
+  const sources: YearSources[] = [...yearMap.entries()]
+    .map(([year, set]) => ({ year, urls: [...set] }))
     .sort((a, b) => b.year - a.year);
 
   return {

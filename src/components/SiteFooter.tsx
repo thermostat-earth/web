@@ -16,11 +16,10 @@ export function SiteFooter() {
           </Link>
         </div>
         <p className="mx-auto mt-5 max-w-2xl leading-relaxed">
-          ThermoStat ranks companies using their own published emissions data.
-          Scores reflect one factual measure — achieved emissions versus IPCC
-          pathways — and are not financial advice, an endorsement, or a judgement
-          of a company&apos;s overall sustainability performance. Spotted an
-          error? Tell us.
+          ThermoStat ranks companies using their own published emissions data,
+          comparing achieved emissions against IPCC pathways. Scores are one
+          factual measure, not financial advice, an endorsement, or a judgement of
+          a company&apos;s overall sustainability performance.
         </p>
         <p className="mt-4">© 2026 ThermoStat</p>
       </div>

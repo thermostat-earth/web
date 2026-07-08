@@ -6,6 +6,14 @@ import type { CompanyDetail as CompanyDetailData } from "@/lib/company";
 const fmt = (n: number | null): string =>
   n == null ? "—" : Math.round(n).toLocaleString("en-GB");
 
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="mb-4 mt-12 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -63,6 +71,8 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                 score={score}
                 sectorMedian={h.sector_median_score_location}
                 color={color}
+                aboveMax={!!h.score_above_max_location}
+                belowMin={!!h.score_below_min_location}
               />
             </div>
             {h.sector_median_score_location != null && (
@@ -168,22 +178,23 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           <SectionHeading>Sources</SectionHeading>
           <ul className="flex flex-col gap-2 text-sm">
             {sources.map((s) => (
-              <li key={s.url} className="flex items-baseline gap-3">
+              <li key={s.year} className="flex items-baseline gap-3">
                 <span className="shrink-0 font-mono text-xs text-muted-foreground">{s.year}</span>
-                <a
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="truncate text-foreground underline decoration-border underline-offset-4 transition hover:decoration-foreground"
-                >
-                  {(() => {
-                    try {
-                      return new URL(s.url).hostname.replace(/^www\./, "");
-                    } catch {
-                      return s.url;
-                    }
-                  })()}
-                </a>
+                <span className="flex flex-wrap gap-x-1">
+                  {s.urls.map((u, i) => (
+                    <span key={u}>
+                      {i > 0 && <span className="text-muted-foreground">, </span>}
+                      <a
+                        href={u}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground underline decoration-border underline-offset-4 transition hover:decoration-foreground"
+                      >
+                        {hostname(u)}
+                      </a>
+                    </span>
+                  ))}
+                </span>
               </li>
             ))}
           </ul>
@@ -191,10 +202,10 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
       )}
 
       <p className="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">
-        ThermoStat ranks companies using their own published emissions data.
-        Scores reflect one factual measure — achieved emissions versus IPCC
-        pathways — and are not financial advice, an endorsement, or a judgement of
-        a company&apos;s overall sustainability performance.{" "}
+        ThermoStat ranks companies using their own published emissions data,
+        comparing achieved emissions against IPCC pathways. Scores are one factual
+        measure, not financial advice, an endorsement, or a judgement of a
+        company&apos;s overall sustainability performance.{" "}
         <Link href="/methodology" className="underline underline-offset-4">
           How scoring works
         </Link>

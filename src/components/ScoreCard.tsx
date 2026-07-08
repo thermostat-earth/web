@@ -54,7 +54,13 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
           {vsSector}
         </div>
       )}
-      <TemperatureBar score={score} sectorMedian={median} color={color} />
+      <TemperatureBar
+        score={score}
+        sectorMedian={median}
+        color={color}
+        aboveMax={!!c.score_above_max_location}
+        belowMin={!!c.score_below_min_location}
+      />
       {median != null && (
         <div className="mt-1 text-center font-mono text-[10px] text-muted-foreground">
           Sector avg {median.toFixed(2)}°C
