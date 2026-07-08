@@ -11,9 +11,7 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
       <div className="rounded-lg border border-border bg-card p-5">
         <div className="text-sm font-medium">{c.company_name}</div>
         <div className="text-xs text-muted-foreground">{meta}</div>
-        <div className="mt-3 font-mono text-sm text-muted-foreground">
-          Not yet scored
-        </div>
+        <div className="mt-3 font-mono text-sm text-muted-foreground">Not yet scored</div>
       </div>
     );
   }
@@ -25,8 +23,8 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
     diff == null
       ? null
       : Math.abs(diff) < 0.05
-        ? "= sector avg"
-        : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector`;
+        ? "≈ sector average"
+        : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector average`;
 
   return (
     <div
@@ -36,22 +34,12 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{c.company_name}</div>
         <div className="text-xs text-muted-foreground">{meta}</div>
-        <div
-          className="mt-3 font-mono text-3xl font-semibold leading-none"
-          style={{ color }}
-        >
-          {formatScore(
-            score,
-            !!c.score_above_max_location,
-            !!c.score_below_min_location,
-          )}
+        <div className="mt-3 font-mono text-3xl font-semibold leading-none" style={{ color }}>
+          {formatScore(score, !!c.score_above_max_location, !!c.score_below_min_location)}
           <span className="text-lg"> °C</span>
         </div>
         {vsSector && (
-          <div
-            className="mt-2 font-mono text-xs"
-            style={{ color: vsSector === "= sector avg" ? undefined : color }}
-          >
+          <div className="mt-2 font-mono text-xs" style={{ color: vsSector === "≈ sector average" ? undefined : color }}>
             {vsSector}
           </div>
         )}
@@ -67,8 +55,8 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
         sectorMedian={median}
         aboveMax={!!c.score_above_max_location}
         belowMin={!!c.score_below_min_location}
-        height={132}
-        showValue={false}
+        height={128}
+        showLegend={false}
       />
     </div>
   );

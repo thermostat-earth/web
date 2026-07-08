@@ -1,28 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 // Small ⓘ marker that reveals a plain-English definition on hover (desktop) or
-// tap (mobile). Sits inline next to jargon like Scope 1/2/3.
+// tap (mobile). The tooltip is fixed-positioned so it can't be clipped by a
+// scrolling/overflow container (e.g. a table wrapper).
 export function InfoTip({ text, label = "More information" }: { text: string; label?: string }) {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const ref = useRef<HTMLButtonElement>(null);
+
+  const show = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (r) setPos({ left: r.left + r.width / 2, top: r.bottom + 6 });
+    setOpen(true);
+  };
+  const hide = () => setOpen(false);
+
   return (
-    <span className="relative inline-block align-middle">
+    <span className="inline-block align-middle">
       <button
+        ref={ref}
         type="button"
         aria-label={label}
-        onClick={() => setOpen((o) => !o)}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onBlur={() => setOpen(false)}
+        onClick={() => (open ? hide() : show())}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onBlur={hide}
         className="ml-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-muted-foreground/50 font-sans text-[9px] font-semibold leading-none text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
       >
         i
       </button>
-      {open && (
+      {open && pos && (
         <span
           role="tooltip"
-          className="absolute bottom-full left-1/2 z-30 mb-1.5 w-52 -translate-x-1/2 rounded-md border border-border bg-card p-2.5 text-left text-xs font-normal leading-relaxed text-muted-foreground shadow-lg"
+          style={{ position: "fixed", left: pos.left, top: pos.top, transform: "translateX(-50%)" }}
+          className="z-50 w-52 rounded-md border border-border bg-card p-2.5 text-left text-xs font-normal leading-relaxed text-muted-foreground shadow-lg"
         >
           {text}
         </span>
