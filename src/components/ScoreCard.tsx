@@ -1,4 +1,4 @@
-import { TemperatureBar } from "@/components/TemperatureBar";
+import { VerticalThermometer } from "@/components/VerticalThermometer";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
 
@@ -30,47 +30,46 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
 
   return (
     <div
-      className="rounded-lg border border-border bg-card p-5"
+      className="flex gap-4 rounded-lg border border-border bg-card p-5"
       style={{ borderLeft: `3px solid ${color}` }}
     >
-      <div className="text-sm font-medium">{c.company_name}</div>
-      <div className="text-xs text-muted-foreground">{meta}</div>
-      <div
-        className="mt-3 font-mono text-3xl font-semibold leading-none"
-        style={{ color }}
-      >
-        {formatScore(
-          score,
-          !!c.score_above_max_location,
-          !!c.score_below_min_location,
-        )}
-        <span className="text-lg"> °C</span>
-      </div>
-      {vsSector && (
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-medium">{c.company_name}</div>
+        <div className="text-xs text-muted-foreground">{meta}</div>
         <div
-          className="mt-2 font-mono text-xs"
-          style={{ color: vsSector === "= sector avg" ? undefined : color }}
+          className="mt-3 font-mono text-3xl font-semibold leading-none"
+          style={{ color }}
         >
-          {vsSector}
+          {formatScore(
+            score,
+            !!c.score_above_max_location,
+            !!c.score_below_min_location,
+          )}
+          <span className="text-lg"> °C</span>
         </div>
-      )}
-      <TemperatureBar
+        {vsSector && (
+          <div
+            className="mt-2 font-mono text-xs"
+            style={{ color: vsSector === "= sector avg" ? undefined : color }}
+          >
+            {vsSector}
+          </div>
+        )}
+        {(c.assessment_year_start || c.assessment_year_end) && (
+          <div className="mt-3 font-mono text-[10px] text-muted-foreground">
+            {c.assessment_year_start}–{c.assessment_year_end}
+          </div>
+        )}
+      </div>
+
+      <VerticalThermometer
         score={score}
         sectorMedian={median}
-        color={color}
         aboveMax={!!c.score_above_max_location}
         belowMin={!!c.score_below_min_location}
+        height={132}
+        showValue={false}
       />
-      {median != null && (
-        <div className="mt-1 text-center font-mono text-[10px] text-muted-foreground">
-          Sector avg {median.toFixed(2)}°C
-        </div>
-      )}
-      {(c.assessment_year_start || c.assessment_year_end) && (
-        <div className="mt-3 font-mono text-[10px] text-muted-foreground">
-          {c.assessment_year_start}–{c.assessment_year_end}
-        </div>
-      )}
     </div>
   );
 }

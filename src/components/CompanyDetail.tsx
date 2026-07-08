@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TemperatureBar } from "@/components/TemperatureBar";
+import { VerticalThermometer } from "@/components/VerticalThermometer";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyDetail as CompanyDetailData } from "@/lib/company";
 
@@ -54,32 +54,33 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </div>
 
         {score != null ? (
-          <div className="w-full sm:max-w-xs sm:text-right">
-            <div
-              className="font-mono text-6xl font-semibold leading-none sm:text-7xl"
-              style={{ color }}
-            >
-              {formatScore(
-                score,
-                !!h.score_above_max_location,
-                !!h.score_below_min_location,
+          <div className="flex items-start gap-5 sm:justify-end">
+            <div className="sm:text-right">
+              <div
+                className="font-mono text-6xl font-semibold leading-none sm:text-7xl"
+                style={{ color }}
+              >
+                {formatScore(
+                  score,
+                  !!h.score_above_max_location,
+                  !!h.score_below_min_location,
+                )}
+                <span className="text-2xl sm:text-3xl"> °C</span>
+              </div>
+              {h.sector_median_score_location != null && (
+                <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+                  Sector avg {h.sector_median_score_location.toFixed(2)}°C
+                </p>
               )}
-              <span className="text-2xl sm:text-3xl"> °C</span>
             </div>
-            <div className="mt-3">
-              <TemperatureBar
-                score={score}
-                sectorMedian={h.sector_median_score_location}
-                color={color}
-                aboveMax={!!h.score_above_max_location}
-                belowMin={!!h.score_below_min_location}
-              />
-            </div>
-            {h.sector_median_score_location != null && (
-              <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                Sector avg {h.sector_median_score_location.toFixed(2)}°C
-              </p>
-            )}
+            <VerticalThermometer
+              score={score}
+              sectorMedian={h.sector_median_score_location}
+              aboveMax={!!h.score_above_max_location}
+              belowMin={!!h.score_below_min_location}
+              height={150}
+              showValue={false}
+            />
           </div>
         ) : (
           <div className="font-mono text-sm text-muted-foreground">Not yet scored</div>
