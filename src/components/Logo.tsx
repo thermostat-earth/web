@@ -20,13 +20,13 @@ export function Logo({ size = 28, className }: { size?: number; className?: stri
         </linearGradient>
       </defs>
 
-      <circle cx="20" cy="22" r="11" stroke="currentColor" strokeWidth="2" />
-      <path d="M9 22 H31" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
-      <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
-      <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="1.3" opacity="0.4" />
+      <circle cx="20" cy="22" r="11" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M9 22 H31" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+      <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+      <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="0.9" opacity="0.4" />
 
-      <circle cx="20" cy="30" r="5.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="2" />
-      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="2" />
+      <circle cx="20" cy="30" r="5.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
       <rect x="18" y="22" width="4" height="8" fill="hsl(var(--background))" />
 
       <circle cx="20" cy="30" r="3.4" fill="url(#ts-therm)" />
