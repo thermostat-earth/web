@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const scores = await getScores();
-  const sample = scores.slice(0, 4);
+  const sample = scores.slice(0, 2);
   return (
     <>
       <SiteHeader />
@@ -20,8 +20,8 @@ export default async function HomePage() {
           <p className="mt-6 max-w-2xl text-muted-foreground">
             ThermoStat turns a company&apos;s achieved emissions into a single
             temperature — the global warming outcome if the whole world moved at
-            their pace. Descriptive, based on what&apos;s been done, not what&apos;s
-            been pledged.
+            their pace. Based on what&apos;s been done, not what&apos;s been
+            pledged.
           </p>
           <div className="mt-8 flex gap-3">
             <Link
@@ -43,9 +43,15 @@ export default async function HomePage() {
           <h2 className="mb-5 text-sm font-medium text-muted-foreground">
             Sample scores
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid max-w-3xl gap-6 sm:grid-cols-2">
             {sample.map((c) => (
-              <ScoreCard key={c.company_id} c={c} />
+              <Link
+                key={c.company_id}
+                href={`/company/${c.company_id}`}
+                className="block transition hover:opacity-90"
+              >
+                <ScoreCard c={c} />
+              </Link>
             ))}
           </div>
         </section>

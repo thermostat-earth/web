@@ -35,9 +35,9 @@ export function TemperatureBar({
         />
       </div>
       <div className="mt-1 flex justify-between font-mono text-[10px] text-muted-foreground">
-        <span>&lt;{SCALE_MIN.toFixed(1)}</span>
-        <span>3.0</span>
-        <span>&gt;{SCALE_MAX.toFixed(1)}</span>
+        <span>{SCALE_MIN.toFixed(1)}</span>
+        <span>2.7</span>
+        <span>{SCALE_MAX.toFixed(1)}</span>
       </div>
     </div>
   );

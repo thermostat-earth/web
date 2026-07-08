@@ -122,13 +122,23 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     ? Math.max(...trajectory.map((t) => t.year))
     : null;
 
-  // Latest reporting year's scope-3 category breakdown.
+  // Latest emissions year's scope-3 category breakdown, de-duplicated per category.
+  // A category can be restated across later reports — keep only the most recent
+  // figure (highest reporting_year), matching the scoring engine's snapshot, rather
+  // than stacking every year's row for the same category.
   const s3All = (scope3Rows ?? []).map((r) => r as Record<string, unknown>);
   const latestS3Year = s3All.length
-    ? Math.max(...s3All.map((r) => Number(r.reporting_year ?? r.year)))
+    ? Math.max(...s3All.map((r) => Number(r.year)))
     : null;
-  const scope3: Scope3Category[] = s3All
-    .filter((r) => Number(r.reporting_year ?? r.year) === latestS3Year)
+  const byCat = new Map<number, Record<string, unknown>>();
+  for (const r of s3All.filter((r) => Number(r.year) === latestS3Year)) {
+    const cat = Number(r.category);
+    const prev = byCat.get(cat);
+    if (!prev || Number(r.reporting_year ?? 0) > Number(prev.reporting_year ?? 0)) {
+      byCat.set(cat, r);
+    }
+  }
+  const scope3: Scope3Category[] = [...byCat.values()]
     .map((r) => ({
       category: Number(r.category),
       name: SCOPE3_CATEGORIES[Number(r.category)] ?? `Category ${r.category}`,

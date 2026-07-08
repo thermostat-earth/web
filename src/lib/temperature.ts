@@ -1,8 +1,9 @@
-// Helpers for placing a company's temperature on the <1.5°C … >4.5°C scale
-// and colouring it green (cool / well aligned) → red (hot / poorly aligned).
+// Helpers for placing a company's temperature on the 1.4°C … 4.0°C scale
+// (the range of IPCC AR6 pathways we hold) and colouring it green (cool / well
+// aligned) → red (hot / poorly aligned).
 
-export const SCALE_MIN = 1.5;
-export const SCALE_MAX = 4.5;
+export const SCALE_MIN = 1.4;
+export const SCALE_MAX = 4.0;
 
 export function scalePosition(score: number): number {
   const t = (score - SCALE_MIN) / (SCALE_MAX - SCALE_MIN);

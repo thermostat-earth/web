@@ -48,7 +48,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         {score != null ? (
           <div className="w-full sm:max-w-xs sm:text-right">
             <div
-              className="font-mono text-4xl font-semibold leading-none"
+              className="font-mono text-6xl font-semibold leading-none sm:text-7xl"
               style={{ color }}
             >
               {formatScore(
@@ -56,7 +56,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                 !!h.score_above_max_location,
                 !!h.score_below_min_location,
               )}
-              <span className="text-xl"> °C</span>
+              <span className="text-2xl sm:text-3xl"> °C</span>
             </div>
             <div className="mt-3">
               <TemperatureBar
@@ -191,9 +191,10 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
       )}
 
       <p className="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">
-        ThermoStat scores describe a company&apos;s achieved emissions trajectory
-        against IPCC AR6 pathways. They are descriptive, not a rating or
-        endorsement.{" "}
+        ThermoStat ranks companies using their own published emissions data.
+        Scores reflect one factual measure — achieved emissions versus IPCC
+        pathways — and are not financial advice, an endorsement, or a judgement of
+        a company&apos;s overall sustainability performance.{" "}
         <Link href="/methodology" className="underline underline-offset-4">
           How scoring works
         </Link>
