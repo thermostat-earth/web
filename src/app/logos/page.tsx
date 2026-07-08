@@ -8,7 +8,7 @@ function Logo({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
       <defs>
-        <linearGradient id={gid} gradientUnits="userSpaceOnUse" x1="20" y1="35" x2="20" y2="7">
+        <linearGradient id={gid} gradientUnits="userSpaceOnUse" x1="20" y1="32" x2="20" y2="6">
           <stop offset="0" stopColor="hsl(145 60% 45%)" />
           <stop offset="0.55" stopColor="hsl(48 90% 52%)" />
           <stop offset="1" stopColor="hsl(0 72% 55%)" />
@@ -23,14 +23,9 @@ function Logo({ size }: { size: number }) {
 
       {/* Thermometer outline, centred over the globe. Transparent body that
           matches the page and masks the globe lines crossing underneath. */}
-      <circle cx="20" cy="30.5" r="4.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="17.8" y="4.5" width="4.4" height="25" rx="2.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      {/* hide the internal seam where the tube meets the bulb */}
-      <rect x="18.4" y="24" width="3.2" height="6.5" fill="hsl(var(--background))" />
-
-      {/* Mercury: bulb + stem sharing one continuous gradient */}
-      <circle cx="20" cy="30.5" r="2.6" fill={`url(#${gid})`} />
-      <rect x="18.95" y="10" width="2.1" height="20.5" rx="1.05" fill={`url(#${gid})`} />
+      {/* Thermometer: a simple rounded capsule (no bulb) with the gradient. */}
+      <rect x="17" y="5" width="6" height="28" rx="3" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="18.4" y="6.6" width="3.2" height="24.8" rx="1.6" fill={`url(#${gid})`} />
     </svg>
   );
 }
