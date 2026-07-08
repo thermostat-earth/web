@@ -33,7 +33,7 @@ export default async function CompanyPage({
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
+      <main className="mx-auto w-full max-w-4xl flex-1 py-12 pl-6 pr-10 sm:pl-8 sm:pr-16">
         <CompanyDetail data={data} />
       </main>
       <SiteFooter />
