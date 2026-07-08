@@ -47,7 +47,7 @@ export function InfoTip({ text, label = "More information" }: { text: string; la
 // Reusable definitions for the recurring terms.
 export const GLOSSARY = {
   scope1:
-    "Direct emissions from sources a company owns or controls — fuel burned on-site or in company vehicles.",
+    "Direct emissions from sources a company owns or controls, e.g. fuel burned on-site or in company vehicles.",
   scope2:
     "Indirect emissions from the energy a company buys, mainly purchased electricity, heat and steam.",
   scope3:

@@ -49,7 +49,7 @@ export type TrajectoryYear = {
   total_location: number | null;
   total_market: number | null;
   inWindow: boolean;
-  reason: string | null; // why an out-of-window year was excluded
+  scope3Reported: boolean; // whether any Scope 3 was reported that year
 };
 
 export type Scope3Category = {
@@ -124,13 +124,6 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
   const trajectory: TrajectoryYear[] = (chartRows ?? []).map((r) => {
     const row = r as Record<string, unknown>;
     const year = Number(row.year);
-    const inWindow = row.assessment_window_flag === true;
-    let reason: string | null = null;
-    if (!inWindow) {
-      reason = yearsWithScope3.has(year)
-        ? "Outside the most recent unbroken run of complete years"
-        : "No Scope 3 reported for this year";
-    }
     return {
       year,
       scope1: num(row.scope1_ghg),
@@ -139,8 +132,8 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
       scope3: num(row.scope3_ghg),
       total_location: num(row.total_ghg_location),
       total_market: num(row.total_ghg_market),
-      inWindow,
-      reason,
+      inWindow: row.assessment_window_flag === true,
+      scope3Reported: yearsWithScope3.has(year),
     };
   });
 

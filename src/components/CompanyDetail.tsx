@@ -23,6 +23,19 @@ function hostname(url: string): string {
   }
 }
 
+// Lists exactly what a year is missing, for the current basis, so the reason is
+// accurate (e.g. H&M 2021 lacks Scope 2 location AND Scope 3).
+function excludedReason(t: TrajectoryYear, basis: Basis): string {
+  const missing: string[] = [];
+  const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
+  if (t.scope1 == null) missing.push("Scope 1");
+  if (s2 == null) missing.push(`Scope 2 (${basis})`);
+  if (!t.scope3Reported) missing.push("Scope 3");
+  return missing.length
+    ? `missing ${missing.join(" and ")}`
+    : "outside the most recent unbroken run";
+}
+
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="mb-4 mt-12 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -71,7 +84,7 @@ function TrajectoryChart({
             {/* full-column hover target */}
             <rect x={x - slotW / 2} y={padTop} width={slotW} height={plotH} fill="transparent">
               <title>
-                {t.year}: {fmt(v)} tCO₂e{t.inWindow ? " (in assessment window)" : ` · excluded — ${t.reason}`}
+                {t.year}: {fmt(v)} tCO₂e{t.inWindow ? " (in assessment window)" : ` · excluded — ${excludedReason(t, basis)}`}
               </title>
             </rect>
             <rect
@@ -143,9 +156,14 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
 
   return (
     <div>
-      <Link href="/scores" className="text-sm text-muted-foreground transition hover:text-foreground">
-        ← All scores
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/scores" className="text-sm text-muted-foreground transition hover:text-foreground">
+          ← All scores
+        </Link>
+        <Link href="/methodology" className="text-sm text-muted-foreground transition hover:text-foreground">
+          How scoring works →
+        </Link>
+      </div>
 
       {/* Header */}
       <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -239,7 +257,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                       <td className="py-2 pr-4 text-right font-mono">{fmt(t.scope3)}</td>
                       <td className="py-2 pr-4 text-right font-mono font-medium">{fmt(total)}</td>
                       <td className="py-2 pl-2 text-[11px] text-muted-foreground">
-                        {!t.inWindow && `excluded — ${t.reason}`}
+                        {!t.inWindow && `excluded — ${excludedReason(t, basis)}`}
                       </td>
                     </tr>
                   );
@@ -282,11 +300,6 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </>
       )}
 
-      <p className="mt-12 border-t border-border pt-6 text-xs text-muted-foreground">
-        <Link href="/methodology" className="underline underline-offset-4">
-          How scoring works →
-        </Link>
-      </p>
     </div>
   );
 }
