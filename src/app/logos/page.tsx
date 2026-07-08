@@ -15,16 +15,17 @@ function Logo({ size }: { size: number }) {
         </linearGradient>
       </defs>
 
-      {/* Earth, centred */}
+      {/* Earth, centred. Rounder, more visible longitude curves. */}
       <circle cx="20" cy="22" r="11" stroke="currentColor" strokeWidth="2" />
-      <path d="M9 22 H31" stroke="currentColor" strokeWidth="1.3" opacity="0.4" />
-      <ellipse cx="20" cy="22" rx="5" ry="11" stroke="currentColor" strokeWidth="1.3" opacity="0.4" />
+      <path d="M9 22 H31" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
+      <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
+      <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="1.3" opacity="0.4" />
 
-      {/* Thermometer outline, centred over the globe */}
-      <circle cx="20" cy="30" r="5.5" fill="var(--background)" stroke="currentColor" strokeWidth="2" />
-      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="var(--background)" stroke="currentColor" strokeWidth="2" />
+      {/* Thermometer outline, centred over the globe. Solid body (not see-through). */}
+      <circle cx="20" cy="30" r="5.5" fill="#eef1f4" stroke="currentColor" strokeWidth="2" />
+      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="#eef1f4" stroke="currentColor" strokeWidth="2" />
       {/* hide the internal seam where the tube meets the bulb */}
-      <rect x="18" y="22" width="4" height="8" fill="var(--background)" />
+      <rect x="18" y="22" width="4" height="8" fill="#eef1f4" />
 
       {/* Mercury: bulb + stem sharing one continuous gradient */}
       <circle cx="20" cy="30" r="3.4" fill={`url(#${gid})`} />
