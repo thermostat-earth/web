@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 const NAV = [
   { href: "/scores", label: "Scores" },
@@ -11,7 +12,8 @@ export function SiteHeader() {
   return (
     <header className="border-b border-border">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="font-semibold tracking-tight">
+        <Link href="/" className="flex items-center gap-1.5 font-semibold tracking-tight">
+          <Logo size={26} />
           ThermoStat
         </Link>
         <nav className="flex items-center gap-6 text-sm text-muted-foreground">
