@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { VerticalThermometer } from "@/components/VerticalThermometer";
+import { HorizontalThermometer } from "@/components/HorizontalThermometer";
 import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import type {
@@ -166,7 +166,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
       </div>
 
       {/* Header */}
-      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-stretch sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{h.company_name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{meta}</p>
@@ -201,23 +201,23 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </div>
 
         {score != null ? (
-          <div className="flex items-center gap-5 sm:justify-end">
-            <div className="font-mono text-6xl font-semibold leading-none sm:text-7xl" style={{ color }}>
-              {formatScore(score, b.aboveMax, b.belowMin)}
-              <span className="text-2xl sm:text-3xl"> °C</span>
-            </div>
-            <VerticalThermometer
-              score={score}
-              sectorMedian={b.sectorMedian}
-              aboveMax={b.aboveMax}
-              belowMin={b.belowMin}
-              height={150}
-            />
+          <div className="flex items-center font-mono text-7xl font-semibold leading-none sm:justify-end sm:text-8xl" style={{ color }}>
+            {formatScore(score, b.aboveMax, b.belowMin)}
+            <span className="text-3xl sm:text-4xl"> °C</span>
           </div>
         ) : (
           <div className="font-mono text-sm text-muted-foreground">Not yet scored</div>
         )}
       </div>
+
+      {score != null && (
+        <HorizontalThermometer
+          score={score}
+          sectorMedian={b.sectorMedian}
+          aboveMax={b.aboveMax}
+          belowMin={b.belowMin}
+        />
+      )}
 
       {/* Emissions trajectory */}
       <SectionHeading>Emissions trajectory · {basis}-based</SectionHeading>
