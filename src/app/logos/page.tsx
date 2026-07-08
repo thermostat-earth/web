@@ -23,14 +23,14 @@ function Logo({ size }: { size: number }) {
 
       {/* Thermometer outline, centred over the globe. Transparent body that
           matches the page and masks the globe lines crossing underneath. */}
-      <circle cx="20" cy="30" r="5.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="20" cy="30.5" r="4.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="17.8" y="4.5" width="4.4" height="25" rx="2.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
       {/* hide the internal seam where the tube meets the bulb */}
-      <rect x="18" y="22" width="4" height="8" fill="hsl(var(--background))" />
+      <rect x="18.4" y="24" width="3.2" height="6.5" fill="hsl(var(--background))" />
 
       {/* Mercury: bulb + stem sharing one continuous gradient */}
-      <circle cx="20" cy="30" r="3.4" fill={`url(#${gid})`} />
-      <rect x="18.4" y="9.5" width="3.2" height="20.5" rx="1.6" fill={`url(#${gid})`} />
+      <circle cx="20" cy="30.5" r="2.6" fill={`url(#${gid})`} />
+      <rect x="18.95" y="10" width="2.1" height="20.5" rx="1.05" fill={`url(#${gid})`} />
     </svg>
   );
 }

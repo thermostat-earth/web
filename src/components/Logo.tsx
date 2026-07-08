@@ -25,12 +25,12 @@ export function Logo({ size = 28, className }: { size?: number; className?: stri
       <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1" opacity="0.5" />
       <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="0.9" opacity="0.4" />
 
-      <circle cx="20" cy="30" r="5.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="18" y="22" width="4" height="8" fill="hsl(var(--background))" />
+      <circle cx="20" cy="30.5" r="4.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="17.8" y="4.5" width="4.4" height="25" rx="2.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="18.4" y="24" width="3.2" height="6.5" fill="hsl(var(--background))" />
 
-      <circle cx="20" cy="30" r="3.4" fill="url(#ts-therm)" />
-      <rect x="18.4" y="9.5" width="3.2" height="20.5" rx="1.6" fill="url(#ts-therm)" />
+      <circle cx="20" cy="30.5" r="2.6" fill="url(#ts-therm)" />
+      <rect x="18.95" y="10" width="2.1" height="20.5" rx="1.05" fill="url(#ts-therm)" />
     </svg>
   );
 }
