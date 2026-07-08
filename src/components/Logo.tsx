@@ -13,7 +13,7 @@ export function Logo({ size = 28, className }: { size?: number; className?: stri
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="ts-therm" gradientUnits="userSpaceOnUse" x1="20" y1="32" x2="20" y2="6">
+        <linearGradient id="ts-therm" gradientUnits="userSpaceOnUse" x1="20" y1="34" x2="20" y2="10">
           <stop offset="0" stopColor="hsl(145 60% 45%)" />
           <stop offset="0.55" stopColor="hsl(48 90% 52%)" />
           <stop offset="1" stopColor="hsl(0 72% 55%)" />
@@ -25,9 +25,10 @@ export function Logo({ size = 28, className }: { size?: number; className?: stri
       <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1" opacity="0.5" />
       <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="0.9" opacity="0.4" />
 
-      {/* thermometer: a simple rounded capsule (no bulb), centred over the globe */}
-      <rect x="17" y="5" width="6" height="28" rx="3" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="18.4" y="6.6" width="3.2" height="24.8" rx="1.6" fill="url(#ts-therm)" />
+      {/* thermometer: a simple rounded capsule (no bulb), centred on the globe
+          so it protrudes equally above and below */}
+      <rect x="17" y="8" width="6" height="28" rx="3" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="18.4" y="9.6" width="3.2" height="24.8" rx="1.6" fill="url(#ts-therm)" />
     </svg>
   );
 }

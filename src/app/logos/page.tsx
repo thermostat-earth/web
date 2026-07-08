@@ -8,7 +8,7 @@ function Logo({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
       <defs>
-        <linearGradient id={gid} gradientUnits="userSpaceOnUse" x1="20" y1="32" x2="20" y2="6">
+        <linearGradient id={gid} gradientUnits="userSpaceOnUse" x1="20" y1="34" x2="20" y2="10">
           <stop offset="0" stopColor="hsl(145 60% 45%)" />
           <stop offset="0.55" stopColor="hsl(48 90% 52%)" />
           <stop offset="1" stopColor="hsl(0 72% 55%)" />
@@ -23,9 +23,9 @@ function Logo({ size }: { size: number }) {
 
       {/* Thermometer outline, centred over the globe. Transparent body that
           matches the page and masks the globe lines crossing underneath. */}
-      {/* Thermometer: a simple rounded capsule (no bulb) with the gradient. */}
-      <rect x="17" y="5" width="6" height="28" rx="3" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
-      <rect x="18.4" y="6.6" width="3.2" height="24.8" rx="1.6" fill={`url(#${gid})`} />
+      {/* Thermometer: a simple rounded capsule (no bulb), centred on the globe. */}
+      <rect x="17" y="8" width="6" height="28" rx="3" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="1.3" />
+      <rect x="18.4" y="9.6" width="3.2" height="24.8" rx="1.6" fill={`url(#${gid})`} />
     </svg>
   );
 }
