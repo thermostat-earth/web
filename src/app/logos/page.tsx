@@ -21,11 +21,12 @@ function Logo({ size }: { size: number }) {
       <ellipse cx="20" cy="22" rx="7" ry="11" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
       <ellipse cx="20" cy="22" rx="3.2" ry="11" stroke="currentColor" strokeWidth="1.3" opacity="0.4" />
 
-      {/* Thermometer outline, centred over the globe. Solid body (not see-through). */}
-      <circle cx="20" cy="30" r="5.5" fill="#eef1f4" stroke="currentColor" strokeWidth="2" />
-      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="#eef1f4" stroke="currentColor" strokeWidth="2" />
+      {/* Thermometer outline, centred over the globe. Transparent body that
+          matches the page and masks the globe lines crossing underneath. */}
+      <circle cx="20" cy="30" r="5.5" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="2" />
+      <rect x="16.8" y="4.5" width="6.4" height="24" rx="3.2" fill="hsl(var(--background))" stroke="currentColor" strokeWidth="2" />
       {/* hide the internal seam where the tube meets the bulb */}
-      <rect x="18" y="22" width="4" height="8" fill="#eef1f4" />
+      <rect x="18" y="22" width="4" height="8" fill="hsl(var(--background))" />
 
       {/* Mercury: bulb + stem sharing one continuous gradient */}
       <circle cx="20" cy="30" r="3.4" fill={`url(#${gid})`} />
@@ -60,7 +61,7 @@ export default function LogosPage() {
 
       <section className="mt-8 border-t border-border pt-8">
         <h2 className="mb-6 text-sm font-semibold text-muted-foreground">On light (check for light mode)</h2>
-        <div className="flex flex-wrap items-center gap-10 rounded-lg bg-white p-8 text-slate-900" style={{ ["--background" as string]: "#ffffff" }}>
+        <div className="flex flex-wrap items-center gap-10 rounded-lg bg-white p-8 text-slate-900" style={{ ["--background" as string]: "0 0% 100%" }}>
           <Logo size={112} />
           <div className="flex items-center gap-2">
             <Logo size={32} />
