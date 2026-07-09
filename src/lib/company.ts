@@ -70,7 +70,6 @@ export type Pathways = Record<string, Record<number, number>>;
 export type CompanyDetail = {
   header: CompanyHeader;
   trajectory: TrajectoryYear[];
-  pathways: Pathways;
   latestYear: number | null;
   scope3: Scope3Category[];
   sources: YearSources[];
@@ -145,22 +144,6 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     ? Math.max(...trajectory.map((t) => t.year))
     : null;
 
-  // IPCC pathway medians over the assessment-window years, for overlaying the
-  // nearest pathways on the trajectory chart.
-  const windowYears = trajectory.filter((t) => t.inWindow).map((t) => t.year);
-  const pathways: Pathways = {};
-  if (windowYears.length) {
-    const { data: pathRows } = await supabase
-      .from("climate_pathways")
-      .select("temperature_c, year, emissions_median_mtco2e")
-      .in("year", windowYears);
-    for (const r of pathRows ?? []) {
-      const row = r as Record<string, unknown>;
-      const t = Number(row.temperature_c).toFixed(1);
-      (pathways[t] ??= {})[Number(row.year)] = Number(row.emissions_median_mtco2e);
-    }
-  }
-
   // All 15 scope-3 categories for the latest emissions year, de-duplicated per
   // category (keep the most recent restatement), each tagged with its state.
   const latestS3Year = s3All.length
@@ -222,5 +205,5 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     },
   };
 
-  return { header, trajectory, pathways, latestYear, scope3, sources };
+  return { header, trajectory, latestYear, scope3, sources };
 }

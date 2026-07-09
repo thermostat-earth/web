@@ -10,7 +10,6 @@ import type {
   CompanyDetail as CompanyDetailData,
   TrajectoryYear,
   Scope3Category,
-  Pathways,
 } from "@/lib/company";
 
 const fmt = (n: number | null): string =>
@@ -45,19 +44,16 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Column-bar chart of total emissions by year, coloured by the company's score,
-// with the nearest IPCC pathways (above and below the score) overlaid as
-// translucent grey lines, scaled to the company's base-year emissions.
+// Column-bar chart of total emissions by year, coloured by the company's score.
+// In-window years are solid with a trend line; excluded years get a faded bar.
 function TrajectoryChart({
   trajectory,
   basis,
   color,
-  pathways,
 }: {
   trajectory: TrajectoryYear[];
   basis: Basis;
   color: string;
-  pathways: Pathways;
 }) {
   const W = Math.max(320, trajectory.length * 64);
   const H = 190;
@@ -70,42 +66,12 @@ function TrajectoryChart({
   const totals = trajectory.map((t) =>
     basis === "location" ? t.total_location : t.total_market,
   );
-
-  // Pathway overlays: the two 0.1°C bins bracketing the score, scaled so each
-  // starts at the company's base-year emissions and follows the pathway's shape.
   const inWin = trajectory.map((t, i) => ({ t, i })).filter((x) => x.t.inWindow);
-  const baseYear = inWin.length ? Math.min(...inWin.map((x) => x.t.year)) : null;
-  const baseRow = inWin.find((x) => x.t.year === baseYear)?.t;
-  const baseEmissions = baseRow ? (basis === "location" ? baseRow.total_location : baseRow.total_market) : null;
-  // Pathways at 0.5°C steps, each scaled to the base year. Show every pathway at
-  // or below the company's latest emissions (they sit within the bars), plus the
-  // single nearest pathway above it.
-  const STEP_TEMPS = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
-  const lastInWin = inWin[inWin.length - 1];
-  const companyEnd = lastInWin ? totals[lastInWin.i] ?? 0 : 0;
-  const allPaths = (baseEmissions && baseEmissions > 0 ? STEP_TEMPS : [])
-    .map((T) => {
-      const p = pathways[T.toFixed(1)];
-      if (!p || !p[baseYear!]) return null;
-      const pBase = p[baseYear!];
-      const pts = inWin
-        .filter((x) => p[x.t.year] != null)
-        .map((x) => ({ i: x.i, value: (baseEmissions! * p[x.t.year]) / pBase }));
-      if (!pts.length) return null;
-      return { temp: T, pts, end: pts[pts.length - 1].value };
-    })
-    .filter(Boolean) as { temp: number; pts: { i: number; value: number }[]; end: number }[];
-  const below = allPaths.filter((l) => l.end <= companyEnd);
-  const above = allPaths.filter((l) => l.end > companyEnd).sort((a, b) => a.end - b.end);
-  const pathLines = [...below, ...(above[0] ? [above[0]] : [])];
-
-  const max = Math.max(1, ...totals.map((v) => v ?? 0), ...pathLines.flatMap((l) => l.pts.map((p) => p.value)));
+  const max = Math.max(1, ...totals.map((v) => v ?? 0));
   const colX = (i: number) => padX + slotW * (i + 0.5);
   const barH = (v: number | null) => (v && v > 0 ? Math.max((v / max) * plotH, 3) : 0);
   const topY = (v: number | null) => padTop + plotH - barH(v);
-  const pyY = (v: number) => padTop + plotH - Math.min(Math.max((v / max) * plotH, 0), plotH);
-  // Company trend line + dots only span the in-window years, so they align with
-  // the solid bars (excluded years get a faded bar but no line/dot).
+  // Trend line + dots only span the in-window years, so they align with the bars.
   const linePts = inWin.map((x) => `${colX(x.i)},${topY(totals[x.i])}`).join(" ");
 
   return (
@@ -137,21 +103,6 @@ function TrajectoryChart({
           </g>
         );
       })}
-
-      {/* IPCC pathway overlays */}
-      {pathLines.map((l) => {
-        const pts = l.pts.map((p) => `${colX(p.i)},${pyY(p.value)}`).join(" ");
-        const last = l.pts[l.pts.length - 1];
-        return (
-          <g key={l.temp} pointerEvents="none" style={{ filter: "drop-shadow(0 0 1.5px rgba(0,0,0,0.7))" }}>
-            <polyline points={pts} fill="none" stroke="hsl(var(--foreground))" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <text x={colX(last.i) - 2} y={pyY(last.value) - 4} textAnchor="end" fill="hsl(var(--foreground))" fillOpacity="0.7" style={{ fontSize: 10, fontFamily: "var(--font-jetbrains)" }}>
-              {l.temp.toFixed(1)}°C
-            </text>
-          </g>
-        );
-      })}
-
       <polyline points={linePts} fill="none" stroke={color} strokeWidth="1.5" opacity="0.9" pointerEvents="none" />
       {inWin.map((x) => (
         <circle key={x.t.year} cx={colX(x.i)} cy={topY(totals[x.i])} r="3" fill={color} pointerEvents="none" />
@@ -191,7 +142,7 @@ function Scope3Row({ c, max, color }: { c: Scope3Category; max: number; color: s
 }
 
 export function CompanyDetail({ data }: { data: CompanyDetailData }) {
-  const { header: h, trajectory, pathways, scope3, sources, latestYear } = data;
+  const { header: h, trajectory, scope3, sources, latestYear } = data;
   const bothAvailable = h.location.available && h.market.available;
   const initial: Basis = h.location.available ? "location" : "market";
   const [basis, setBasis] = useState<Basis>(initial);
@@ -276,7 +227,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} pathways={pathways} />
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} />
           {(h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
