@@ -29,7 +29,7 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
     diff == null ? null : approx ? "≈ sector average" : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector`;
 
   return (
-    <div className="flex items-stretch gap-4 rounded-lg border border-border bg-card px-6 py-8" style={{ borderLeft: `3px solid ${color}` }}>
+    <div className="flex items-stretch justify-between gap-4 rounded-lg border border-border bg-card px-6 py-8" style={{ borderLeft: `3px solid ${color}` }}>
       <div className="flex min-w-0 flex-col">
         <div className="truncate text-sm font-medium">{c.company_name}</div>
         <div className="truncate text-xs text-muted-foreground">{meta}</div>
@@ -45,7 +45,6 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
       </div>
 
       <VerticalThermo
-        companyName={c.company_name}
         score={score}
         sectorMedian={median}
         aboveMax={aboveMax}
@@ -58,7 +57,6 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
 }
 
 function VerticalThermo({
-  companyName,
   score,
   sectorMedian,
   aboveMax,
@@ -66,7 +64,6 @@ function VerticalThermo({
   approxSector,
   color,
 }: {
-  companyName: string;
   score: number;
   sectorMedian: number | null;
   aboveMax: boolean;
@@ -76,8 +73,8 @@ function VerticalThermo({
 }) {
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
-  // Off-scale dots sit well clear above/below the tube (card padding gives the room).
-  const dotBottom = aboveMax ? "calc(100% + 20px)" : belowMin ? "-20px" : `${pos}%`;
+  // Off-scale dots sit well clear above/below the tube (the key margin gives the room).
+  const dotBottom = aboveMax ? "calc(100% + 18px)" : belowMin ? "-18px" : `${pos}%`;
   // When company ≈ sector, the sector line snaps to the company dot (incl. off-scale).
   const sectorBottom = sectorPos == null ? null : approxSector ? dotBottom : `${sectorPos}%`;
 
@@ -88,30 +85,22 @@ function VerticalThermo({
   const gapPct = hi - lo;
 
   return (
-    <div className="flex flex-1 items-stretch">
-      {/* labels in the empty space, right-aligned toward the tube */}
-      <div className="relative flex-1">
-        {sectorPos == null ? (
-          <div className="absolute right-0 translate-y-1/2 text-right text-xs font-medium leading-tight" style={{ bottom: dotBottom, color }}>
-            {companyName}
-          </div>
-        ) : approxSector ? (
-          <div className="absolute right-0 flex translate-y-1/2 flex-col items-end text-right leading-tight" style={{ bottom: dotBottom }}>
-            <span className="text-xs font-medium" style={{ color }}>{companyName}</span>
-            <span className="text-[10px] text-muted-foreground">≈ Sector average</span>
-          </div>
-        ) : (
-          <>
-            <div className="absolute right-0 translate-y-1/2 text-right text-xs font-medium leading-tight" style={{ bottom: dotBottom, color }}>
-              {companyName}
-            </div>
-            <div className="absolute right-0 translate-y-1/2 text-right text-[10px] leading-tight text-muted-foreground" style={{ bottom: sectorBottom! }}>
-              Sector average
-            </div>
-          </>
+    <div className="flex shrink-0 flex-col items-end">
+      {/* key (top-right) */}
+      <div className="mb-7 flex items-center gap-3 text-[10px] leading-none text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: color, border: "2px solid hsl(var(--background))" }} />
+          This company
+        </span>
+        {sectorPos != null && (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-[3px] w-3.5 rounded-full bg-foreground" />
+            Sector average
+          </span>
         )}
       </div>
 
+      <div className="flex flex-1 items-stretch">
       {/* company-vs-sector arrow — thin shaft, chunky head, set a little apart from the tube */}
       <div className="relative mr-2.5 w-2">
         <div className="relative h-full">
@@ -159,6 +148,7 @@ function VerticalThermo({
             </div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );
