@@ -70,14 +70,24 @@ export function HorizontalThermometer({
         />
       </div>
 
-      {/* gap bar below — a visible segment spanning company↔sector */}
-      {gapLo != null && gapHi != null && (
-        <div className="relative mt-2.5 h-1.5">
+      {/* gap bar below — a segment spanning company↔sector, filled with the same
+          gradient (aligned to the main bar) so it naturally reddens/greens. */}
+      {gapLo != null && gapHi != null && gapHi - gapLo > 0.5 && (
+        <div className="relative mt-2.5 h-2">
           <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-border" />
           <div
-            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/60"
+            className="absolute inset-y-0 overflow-hidden rounded-full ring-1 ring-black/10"
             style={{ left: `${gapLo}%`, width: `${gapHi - gapLo}%` }}
-          />
+          >
+            <div
+              className="h-full"
+              style={{
+                width: `${(100 / (gapHi - gapLo)) * 100}%`,
+                marginLeft: `-${(gapLo / (gapHi - gapLo)) * 100}%`,
+                background: H_GRADIENT,
+              }}
+            />
+          </div>
         </div>
       )}
 
@@ -91,7 +101,7 @@ export function HorizontalThermometer({
             <span className="inline-block h-3 w-[3px] rounded-full bg-foreground" /> sector average
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-1.5 w-3.5 rounded-full bg-foreground/60" /> gap vs sector
+            <span className="inline-block h-2 w-3.5 rounded-full" style={{ background: H_GRADIENT }} /> gap vs sector
           </span>
         </div>
         <div className="flex gap-3 font-mono text-[10px] text-muted-foreground">
