@@ -53,13 +53,11 @@ function TrajectoryChart({
   basis,
   color,
   pathways,
-  score,
 }: {
   trajectory: TrajectoryYear[];
   basis: Basis;
   color: string;
   pathways: Pathways;
-  score: number | null;
 }) {
   const W = Math.max(320, trajectory.length * 64);
   const H = 190;
@@ -79,18 +77,13 @@ function TrajectoryChart({
   const baseYear = inWin.length ? Math.min(...inWin.map((x) => x.t.year)) : null;
   const baseRow = inWin.find((x) => x.t.year === baseYear)?.t;
   const baseEmissions = baseRow ? (basis === "location" ? baseRow.total_location : baseRow.total_market) : null;
-  const bracket = (() => {
-    if (score == null) return [] as number[];
-    const s = Math.min(4.0, Math.max(1.4, score));
-    let below = Math.floor(s * 10) / 10;
-    let above = Math.ceil(s * 10) / 10;
-    if (Math.abs(below - above) < 1e-9) {
-      below = Math.max(1.4, +(below - 0.1).toFixed(1));
-      above = Math.min(4.0, +(above + 0.1).toFixed(1));
-    }
-    return Array.from(new Set([+below.toFixed(1), +above.toFixed(1)]));
-  })();
-  const pathLines = (baseEmissions && baseEmissions > 0 ? bracket : [])
+  // Pathways at 0.5°C steps, each scaled to the base year. Show every pathway at
+  // or below the company's latest emissions (they sit within the bars), plus the
+  // single nearest pathway above it.
+  const STEP_TEMPS = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+  const lastInWin = inWin[inWin.length - 1];
+  const companyEnd = lastInWin ? totals[lastInWin.i] ?? 0 : 0;
+  const allPaths = (baseEmissions && baseEmissions > 0 ? STEP_TEMPS : [])
     .map((T) => {
       const p = pathways[T.toFixed(1)];
       if (!p || !p[baseYear!]) return null;
@@ -98,9 +91,13 @@ function TrajectoryChart({
       const pts = inWin
         .filter((x) => p[x.t.year] != null)
         .map((x) => ({ i: x.i, value: (baseEmissions! * p[x.t.year]) / pBase }));
-      return pts.length ? { temp: T, pts } : null;
+      if (!pts.length) return null;
+      return { temp: T, pts, end: pts[pts.length - 1].value };
     })
-    .filter(Boolean) as { temp: number; pts: { i: number; value: number }[] }[];
+    .filter(Boolean) as { temp: number; pts: { i: number; value: number }[]; end: number }[];
+  const below = allPaths.filter((l) => l.end <= companyEnd);
+  const above = allPaths.filter((l) => l.end > companyEnd).sort((a, b) => a.end - b.end);
+  const pathLines = [...below, ...(above[0] ? [above[0]] : [])];
 
   const max = Math.max(1, ...totals.map((v) => v ?? 0), ...pathLines.flatMap((l) => l.pts.map((p) => p.value)));
   const colX = (i: number) => padX + slotW * (i + 0.5);
@@ -146,9 +143,9 @@ function TrajectoryChart({
         const pts = l.pts.map((p) => `${colX(p.i)},${pyY(p.value)}`).join(" ");
         const last = l.pts[l.pts.length - 1];
         return (
-          <g key={l.temp} pointerEvents="none">
-            <polyline points={pts} fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6" />
-            <text x={colX(last.i) - 2} y={pyY(last.value) - 4} textAnchor="end" className="fill-muted-foreground" style={{ fontSize: 10, fontFamily: "var(--font-jetbrains)" }}>
+          <g key={l.temp} pointerEvents="none" style={{ filter: "drop-shadow(0 0 1.5px rgba(0,0,0,0.7))" }}>
+            <polyline points={pts} fill="none" stroke="hsl(var(--foreground))" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <text x={colX(last.i) - 2} y={pyY(last.value) - 4} textAnchor="end" fill="hsl(var(--foreground))" fillOpacity="0.7" style={{ fontSize: 10, fontFamily: "var(--font-jetbrains)" }}>
               {l.temp.toFixed(1)}°C
             </text>
           </g>
@@ -279,7 +276,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} pathways={pathways} score={score} />
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} pathways={pathways} />
           {(h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.

@@ -95,7 +95,7 @@ export function HorizontalThermometer({
           arrow pointing OUT to the company, flush against its end. */}
       {gap && (
         <div className="relative mb-1.5 h-3">
-          <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
+          <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.companyRight ? gap.leftEnd : `calc((${gap.leftEnd}) + 10px)`, right: gap.companyRight ? `calc(100% - (${gap.rightEnd}) + 10px)` : `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
           {gap.companyRight ? (
             <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-100%, -50%)", width: 0, height: 0, borderTop: "7px solid transparent", borderBottom: "7px solid transparent", borderLeft: `13px solid ${color}` }} />
           ) : (
