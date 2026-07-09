@@ -95,12 +95,12 @@ export function HorizontalThermometer({
       {/* difference arrow (company vs sector), sitting above the markers. An
           arrow pointing OUT to the company, flush against its end. */}
       {gap && (
-        <div className="relative mb-1.5 h-3">
+        <div className="relative mb-1.5 h-4">
           <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
           {gap.companyRight ? (
-            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-1px, -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderLeft: `9px solid ${color}` }} />
+            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-100%, -50%)", width: 0, height: 0, borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderLeft: `13px solid ${color}` }} />
           ) : (
-            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translate(calc(-100% + 1px), -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderRight: `9px solid ${color}` }} />
+            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translateY(-50%)", width: 0, height: 0, borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderRight: `13px solid ${color}` }} />
           )}
         </div>
       )}
