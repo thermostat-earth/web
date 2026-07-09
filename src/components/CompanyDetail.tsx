@@ -234,39 +234,56 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             </p>
           )}
 
-          <p className="mb-1 mt-6 text-[11px] tracking-wide text-muted-foreground">All figures in tCO₂e</p>
+          <p className="mb-2 mt-6 text-[11px] tracking-wide text-muted-foreground">All figures in tCO₂e</p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-border text-left font-mono text-xs text-muted-foreground">
-                  <th className="py-2 pr-4 font-normal">Year</th>
-                  <th className="py-2 pr-4 text-right font-normal">Scope 1<InfoTip text={GLOSSARY.scope1} /></th>
-                  <th className="py-2 pr-4 text-right font-normal">Scope 2<InfoTip text={GLOSSARY.scope2} /></th>
-                  <th className="py-2 pr-4 text-right font-normal">Scope 3<InfoTip text={GLOSSARY.scope3} /></th>
-                  <th className="py-2 pr-4 text-right font-normal">Total</th>
-                  <th className="py-2 font-normal"></th>
+                <tr className="border-b border-border font-mono text-xs text-muted-foreground">
+                  <th className="py-2 pr-4 text-left font-normal"></th>
+                  {trajectory.map((t) => (
+                    <th
+                      key={t.year}
+                      className={`py-2 pl-4 text-right font-normal ${t.inWindow ? "" : "text-muted-foreground/50"}`}
+                      title={t.inWindow ? undefined : `Excluded — ${excludedReason(t, basis)}`}
+                    >
+                      {t.year}
+                      {!t.inWindow && <span className="ml-0.5">*</span>}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {trajectory.map((t) => {
-                  const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
-                  const total = basis === "location" ? t.total_location : t.total_market;
-                  return (
-                    <tr key={t.year} className={`border-b border-border/50 ${t.inWindow ? "" : "opacity-50"}`}>
-                      <td className="py-2 pr-4 font-mono">{t.year}</td>
-                      <td className="py-2 pr-4 text-right font-mono">{fmt(t.scope1)}</td>
-                      <td className="py-2 pr-4 text-right font-mono">{fmt(s2)}</td>
-                      <td className="py-2 pr-4 text-right font-mono">{fmt(t.scope3)}</td>
-                      <td className="py-2 pr-4 text-right font-mono font-medium">{fmt(total)}</td>
-                      <td className="py-2 pl-2 text-[11px] text-muted-foreground">
-                        {!t.inWindow && `excluded — ${excludedReason(t, basis)}`}
+                {(
+                  [
+                    { label: "Scope 1", tip: GLOSSARY.scope1, get: (t: TrajectoryYear) => t.scope1 },
+                    { label: "Scope 2", tip: GLOSSARY.scope2, get: (t: TrajectoryYear) => (basis === "location" ? t.scope2_location : t.scope2_market) },
+                    { label: "Scope 3", tip: GLOSSARY.scope3, get: (t: TrajectoryYear) => t.scope3 },
+                    { label: "Total", tip: null as string | null, get: (t: TrajectoryYear) => (basis === "location" ? t.total_location : t.total_market), bold: true },
+                  ]
+                ).map((row) => (
+                  <tr key={row.label} className="border-b border-border/50">
+                    <td className={`py-2 pr-4 text-left ${row.bold ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                      {row.label}
+                      {row.tip && <InfoTip text={row.tip} />}
+                    </td>
+                    {trajectory.map((t) => (
+                      <td
+                        key={t.year}
+                        className={`py-2 pl-4 text-right font-mono ${row.bold ? "font-medium" : ""} ${t.inWindow ? "" : "text-muted-foreground/50"}`}
+                      >
+                        {fmt(row.get(t))}
                       </td>
-                    </tr>
-                  );
-                })}
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
+          {trajectory.some((t) => !t.inWindow) && (
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              * excluded from the assessment window (hover the year for why)
+            </p>
+          )}
         </>
       )}
 
