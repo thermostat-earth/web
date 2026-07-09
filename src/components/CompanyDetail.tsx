@@ -156,7 +156,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
 
   return (
     <div>
-      <div className="mb-3 inline-flex items-center gap-2">
+      <div className="mb-6 inline-flex items-center gap-2">
         <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
           {(["location", "market"] as Basis[]).map((opt) => (
             <button

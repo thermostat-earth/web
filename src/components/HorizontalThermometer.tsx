@@ -16,6 +16,13 @@ function styleFor(p: number, align: Align): React.CSSProperties {
   return { left: `${p}%`, transform: "translateX(-50%)", textAlign: "center" };
 }
 
+// Same, but anchored to a CSS position (so it can align to an off-the-bar dot).
+function styleForCSS(leftCSS: string, align: Align): React.CSSProperties {
+  if (align === "left") return { left: leftCSS, textAlign: "left" };
+  if (align === "right") return { right: `calc(100% - (${leftCSS}))`, textAlign: "right" };
+  return { left: leftCSS, transform: "translateX(-50%)", textAlign: "center" };
+}
+
 function TriDown({ color }: { color: string }) {
   return <span style={{ width: 0, height: 0, borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderTop: `6px solid ${color}`, display: "block" }} />;
 }
@@ -71,10 +78,9 @@ export function HorizontalThermometer({
     if (sectorMedian == null || Math.abs(pos - sectorPos!) <= 0.5) return null;
     const companyRight = pos >= sectorPos!;
     return {
+      companyRight,
       leftEnd: companyRight ? `${sectorPos}%` : companyCenter,
       rightEnd: companyRight ? companyCenter : `${sectorPos}%`,
-      loColor: scoreColor(Math.min(score, sectorMedian)),
-      hiColor: scoreColor(Math.max(score, sectorMedian)),
       grad: `linear-gradient(to right, ${scoreColor(Math.min(score, sectorMedian))}, ${scoreColor(Math.max(score, sectorMedian))})`,
     };
   })();
@@ -82,8 +88,8 @@ export function HorizontalThermometer({
   return (
     <div className="mt-8">
       {/* labels + arrows above */}
-      <div className="relative mb-1 h-9">
-        <div className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleFor(pos, align.company), color }}>
+      <div className="relative mb-2 h-8">
+        <div className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
           <span ref={companyRef}>{companyName}</span>
         </div>
         <div className="absolute bottom-0 -translate-x-1/2" style={{ left: companyCenter }}><TriDown color={color} /></div>
@@ -119,14 +125,16 @@ export function HorizontalThermometer({
         })}
       </div>
 
-      {/* gap: a double-headed arrow to emphasise the difference vs sector */}
+      {/* gap: an arrow pointing OUT to the company (moving away from the sector
+          average). Only one head, flush against the bar. */}
       {gap && (
         <div className="relative mt-3 h-3">
           <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
-          {/* left head (points left) */}
-          <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translate(-100%, -50%)", width: 0, height: 0, borderTop: "5px solid transparent", borderBottom: "5px solid transparent", borderRight: `7px solid ${gap.loColor}` }} />
-          {/* right head (points right) */}
-          <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translateY(-50%)", width: 0, height: 0, borderTop: "5px solid transparent", borderBottom: "5px solid transparent", borderLeft: `7px solid ${gap.hiColor}` }} />
+          {gap.companyRight ? (
+            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-1px, -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderLeft: `9px solid ${color}` }} />
+          ) : (
+            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translate(calc(-100% + 1px), -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderRight: `9px solid ${color}` }} />
+          )}
         </div>
       )}
     </div>
