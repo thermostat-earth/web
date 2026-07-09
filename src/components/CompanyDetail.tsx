@@ -323,7 +323,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                       bg = color.replace(")", ` / ${a.toFixed(2)})`);
                       content = compact(c.ghg);
                     } else if (rowMaterial) {
-                      content = <span className="font-medium text-amber-600">n/r</span>;
+                      content = <span className="font-medium text-amber-600">n/a</span>;
                     } else {
                       content = <span className="opacity-40">—</span>;
                     }
@@ -344,7 +344,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </table>
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-        Cells shaded by size. <span className="font-medium text-amber-600">n/r</span> = material to this company but not reported that year.
+        Cells shaded by size. <span className="font-medium text-amber-600">n/a</span> = material to this company, data not available for that year.
         Greyed-out rows are categories not material to this company.
       </p>
 
