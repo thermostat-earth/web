@@ -10,11 +10,10 @@ type View = "thermometer" | "dashboard";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
-const H = 620; // thermometer height (px)
 const GAP = 34; // min vertical spacing between labels on one side
 
 export function ScoresView({ scores }: { scores: CompanyScore[] }) {
-  const [view, setView] = useState<View>("thermometer");
+  const [view, setView] = useState<View>("dashboard");
   const [sector, setSector] = useState("All");
 
   const sectors = useMemo(
@@ -30,7 +29,7 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
     <div>
       <div className="mb-10 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
-          {(["thermometer", "dashboard"] as View[]).map((v) => (
+          {(["dashboard", "thermometer"] as View[]).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -89,6 +88,8 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
   }, []);
 
   const scored = rows.filter((s) => s.thermostat_score_location != null);
+  // Only as tall as the data needs — grows with the number of companies.
+  const H = Math.max(320, scored.length * 58);
   const cx = w / 2;
 
   const items = useMemo(() => {
