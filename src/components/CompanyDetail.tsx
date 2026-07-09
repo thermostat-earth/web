@@ -156,6 +156,25 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
 
   return (
     <div>
+      <div className="mb-3 inline-flex items-center gap-2">
+        <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
+          {(["location", "market"] as Basis[]).map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => setBasis(opt)}
+              disabled={!h[opt].available}
+              className={`px-3 py-1.5 font-medium capitalize transition-colors disabled:opacity-40 ${
+                basis === opt ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {opt}-based
+            </button>
+          ))}
+        </div>
+        <InfoTip text={`${GLOSSARY.location} ${GLOSSARY.market}`} label="Location vs market-based" />
+      </div>
+
       <div className="flex items-center justify-between">
         <Link href="/scores" className="text-sm text-muted-foreground transition hover:text-foreground">
           ← All scores
@@ -166,26 +185,8 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
       </div>
 
       {/* Header */}
-      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-stretch sm:justify-between">
+      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="mb-4 inline-flex items-center gap-2">
-            <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
-              {(["location", "market"] as Basis[]).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setBasis(opt)}
-                  disabled={!h[opt].available}
-                  className={`px-3 py-1.5 font-medium capitalize transition-colors disabled:opacity-40 ${
-                    basis === opt ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {opt}-based
-                </button>
-              ))}
-            </div>
-            <InfoTip text={`${GLOSSARY.location} ${GLOSSARY.market}`} label="Location vs market-based" />
-          </div>
           <h1 className="text-3xl font-bold tracking-tight">{h.company_name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{meta}</p>
           {(h.assessment_year_start || h.assessment_year_end) && (
@@ -233,7 +234,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             </p>
           )}
 
-          <p className="mb-1 mt-6 text-[11px] uppercase tracking-wide text-muted-foreground">All figures in tCO₂e</p>
+          <p className="mb-1 mt-6 text-[11px] tracking-wide text-muted-foreground">All figures in tCO₂e</p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
