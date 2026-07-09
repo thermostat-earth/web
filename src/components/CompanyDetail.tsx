@@ -9,6 +9,7 @@ import type {
   Basis,
   CompanyDetail as CompanyDetailData,
   TrajectoryYear,
+  Scope3ByYear,
 } from "@/lib/company";
 
 const fmt = (n: number | null): string =>
@@ -35,6 +36,16 @@ function excludedReason(t: TrajectoryYear, basis: Basis): string {
     : "outside the most recent unbroken run";
 }
 
+// A year's Total is only meaningful when everything relevant is reported:
+// Scope 1, Scope 2 (for the current basis), and every material Scope-3 category.
+function yearComplete(t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[]): boolean {
+  if (t.scope1 == null) return false;
+  const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
+  if (s2 == null) return false;
+  const material = s3.filter((r) => r.cells[t.year]?.material);
+  return material.length > 0 && material.every((r) => r.cells[t.year]?.reported);
+}
+
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="mb-4 mt-12 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -50,11 +61,13 @@ function TrajectoryChart({
   basis,
   color,
   getValue,
+  included,
 }: {
   trajectory: TrajectoryYear[];
   basis: Basis;
   color: string;
   getValue: (t: TrajectoryYear) => number | null;
+  included: (t: TrajectoryYear) => boolean;
 }) {
   const W = Math.max(320, trajectory.length * 64);
   const H = 190;
@@ -65,37 +78,40 @@ function TrajectoryChart({
   const slotW = (W - padX * 2) / trajectory.length;
   const barW = Math.min(30, slotW * 0.5);
   const values = trajectory.map(getValue);
-  const inWin = trajectory.map((t, i) => ({ t, i })).filter((x) => x.t.inWindow);
-  const max = Math.max(1, ...values.map((v) => v ?? 0));
+  // Only complete years get a bar/line/dot; the y-scale is based on those too.
+  const inc = trajectory.map((t, i) => ({ t, i })).filter((x) => included(x.t));
+  const max = Math.max(1, ...inc.map((x) => values[x.i] ?? 0));
   const colX = (i: number) => padX + slotW * (i + 0.5);
   const barH = (v: number | null) => (v && v > 0 ? Math.max((v / max) * plotH, 3) : 0);
   const topY = (v: number | null) => padTop + plotH - barH(v);
-  // Trend line + dots only span the in-window years, so they align with the bars.
-  const linePts = inWin.map((x) => `${colX(x.i)},${topY(values[x.i])}`).join(" ");
+  const linePts = inc.map((x) => `${colX(x.i)},${topY(values[x.i])}`).join(" ");
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: 220 }}>
       <line x1={padX} y1={padTop + plotH} x2={W - padX} y2={padTop + plotH} stroke="hsl(var(--border))" strokeWidth="1" />
       {trajectory.map((t, i) => {
+        const isInc = included(t);
         const v = values[i];
         const x = colX(i);
         return (
           <g key={t.year}>
             <rect x={x - slotW / 2} y={padTop} width={slotW} height={plotH} fill="transparent">
               <title>
-                {t.year}: {fmt(v)} tCO₂e{t.inWindow ? " (in assessment window)" : ` · excluded — ${excludedReason(t, basis)}`}
+                {isInc ? `${t.year}: ${fmt(v)} tCO₂e` : `${t.year}: total not shown — ${excludedReason(t, basis)}`}
               </title>
             </rect>
-            <rect
-              x={x - barW / 2}
-              y={topY(v)}
-              width={barW}
-              height={barH(v)}
-              rx="2"
-              fill={t.inWindow ? color : "hsl(var(--muted-foreground))"}
-              opacity={t.inWindow ? 0.9 : 0.3}
-              pointerEvents="none"
-            />
+            {isInc && (
+              <rect
+                x={x - barW / 2}
+                y={topY(v)}
+                width={barW}
+                height={barH(v)}
+                rx="2"
+                fill={color}
+                opacity={0.9}
+                pointerEvents="none"
+              />
+            )}
             <text x={x} y={H - 8} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: 11, fontFamily: "var(--font-jetbrains)" }}>
               {t.year}
             </text>
@@ -103,7 +119,7 @@ function TrajectoryChart({
         );
       })}
       <polyline points={linePts} fill="none" stroke={color} strokeWidth="1.5" opacity="0.9" pointerEvents="none" />
-      {inWin.map((x) => (
+      {inc.map((x) => (
         <circle key={x.t.year} cx={colX(x.i)} cy={topY(values[x.i])} r="3" fill={color} pointerEvents="none" />
       ))}
     </svg>
@@ -213,7 +229,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} />
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} included={(t) => yearComplete(t, basis, scope3ByYear)} />
           {(h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
@@ -243,8 +259,8 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                   [
                     { label: "Scope 1", tip: GLOSSARY.scope1, get: (t: TrajectoryYear) => t.scope1 },
                     { label: "Scope 2", tip: GLOSSARY.scope2, get: (t: TrajectoryYear) => (basis === "location" ? t.scope2_location : t.scope2_market) },
-                    { label: "Scope 3", tip: GLOSSARY.scope3, get: (t: TrajectoryYear) => t.scope3 },
-                    { label: "Total", tip: null as string | null, get: (t: TrajectoryYear) => (basis === "location" ? t.total_location : t.total_market), bold: true },
+                    { label: "Scope 3", tip: GLOSSARY.scope3, get: (t: TrajectoryYear) => (t.scope3Reported ? t.scope3 : null) },
+                    { label: "Total", tip: null as string | null, get: (t: TrajectoryYear) => (yearComplete(t, basis, scope3ByYear) ? (basis === "location" ? t.total_location : t.total_market) : null), bold: true },
                   ]
                 ).map((row) => (
                   <tr key={row.label} className="border-b border-border/50">
