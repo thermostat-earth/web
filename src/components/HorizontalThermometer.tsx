@@ -48,7 +48,6 @@ export function HorizontalThermometer({
   // When company and sector coincide (e.g. the only company in its sector), merge
   // the two labels so they don't pile up on top of each other.
   const coincident = sectorPos != null && Math.abs(pos - sectorPos) < 3;
-  const exact = sectorPos != null && Math.abs(pos - sectorPos) < 0.5;
 
   // Measure the track + labels so a label only centres when it actually fits;
   // otherwise it anchors to the nearer end.
@@ -95,12 +94,12 @@ export function HorizontalThermometer({
       {/* difference arrow (company vs sector), sitting above the markers. An
           arrow pointing OUT to the company, flush against its end. */}
       {gap && (
-        <div className="relative mb-1.5 h-4">
+        <div className="relative mb-1.5 h-3">
           <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
           {gap.companyRight ? (
-            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-100%, -50%)", width: 0, height: 0, borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderLeft: `13px solid ${color}` }} />
+            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-100%, -50%)", width: 0, height: 0, borderTop: "7px solid transparent", borderBottom: "7px solid transparent", borderLeft: `13px solid ${color}` }} />
           ) : (
-            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translateY(-50%)", width: 0, height: 0, borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderRight: `13px solid ${color}` }} />
+            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translateY(-50%)", width: 0, height: 0, borderTop: "7px solid transparent", borderBottom: "7px solid transparent", borderRight: `13px solid ${color}` }} />
           )}
         </div>
       )}
@@ -109,7 +108,7 @@ export function HorizontalThermometer({
       <div className="relative mb-2 h-8">
         <div ref={companyRef} className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
           {companyName}
-          {coincident && <span className="font-normal text-muted-foreground"> · {exact ? "=" : "≈"} Sector average</span>}
+          {coincident && <span className="font-normal text-muted-foreground"> · ≈ Sector average</span>}
         </div>
         <div className="absolute bottom-0 -translate-x-1/2" style={{ left: companyCenter }}><TriDown color={color} /></div>
         {sectorPos != null && !coincident && (
