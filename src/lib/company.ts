@@ -62,6 +62,9 @@ export type Scope3Category = {
   notes: string | null;
 };
 
+export type Scope3Cell = { ghg: number | null; reported: boolean; material: boolean };
+export type Scope3ByYear = { category: number; name: string; cells: Record<number, Scope3Cell> };
+
 export type YearSources = { year: number; urls: string[] };
 
 // IPCC pathway medians keyed by temperature string → year → emissions (Mt CO₂e).
@@ -72,6 +75,7 @@ export type CompanyDetail = {
   trajectory: TrajectoryYear[];
   latestYear: number | null;
   scope3: Scope3Category[];
+  scope3ByYear: Scope3ByYear[];
   sources: YearSources[];
 };
 
@@ -170,6 +174,28 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     };
   });
 
+  // Scope-3 category × year matrix (latest restatement per category-year), using
+  // the same year columns as the emissions table.
+  const cellByKey = new Map<string, Record<string, unknown>>();
+  for (const r of s3All) {
+    const key = `${Number(r.category)}|${Number(r.year)}`;
+    const prev = cellByKey.get(key);
+    if (!prev || Number(r.reporting_year ?? 0) > Number(prev.reporting_year ?? 0)) {
+      cellByKey.set(key, r);
+    }
+  }
+  const s3Years = trajectory.map((t) => t.year);
+  const scope3ByYear: Scope3ByYear[] = Array.from({ length: 15 }, (_, i) => i + 1).map((cat) => ({
+    category: cat,
+    name: SCOPE3_CATEGORIES[cat],
+    cells: Object.fromEntries(
+      s3Years.map((y) => {
+        const r = cellByKey.get(`${cat}|${y}`);
+        return [y, { ghg: r ? num(r.ghg) : null, reported: r ? r.reported === true : false, material: r ? r.effective_required === true : false }];
+      }),
+    ),
+  }));
+
   // Group sources by reporting year so every year is represented.
   const yearMap = new Map<number, Set<string>>();
   for (const r of reviewRows ?? []) {
@@ -205,5 +231,5 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     },
   };
 
-  return { header, trajectory, latestYear, scope3, sources };
+  return { header, trajectory, latestYear, scope3, scope3ByYear, sources };
 }

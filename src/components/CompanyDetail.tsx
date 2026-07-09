@@ -9,7 +9,6 @@ import type {
   Basis,
   CompanyDetail as CompanyDetailData,
   TrajectoryYear,
-  Scope3Category,
 } from "@/lib/company";
 
 const fmt = (n: number | null): string =>
@@ -111,38 +110,8 @@ function TrajectoryChart({
   );
 }
 
-function Scope3Row({ c, max, color }: { c: Scope3Category; max: number; color: string }) {
-  let tag: React.ReactNode;
-  if (c.reported) {
-    tag = <span className="font-mono text-xs">{fmt(c.ghg)}</span>;
-  } else if (c.material) {
-    tag = (
-      <span
-        className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800"
-        title={c.notReportedReason ?? "Material to this company but not reported"}
-      >
-        not reported
-      </span>
-    );
-  } else {
-    tag = <span className="text-[10px] text-muted-foreground/50">not material</span>;
-  }
-  return (
-    <div className="flex items-center gap-3 text-sm" title={c.notes ?? undefined}>
-      <span className="w-6 shrink-0 font-mono text-xs text-muted-foreground">{c.category}</span>
-      <span className={`w-56 shrink-0 truncate ${c.reported ? "" : "text-muted-foreground/60"}`}>{c.name}</span>
-      <div className="hidden h-2 flex-1 sm:block">
-        {c.reported && c.ghg != null && (
-          <div className="h-2 rounded-full" style={{ width: `${(c.ghg / max) * 100}%`, background: color, opacity: 0.85 }} />
-        )}
-      </div>
-      <span className="flex w-24 shrink-0 justify-end text-right">{tag}</span>
-    </div>
-  );
-}
-
 export function CompanyDetail({ data }: { data: CompanyDetailData }) {
-  const { header: h, trajectory, scope3, sources, latestYear } = data;
+  const { header: h, trajectory, scope3ByYear, sources } = data;
   const bothAvailable = h.location.available && h.market.available;
   const initial: Basis = h.location.available ? "location" : "market";
   const [basis, setBasis] = useState<Basis>(initial);
@@ -151,8 +120,14 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
   const color = score != null ? scoreColor(score) : "hsl(var(--muted-foreground))";
   const meta = [h.sector, h.country_hq].filter(Boolean).join(" · ");
 
-  const reportedS3 = scope3.filter((c) => c.reported && c.ghg != null);
-  const maxS3 = Math.max(1, ...reportedS3.map((c) => c.ghg ?? 0));
+  const s3Max = Math.max(
+    1,
+    ...scope3ByYear.flatMap((r) =>
+      trajectory.map((t) => (r.cells[t.year]?.reported ? r.cells[t.year].ghg ?? 0 : 0)),
+    ),
+  );
+  const compact = (n: number | null): string =>
+    n == null ? "" : n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}k` : `${Math.round(n)}`;
 
   return (
     <div>
@@ -298,17 +273,56 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </>
       )}
 
-      {/* Scope-3 over time */}
-      <SectionHeading>Scope 3 over time</SectionHeading>
-      <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => t.scope3} />
-
-      {/* Scope-3 breakdown — all 15 categories with their state */}
-      <SectionHeading>Scope 3 by category{latestYear ? ` · ${latestYear}` : ""}</SectionHeading>
-      <div className="flex flex-col gap-1.5">
-        {scope3.map((c) => (
-          <Scope3Row key={c.category} c={c} max={maxS3} color={color} />
-        ))}
+      {/* Scope-3 by category over years, heat-mapped by size */}
+      <SectionHeading>Scope 3 by category (tCO₂e)</SectionHeading>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-border font-mono text-xs text-muted-foreground">
+              <th className="py-2 pr-3 text-left font-normal">Category</th>
+              {trajectory.map((t) => (
+                <th key={t.year} className={`py-2 pl-3 text-right font-normal ${t.inWindow ? "" : "text-muted-foreground/50"}`}>
+                  {t.year}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {scope3ByYear.map((row) => (
+              <tr key={row.category} className="border-b border-border/40">
+                <td className="py-1.5 pr-3 text-left text-xs">
+                  <span className="mr-1.5 font-mono text-muted-foreground">{row.category}</span>
+                  <span className="text-foreground">{row.name}</span>
+                </td>
+                {trajectory.map((t) => {
+                  const c = row.cells[t.year];
+                  let bg: string | undefined;
+                  let content: React.ReactNode = <span className="text-muted-foreground/30">–</span>;
+                  if (c && c.reported && c.ghg != null) {
+                    const a = 0.08 + Math.pow(c.ghg / s3Max, 0.45) * 0.8;
+                    bg = color.replace(")", ` / ${a.toFixed(2)})`);
+                    content = compact(c.ghg);
+                  } else if (c && c.material) {
+                    content = <span className="text-amber-600/70">n/r</span>;
+                  }
+                  return (
+                    <td
+                      key={t.year}
+                      className={`py-1.5 pl-3 text-right font-mono text-xs ${t.inWindow ? "" : "opacity-50"}`}
+                      style={bg ? { background: bg } : undefined}
+                    >
+                      {content}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Cells shaded by size. <span className="text-amber-600/70">n/r</span> = material but not reported; – = not reported / not material.
+      </p>
 
       {/* Sources */}
       {sources.length > 0 && (
