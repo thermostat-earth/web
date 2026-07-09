@@ -222,7 +222,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
       )}
 
       {score != null && b.sectorMedian != null && (
-        <p className="mt-6 text-sm font-medium" style={{ color }}>
+        <p className="mt-10 text-sm font-bold" style={{ color }}>
           {(() => {
             const d = score - b.sectorMedian;
             if (Math.abs(d) < 0.05)
