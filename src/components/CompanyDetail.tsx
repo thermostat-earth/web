@@ -23,14 +23,6 @@ function hostname(url: string): string {
   }
 }
 
-// For a strongly-shaded heat-map cell, use dark text on lighter fills (green /
-// amber hues) and light text on darker fills (reds). Faint cells (low alpha)
-// keep the theme's own text colour.
-function cellTextColor(color: string, alpha: number): string | undefined {
-  if (alpha < 0.4) return undefined;
-  const hue = Number(color.match(/hsl\(\s*([\d.]+)/)?.[1] ?? 0);
-  return hue >= 35 ? "#0f172a" : "#f8fafc";
-}
 
 // Lists exactly what a year is missing, for the current basis, so the reason is
 // accurate (e.g. H&M 2021 lacks Scope 2 location AND Scope 3).
@@ -145,6 +137,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
   const b = h[basis];
   const score = b.score;
   const color = score != null ? scoreColor(score) : "hsl(var(--muted-foreground))";
+  const heatHue = Number(color.match(/hsl\(\s*([\d.]+)/)?.[1] ?? 0);
   const meta = [h.sector, h.country_hq].filter(Boolean).join(" · ");
 
   const s3Max = Math.max(
@@ -331,9 +324,9 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                     let textColor: string | undefined;
                     let content: React.ReactNode;
                     if (c && c.reported && c.ghg != null) {
-                      const a = 0.08 + Math.pow(c.ghg / s3Max, 0.45) * 0.8;
-                      bg = color.replace(")", ` / ${a.toFixed(2)})`);
-                      textColor = cellTextColor(color, a);
+                      const light = 86 - Math.pow(c.ghg / s3Max, 0.5) * 44;
+                      bg = `hsl(${heatHue} 58% ${light}%)`;
+                      textColor = light > 58 ? "#0f172a" : "#f8fafc";
                       content = compact(c.ghg);
                     } else if (rowMaterial) {
                       content = <span className="font-medium text-amber-600">n/a</span>;
