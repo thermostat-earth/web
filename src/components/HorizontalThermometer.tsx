@@ -18,8 +18,9 @@ function styleFor(p: number, align: Align): React.CSSProperties {
 
 // Same, but anchored to a CSS position (so it can align to an off-the-bar dot).
 function styleForCSS(leftCSS: string, align: Align): React.CSSProperties {
-  if (align === "left") return { left: leftCSS, textAlign: "left" };
-  if (align === "right") return { right: `calc(100% - (${leftCSS}))`, textAlign: "right" };
+  const HALF = 8; // half the company dot, so the label edge meets the dot edge
+  if (align === "left") return { left: `calc((${leftCSS}) - ${HALF}px)`, textAlign: "left" };
+  if (align === "right") return { right: `calc(100% - (${leftCSS}) - ${HALF}px)`, textAlign: "right" };
   return { left: leftCSS, transform: "translateX(-50%)", textAlign: "center" };
 }
 
@@ -44,12 +45,16 @@ export function HorizontalThermometer({
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
   const companyCenter = aboveMax ? "calc(100% + 16px)" : belowMin ? "-16px" : `${pos}%`;
+  // When company and sector coincide (e.g. the only company in its sector), merge
+  // the two labels so they don't pile up on top of each other.
+  const coincident = sectorPos != null && Math.abs(pos - sectorPos) < 3;
+  const exact = sectorPos != null && Math.abs(pos - sectorPos) < 0.5;
 
   // Measure the track + labels so a label only centres when it actually fits;
   // otherwise it anchors to the nearer end.
   const trackRef = useRef<HTMLDivElement>(null);
-  const companyRef = useRef<HTMLSpanElement>(null);
-  const sectorRef = useRef<HTMLSpanElement>(null);
+  const companyRef = useRef<HTMLDivElement>(null);
+  const sectorRef = useRef<HTMLDivElement>(null);
   const [align, setAlign] = useState<{ company: Align; sector: Align }>({ company: "center", sector: "center" });
 
   useEffect(() => {
@@ -75,7 +80,7 @@ export function HorizontalThermometer({
   // Gap between company and sector. Endpoints are CSS values so the company end
   // reaches the dot even when it sits off the bar (clamped >4.0 / <1.4).
   const gap = (() => {
-    if (sectorMedian == null || Math.abs(pos - sectorPos!) <= 0.5) return null;
+    if (sectorMedian == null || coincident) return null;
     const companyRight = pos >= sectorPos!;
     return {
       companyRight,
@@ -102,14 +107,15 @@ export function HorizontalThermometer({
 
       {/* labels + arrows above */}
       <div className="relative mb-2 h-8">
-        <div className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
-          <span ref={companyRef}>{companyName}</span>
+        <div ref={companyRef} className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
+          {companyName}
+          {coincident && <span className="font-normal text-muted-foreground"> · {exact ? "=" : "≈"} Sector average</span>}
         </div>
         <div className="absolute bottom-0 -translate-x-1/2" style={{ left: companyCenter }}><TriDown color={color} /></div>
-        {sectorPos != null && (
+        {sectorPos != null && !coincident && (
           <>
-            <div className="absolute top-0 whitespace-nowrap text-xs text-muted-foreground" style={styleFor(sectorPos, align.sector)}>
-              <span ref={sectorRef}>Sector average</span>
+            <div ref={sectorRef} className="absolute top-0 whitespace-nowrap text-xs text-muted-foreground" style={styleFor(sectorPos, align.sector)}>
+              Sector average
             </div>
             <div className="absolute bottom-0 -translate-x-1/2" style={{ left: `${sectorPos}%` }}><TriDown color="hsl(var(--foreground))" /></div>
           </>
