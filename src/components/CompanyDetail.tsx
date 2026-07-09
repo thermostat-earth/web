@@ -23,6 +23,15 @@ function hostname(url: string): string {
   }
 }
 
+// For a strongly-shaded heat-map cell, use dark text on lighter fills (green /
+// amber hues) and light text on darker fills (reds). Faint cells (low alpha)
+// keep the theme's own text colour.
+function cellTextColor(color: string, alpha: number): string | undefined {
+  if (alpha < 0.4) return undefined;
+  const hue = Number(color.match(/hsl\(\s*([\d.]+)/)?.[1] ?? 0);
+  return hue >= 35 ? "#0f172a" : "#f8fafc";
+}
+
 // Lists exactly what a year is missing, for the current basis, so the reason is
 // accurate (e.g. H&M 2021 lacks Scope 2 location AND Scope 3).
 function excludedReason(t: TrajectoryYear, basis: Basis): string {
@@ -118,9 +127,11 @@ function TrajectoryChart({
           </g>
         );
       })}
-      <polyline points={linePts} fill="none" stroke={color} strokeWidth="1.5" opacity="0.9" pointerEvents="none" />
+      {/* halo underneath so the line + dots stand out against the bars */}
+      <polyline points={linePts} fill="none" stroke="hsl(var(--background))" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" pointerEvents="none" />
+      <polyline points={linePts} fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" pointerEvents="none" />
       {inc.map((x) => (
-        <circle key={x.t.year} cx={colX(x.i)} cy={topY(values[x.i])} r="3" fill={color} pointerEvents="none" />
+        <circle key={x.t.year} cx={colX(x.i)} cy={topY(values[x.i])} r="3" fill={color} stroke="hsl(var(--background))" strokeWidth="1.5" pointerEvents="none" />
       ))}
     </svg>
   );
@@ -317,10 +328,12 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                   {trajectory.map((t) => {
                     const c = row.cells[t.year];
                     let bg: string | undefined;
+                    let textColor: string | undefined;
                     let content: React.ReactNode;
                     if (c && c.reported && c.ghg != null) {
                       const a = 0.08 + Math.pow(c.ghg / s3Max, 0.45) * 0.8;
                       bg = color.replace(")", ` / ${a.toFixed(2)})`);
+                      textColor = cellTextColor(color, a);
                       content = compact(c.ghg);
                     } else if (rowMaterial) {
                       content = <span className="font-medium text-amber-600">n/a</span>;
@@ -331,7 +344,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                       <td
                         key={t.year}
                         className={`py-1.5 pl-3 text-right font-mono text-xs ${t.inWindow ? "" : "opacity-50"}`}
-                        style={bg ? { background: bg } : undefined}
+                        style={bg ? { background: bg, color: textColor } : undefined}
                       >
                         {content}
                       </td>
@@ -357,11 +370,17 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
               <li key={s.year} className="flex items-baseline gap-3">
                 <span className="shrink-0 font-mono text-xs text-muted-foreground">{s.year}</span>
                 <span className="flex flex-wrap gap-x-1">
-                  {s.urls.map((u, i) => (
-                    <span key={u}>
+                  {s.items.map((it, i) => (
+                    <span key={it.url}>
                       {i > 0 && <span className="text-muted-foreground">, </span>}
-                      <a href={u} target="_blank" rel="noopener noreferrer" className="text-foreground underline decoration-border underline-offset-4 transition hover:decoration-foreground">
-                        {hostname(u)}
+                      <a
+                        href={it.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={it.notes ? `${it.notes}\n${it.url}` : it.url}
+                        className="text-foreground underline decoration-border underline-offset-4 transition hover:decoration-foreground"
+                      >
+                        {hostname(it.url)}
                       </a>
                     </span>
                   ))}

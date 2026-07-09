@@ -65,7 +65,8 @@ export type Scope3Category = {
 export type Scope3Cell = { ghg: number | null; reported: boolean; material: boolean };
 export type Scope3ByYear = { category: number; name: string; cells: Record<number, Scope3Cell> };
 
-export type YearSources = { year: number; urls: string[] };
+export type SourceItem = { url: string; notes: string | null };
+export type YearSources = { year: number; items: SourceItem[] };
 
 // IPCC pathway medians keyed by temperature string → year → emissions (Mt CO₂e).
 export type Pathways = Record<string, Record<number, number>>;
@@ -117,7 +118,7 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
         .eq("company_id", companyId),
       supabase
         .from("company_year_review")
-        .select("year, source_url")
+        .select("year, source_url, source_notes")
         .eq("company_id", companyId)
         .order("year"),
     ]);
@@ -196,16 +197,20 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     ),
   }));
 
-  // Group sources by reporting year so every year is represented.
-  const yearMap = new Map<number, Set<string>>();
+  // Group sources by reporting year, keeping the provenance note per URL.
+  const yearMap = new Map<number, Map<string, string | null>>();
   for (const r of reviewRows ?? []) {
-    const row = r as { year: number; source_url: string | null };
+    const row = r as { year: number; source_url: string | null; source_notes: string | null };
     if (!row.source_url) continue;
-    if (!yearMap.has(row.year)) yearMap.set(row.year, new Set());
-    yearMap.get(row.year)!.add(row.source_url);
+    if (!yearMap.has(row.year)) yearMap.set(row.year, new Map());
+    const m = yearMap.get(row.year)!;
+    const existing = m.get(row.source_url);
+    if (existing === undefined || (!existing && row.source_notes)) {
+      m.set(row.source_url, row.source_notes || null);
+    }
   }
   const sources: YearSources[] = [...yearMap.entries()]
-    .map(([year, set]) => ({ year, urls: [...set] }))
+    .map(([year, m]) => ({ year, items: [...m.entries()].map(([url, notes]) => ({ url, notes })) }))
     .sort((a, b) => b.year - a.year);
 
   const header: CompanyHeader = {
