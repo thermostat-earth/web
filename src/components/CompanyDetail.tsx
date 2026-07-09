@@ -221,6 +221,17 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         />
       )}
 
+      {score != null && b.sectorMedian != null && (
+        <p className="mt-6 text-sm font-medium" style={{ color }}>
+          {(() => {
+            const d = score - b.sectorMedian;
+            if (Math.abs(d) < 0.05)
+              return `${h.company_name} is aligned in line with their sector's average.`;
+            return `${h.company_name} is aligned to a climate pathway ${Math.abs(d).toFixed(2)}°C ${d > 0 ? "higher" : "lower"} than their sector's average.`;
+          })()}
+        </p>
+      )}
+
       {/* Emissions trajectory */}
       <SectionHeading>Emissions trajectory · {basis}-based</SectionHeading>
       {trajectory.length === 0 ? (
