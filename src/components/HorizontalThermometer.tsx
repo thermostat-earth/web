@@ -3,59 +3,60 @@ import { scalePosition, scoreColor, SCALE_MIN, SCALE_MAX } from "@/lib/temperatu
 const H_GRADIENT =
   "linear-gradient(to right, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
 
+const TICKS = [1.4, 2, 3, 4];
+
+// Edge-aware anchoring: right-align near the right edge, left-align near the
+// left edge, otherwise centre — so labels never overflow the ends.
+function anchor(p: number): React.CSSProperties {
+  if (p <= 12) return { left: `${p}%`, textAlign: "left" };
+  if (p >= 88) return { right: `${100 - p}%`, textAlign: "right" };
+  return { left: `${p}%`, transform: "translateX(-50%)", textAlign: "center" };
+}
+
 function TriDown({ color }: { color: string }) {
   return (
-    <span
-      style={{
-        width: 0,
-        height: 0,
-        borderLeft: "5px solid transparent",
-        borderRight: "5px solid transparent",
-        borderTop: `6px solid ${color}`,
-        display: "block",
-      }}
-    />
+    <span style={{ width: 0, height: 0, borderLeft: "5px solid transparent", borderRight: "5px solid transparent", borderTop: `6px solid ${color}`, display: "block" }} />
   );
 }
 
 // Full-width horizontal thermometer: cool (1.4°C) left → hot (4.0°C) right.
-// Company + sector arrows sit on the same side (above). The gap between them is
-// shown as a separate visible bar below the main track.
 export function HorizontalThermometer({
   score,
   sectorMedian,
+  companyName,
   aboveMax = false,
   belowMin = false,
 }: {
   score: number;
   sectorMedian: number | null;
+  companyName: string;
   aboveMax?: boolean;
   belowMin?: boolean;
 }) {
   const color = scoreColor(score);
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
-  const gapLo = sectorPos != null ? Math.min(pos, sectorPos) : null;
-  const gapHi = sectorPos != null ? Math.max(pos, sectorPos) : null;
 
-  const companyLeft = aboveMax ? "calc(100% + 12px)" : belowMin ? "-12px" : `${pos}%`;
-  const companyTransform = aboveMax
-    ? "translate(0, -50%)"
-    : belowMin
-      ? "translate(-100%, -50%)"
-      : "translate(-50%, -50%)";
+  // marker centres (company sits off the end when clamped)
+  const companyCenter = aboveMax ? "calc(100% + 16px)" : belowMin ? "-16px" : `${pos}%`;
+
+  // gap fill: cool colour → warm colour across the company↔sector span
+  const gap =
+    sectorMedian != null
+      ? { lo: Math.min(pos, sectorPos!), hi: Math.max(pos, sectorPos!), grad: `linear-gradient(to right, ${scoreColor(Math.min(score, sectorMedian))}, ${scoreColor(Math.max(score, sectorMedian))})` }
+      : null;
 
   return (
     <div className="mt-8">
-      {/* arrows, same side (above the bar) */}
-      <div className="relative mb-1.5 h-2">
-        <div className="absolute -translate-x-1/2" style={{ left: companyLeft }}>
-          <TriDown color={color} />
-        </div>
+      {/* labels + arrows above (same side) */}
+      <div className="relative mb-1 h-9">
+        <div className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...anchor(pos), color }}>{companyName}</div>
+        <div className="absolute bottom-0 -translate-x-1/2" style={{ left: companyCenter }}><TriDown color={color} /></div>
         {sectorPos != null && (
-          <div className="absolute -translate-x-1/2" style={{ left: `${sectorPos}%` }}>
-            <TriDown color="hsl(var(--foreground))" />
-          </div>
+          <>
+            <div className="absolute top-0 whitespace-nowrap text-xs text-muted-foreground" style={anchor(sectorPos)}>sector average</div>
+            <div className="absolute bottom-0 -translate-x-1/2" style={{ left: `${sectorPos}%` }}><TriDown color="hsl(var(--foreground))" /></div>
+          </>
         )}
       </div>
 
@@ -64,52 +65,29 @@ export function HorizontalThermometer({
         {sectorPos != null && (
           <div className="absolute top-1/2 h-5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground ring-1 ring-background" style={{ left: `${sectorPos}%` }} />
         )}
-        <div
-          className="absolute top-1/2 h-4 w-4 rounded-full shadow"
-          style={{ left: companyLeft, transform: companyTransform, background: color, border: "3px solid hsl(var(--background))" }}
-        />
+        <div className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow" style={{ left: companyCenter, background: color, border: "3px solid hsl(var(--background))" }} />
       </div>
 
-      {/* gap bar below — a segment spanning company↔sector, filled with the same
-          gradient (aligned to the main bar) so it naturally reddens/greens. */}
-      {gapLo != null && gapHi != null && gapHi - gapLo > 0.5 && (
-        <div className="relative mt-2.5 h-2">
+      {/* degree tick marks */}
+      <div className="relative mt-1.5 h-5">
+        {TICKS.map((t) => {
+          const p = scalePosition(t) * 100;
+          return (
+            <div key={t} className="absolute flex flex-col" style={anchor(p)}>
+              <span className="h-1.5 w-px bg-muted-foreground/40" style={{ alignSelf: p <= 12 ? "flex-start" : p >= 88 ? "flex-end" : "center" }} />
+              <span className="mt-0.5 font-mono text-[10px] text-muted-foreground">{t}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* gap bar — coloured to show direction vs sector */}
+      {gap && gap.hi - gap.lo > 0.5 && (
+        <div className="relative mt-2 h-2">
           <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-border" />
-          <div
-            className="absolute inset-y-0 overflow-hidden rounded-full ring-1 ring-black/10"
-            style={{ left: `${gapLo}%`, width: `${gapHi - gapLo}%` }}
-          >
-            <div
-              className="h-full"
-              style={{
-                width: `${(100 / (gapHi - gapLo)) * 100}%`,
-                marginLeft: `-${(gapLo / (gapHi - gapLo)) * 100}%`,
-                background: H_GRADIENT,
-              }}
-            />
-          </div>
+          <div className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full ring-1 ring-black/10" style={{ left: `${gap.lo}%`, width: `${gap.hi - gap.lo}%`, background: gap.grad }} />
         </div>
       )}
-
-      {/* key + scale */}
-      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex gap-4 text-[10px] text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: color, border: "2px solid hsl(var(--background))" }} /> this company
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-3 w-[3px] rounded-full bg-foreground" /> sector average
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-3.5 rounded-full" style={{ background: H_GRADIENT }} /> gap vs sector
-          </span>
-        </div>
-        <div className="flex gap-3 font-mono text-[10px] text-muted-foreground">
-          <span>{SCALE_MIN.toFixed(1)}°C</span>
-          <span>→</span>
-          <span>{SCALE_MAX.toFixed(1)}°C</span>
-        </div>
-      </div>
     </div>
   );
 }
