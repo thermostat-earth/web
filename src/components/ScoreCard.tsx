@@ -3,9 +3,8 @@ import type { CompanyScore } from "@/lib/scores";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
-const H = 184; // overall thermometer height (px)
-const CAP = 28; // reserved space above/below the tube for off-scale dots
-const TUBE_H = H - 2 * CAP; // the coloured tube itself
+const CAP = 24; // reserved space above/below the tube for off-scale dots
+const TICKS = [1.4, 2, 3, 4];
 
 export function ScoreCard({ c }: { c: CompanyScore }) {
   const score = c.thermostat_score_location;
@@ -34,16 +33,16 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
         : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector`;
 
   return (
-    <div className="flex justify-between gap-3 rounded-lg border border-border bg-card p-5" style={{ borderLeft: `3px solid ${color}` }}>
+    <div className="flex items-stretch gap-4 rounded-lg border border-border bg-card p-5" style={{ borderLeft: `3px solid ${color}` }}>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="truncate text-sm font-medium">{c.company_name}</div>
         <div className="truncate text-xs text-muted-foreground">{meta}</div>
-        <div className="mt-4 font-mono text-5xl font-semibold leading-none" style={{ color }}>
+        <div className="mt-4 font-mono text-6xl font-semibold leading-none" style={{ color }}>
           {formatScore(score, aboveMax, belowMin)}
-          <span className="text-xl"> °C</span>
+          <span className="text-2xl font-medium"> °C</span>
         </div>
         {vsSector && (
-          <div className="mt-2 font-mono text-xs" style={{ color: vsSector === "≈ sector average" ? undefined : color }}>
+          <div className="mt-2.5 text-xs" style={{ color: vsSector.startsWith("≈") ? undefined : color }}>
             {vsSector}
           </div>
         )}
@@ -69,38 +68,30 @@ function VerticalThermo({
 }) {
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
-  // Off-scale dots sit in the reserved cap above/below the tube — a clear gap from
-  // the tube end, and never near the card edge.
-  const dotBottom = aboveMax ? "calc(100% + 16px)" : belowMin ? "-16px" : `${pos}%`;
+  const dotBottom = aboveMax ? "calc(100% + 15px)" : belowMin ? "-15px" : `${pos}%`;
 
   const showArrow = sectorPos != null && Math.abs(pos - sectorPos) > 1;
   const companyAbove = sectorPos != null && pos >= sectorPos;
   const lo = sectorPos != null ? Math.min(pos, sectorPos) : 0;
   const hi = sectorPos != null ? Math.max(pos, sectorPos) : 0;
+  const gapPct = hi - lo;
 
   return (
-    <div className="flex shrink-0 gap-1.5" style={{ height: H }}>
-      {/* scale labels — aligned to the tube (inside the caps) */}
-      <div className="flex flex-col justify-between text-right font-mono text-[9px] text-muted-foreground" style={{ paddingTop: CAP - 6, paddingBottom: CAP - 6 }}>
-        <span>4.0°C</span>
-        <span>2.7</span>
-        <span>1.4°C</span>
-      </div>
-
-      {/* vertical company-vs-sector arrow (left of the tube, where there's room) */}
-      <div className="relative w-3" style={{ paddingTop: CAP, paddingBottom: CAP }}>
+    <div className="flex shrink-0 items-stretch gap-1.5">
+      {/* company-vs-sector arrow (left of the tube, where there's room) */}
+      <div className="relative w-2.5" style={{ paddingTop: CAP, paddingBottom: CAP }}>
         <div className="relative h-full">
           {showArrow && (
             <>
-              {/* gap fill: a slice of the same gradient as the tube */}
-              <div className="absolute left-1/2 w-1.5 -translate-x-1/2 overflow-hidden rounded-full ring-1 ring-black/5" style={{ bottom: `${lo}%`, height: `${hi - lo}%` }}>
-                <div className="absolute inset-x-0" style={{ height: TUBE_H, bottom: `${-(lo / 100) * TUBE_H}px`, background: TUBE_GRADIENT }} />
+              {/* gap fill: a slice of the same gradient as the tube, sector → company */}
+              <div className="absolute left-1/2 w-2.5 -translate-x-1/2 overflow-hidden rounded-full" style={{ bottom: `${lo}%`, height: `${gapPct}%` }}>
+                <div className="absolute inset-x-0" style={{ height: `${10000 / gapPct}%`, bottom: `${(-lo / gapPct) * 100}%`, background: TUBE_GRADIENT }} />
               </div>
-              {/* arrowhead at the company end, pointing toward the company */}
+              {/* arrowhead ending at the company marker */}
               <div
                 className="absolute left-1/2 -translate-x-1/2"
                 style={{
-                  bottom: `${pos}%`,
+                  bottom: `calc(${pos}% - 3px)`,
                   width: 0,
                   height: 0,
                   borderLeft: "5px solid transparent",
@@ -113,9 +104,9 @@ function VerticalThermo({
         </div>
       </div>
 
-      {/* tube (inside the caps) */}
+      {/* tube */}
       <div className="relative w-3" style={{ paddingTop: CAP, paddingBottom: CAP }}>
-        <div className="relative h-full w-3 rounded-full ring-1 ring-black/10" style={{ background: TUBE_GRADIENT }}>
+        <div className="relative h-full w-full rounded-full ring-1 ring-black/10" style={{ background: TUBE_GRADIENT }}>
           {sectorPos != null && (
             <div className="absolute left-1/2 h-[3px] w-6 -translate-x-1/2 translate-y-1/2 rounded-full bg-foreground ring-1 ring-background" style={{ bottom: `${sectorPos}%` }} />
           )}
@@ -123,6 +114,18 @@ function VerticalThermo({
             className="absolute left-1/2 h-4 w-4 rounded-full shadow"
             style={{ bottom: dotBottom, transform: "translate(-50%, 50%)", background: color, border: "3px solid hsl(var(--background))" }}
           />
+        </div>
+      </div>
+
+      {/* scale ticks (outer right, attached to the tube): 1.4 · 2 · 3 · 4 */}
+      <div className="relative w-6" style={{ paddingTop: CAP, paddingBottom: CAP }}>
+        <div className="relative h-full">
+          {TICKS.map((v) => (
+            <div key={v} className="absolute left-0 flex translate-y-1/2 items-center gap-0.5" style={{ bottom: `${scalePosition(v) * 100}%` }}>
+              <span className="h-px w-1 bg-border" />
+              <span className="font-mono text-[9px] leading-none text-muted-foreground">{v}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
