@@ -304,40 +304,48 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             </tr>
           </thead>
           <tbody>
-            {scope3ByYear.map((row) => (
-              <tr key={row.category} className="border-b border-border/40">
-                <td className="py-1.5 pr-3 text-left text-xs">
-                  <span className="mr-1.5 font-mono text-muted-foreground">{row.category}</span>
-                  <span className="text-foreground">{row.name}</span>
-                </td>
-                {trajectory.map((t) => {
-                  const c = row.cells[t.year];
-                  let bg: string | undefined;
-                  let content: React.ReactNode = <span className="text-muted-foreground/30">–</span>;
-                  if (c && c.reported && c.ghg != null) {
-                    const a = 0.08 + Math.pow(c.ghg / s3Max, 0.45) * 0.8;
-                    bg = color.replace(")", ` / ${a.toFixed(2)})`);
-                    content = compact(c.ghg);
-                  } else if (c && c.material) {
-                    content = <span className="text-amber-600/70">n/r</span>;
-                  }
-                  return (
-                    <td
-                      key={t.year}
-                      className={`py-1.5 pl-3 text-right font-mono text-xs ${t.inWindow ? "" : "opacity-50"}`}
-                      style={bg ? { background: bg } : undefined}
-                    >
-                      {content}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+            {scope3ByYear.map((row) => {
+              // Materiality is a property of the company, not a single year — a
+              // category is material if it's flagged material in any year.
+              const rowMaterial = trajectory.some((t) => row.cells[t.year]?.material);
+              return (
+                <tr key={row.category} className={`border-b border-border/40 ${rowMaterial ? "" : "text-muted-foreground/40"}`}>
+                  <td className="py-1.5 pr-3 text-left text-xs">
+                    <span className="mr-1.5 font-mono text-muted-foreground">{row.category}</span>
+                    <span className={rowMaterial ? "text-foreground" : ""}>{row.name}</span>
+                  </td>
+                  {trajectory.map((t) => {
+                    const c = row.cells[t.year];
+                    let bg: string | undefined;
+                    let content: React.ReactNode;
+                    if (c && c.reported && c.ghg != null) {
+                      const a = 0.08 + Math.pow(c.ghg / s3Max, 0.45) * 0.8;
+                      bg = color.replace(")", ` / ${a.toFixed(2)})`);
+                      content = compact(c.ghg);
+                    } else if (rowMaterial) {
+                      content = <span className="font-medium text-amber-600">n/r</span>;
+                    } else {
+                      content = <span className="opacity-40">—</span>;
+                    }
+                    return (
+                      <td
+                        key={t.year}
+                        className={`py-1.5 pl-3 text-right font-mono text-xs ${t.inWindow ? "" : "opacity-50"}`}
+                        style={bg ? { background: bg } : undefined}
+                      >
+                        {content}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        Cells shaded by size. <span className="text-amber-600/70">n/r</span> = material but not reported; – = not reported / not material.
+      <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+        Cells shaded by size. <span className="font-medium text-amber-600">n/r</span> = material to this company but not reported that year.
+        Greyed-out rows are categories not material to this company.
       </p>
 
       {/* Sources */}
