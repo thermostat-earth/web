@@ -33,9 +33,9 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
       <div className="flex min-w-0 flex-col">
         <div className="truncate text-sm font-medium">{c.company_name}</div>
         <div className="truncate text-xs text-muted-foreground">{meta}</div>
-        <div className="mt-4 whitespace-nowrap font-mono text-5xl font-semibold leading-none" style={{ color }}>
+        <div className="mt-4 whitespace-nowrap font-mono text-6xl font-semibold leading-none" style={{ color }}>
           {formatScore(score, aboveMax, belowMin).replace(/\s+/g, "")}
-          <span className="ml-1 text-xl font-medium">°C</span>
+          <span className="ml-1 text-2xl font-medium">°C</span>
         </div>
         {vsSector && (
           <div className="mt-2.5 text-xs" style={{ color: approx ? undefined : color }}>
