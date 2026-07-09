@@ -80,16 +80,21 @@ function Dashboard({ rows }: { rows: CompanyScore[] }) {
 function Thermometer({ rows }: { rows: CompanyScore[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(760);
+  const [vh, setVh] = useState(720);
   useEffect(() => {
-    const on = () => setW(ref.current?.offsetWidth ?? 760);
+    const on = () => {
+      setW(ref.current?.offsetWidth ?? 760);
+      setVh(window.innerHeight);
+    };
     on();
     window.addEventListener("resize", on);
     return () => window.removeEventListener("resize", on);
   }, []);
 
   const scored = rows.filter((s) => s.thermostat_score_location != null);
-  // Only as tall as the data needs — grows with the number of companies.
-  const H = Math.max(320, scored.length * 58);
+  // Fill down toward the bottom of the page as a minimum; grow taller for more data.
+  const H = Math.max(vh - 340, scored.length * 58, 320);
+  const TOP = 30; // gap above the tube so the 4.0°C label sits clear
   const cx = w / 2;
 
   const items = useMemo(() => {
@@ -111,7 +116,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scored]);
 
-  const contentH = Math.max(H + 30, ...items.map((it) => it.labelY + GAP)) + 20;
+  const contentH = Math.max(H + TOP + 20, ...items.map((it) => it.labelY + TOP + GAP)) + 10;
 
   if (scored.length === 0) return <Empty />;
 
@@ -122,23 +127,23 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
         {items.map((it) => {
           const fromX = cx + (it.side === "left" ? -7 : 7);
           const toX = cx + (it.side === "left" ? -30 : 30);
-          return <line key={it.s.company_id} x1={fromX} y1={it.y + 15} x2={toX} y2={it.labelY + 15} stroke="hsl(var(--border))" strokeWidth="1" />;
+          return <line key={it.s.company_id} x1={fromX} y1={it.y + TOP} x2={toX} y2={it.labelY + TOP} stroke="hsl(var(--border))" strokeWidth="1" />;
         })}
       </svg>
 
       {/* scale end labels (centred, above/below the tube) */}
-      <div className="absolute -translate-x-1/2 font-mono text-[10px] text-muted-foreground" style={{ left: cx, top: 0 }}>4.0°C</div>
-      <div className="absolute -translate-x-1/2 font-mono text-[10px] text-muted-foreground" style={{ left: cx, top: H + 18 }}>1.4°C</div>
+      <div className="absolute -translate-x-1/2 font-mono text-[10px] text-muted-foreground" style={{ left: cx, top: 2 }}>4.0°C</div>
+      <div className="absolute -translate-x-1/2 font-mono text-[10px] text-muted-foreground" style={{ left: cx, top: H + TOP + 6 }}>1.4°C</div>
 
       {/* tube */}
-      <div className="absolute w-3 -translate-x-1/2 rounded-full ring-1 ring-black/10" style={{ left: cx, top: 15, height: H, background: TUBE_GRADIENT }} />
+      <div className="absolute w-3 -translate-x-1/2 rounded-full ring-1 ring-black/10" style={{ left: cx, top: TOP, height: H, background: TUBE_GRADIENT }} />
 
       {/* markers */}
       {items.map((it) => (
         <div
           key={it.s.company_id}
           className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow"
-          style={{ left: cx, top: it.y + 15, background: it.color, border: "2px solid hsl(var(--background))" }}
+          style={{ left: cx, top: it.y + TOP, background: it.color, border: "2px solid hsl(var(--background))" }}
         />
       ))}
 
@@ -150,7 +155,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
           className={`group absolute flex -translate-y-1/2 items-center gap-2 rounded-md px-2 py-0.5 transition hover:bg-secondary ${
             it.side === "left" ? "flex-row-reverse text-right" : "text-left"
           }`}
-          style={it.side === "left" ? { right: w - cx + 32, top: it.labelY + 15 } : { left: cx + 32, top: it.labelY + 15 }}
+          style={it.side === "left" ? { right: w - cx + 32, top: it.labelY + TOP } : { left: cx + 32, top: it.labelY + TOP }}
         >
           <span className="font-mono text-sm font-semibold tabular-nums" style={{ color: it.color }}>
             {formatScore(it.score, !!it.s.score_above_max_location, !!it.s.score_below_min_location)}°C
