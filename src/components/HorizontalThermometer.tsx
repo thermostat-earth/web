@@ -87,6 +87,19 @@ export function HorizontalThermometer({
 
   return (
     <div className="mt-8">
+      {/* difference arrow (company vs sector), sitting above the markers. An
+          arrow pointing OUT to the company, flush against its end. */}
+      {gap && (
+        <div className="relative mb-1.5 h-3">
+          <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
+          {gap.companyRight ? (
+            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-1px, -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderLeft: `9px solid ${color}` }} />
+          ) : (
+            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translate(calc(-100% + 1px), -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderRight: `9px solid ${color}` }} />
+          )}
+        </div>
+      )}
+
       {/* labels + arrows above */}
       <div className="relative mb-2 h-8">
         <div className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
@@ -96,7 +109,7 @@ export function HorizontalThermometer({
         {sectorPos != null && (
           <>
             <div className="absolute top-0 whitespace-nowrap text-xs text-muted-foreground" style={styleFor(sectorPos, align.sector)}>
-              <span ref={sectorRef}>sector average</span>
+              <span ref={sectorRef}>Sector average</span>
             </div>
             <div className="absolute bottom-0 -translate-x-1/2" style={{ left: `${sectorPos}%` }}><TriDown color="hsl(var(--foreground))" /></div>
           </>
@@ -125,18 +138,6 @@ export function HorizontalThermometer({
         })}
       </div>
 
-      {/* gap: an arrow pointing OUT to the company (moving away from the sector
-          average). Only one head, flush against the bar. */}
-      {gap && (
-        <div className="relative mt-3 h-3">
-          <div className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full" style={{ left: gap.leftEnd, right: `calc(100% - (${gap.rightEnd}))`, background: gap.grad }} />
-          {gap.companyRight ? (
-            <span className="absolute top-1/2" style={{ left: gap.rightEnd, transform: "translate(-1px, -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderLeft: `9px solid ${color}` }} />
-          ) : (
-            <span className="absolute top-1/2" style={{ left: gap.leftEnd, transform: "translate(calc(-100% + 1px), -50%)", width: 0, height: 0, borderTop: "6px solid transparent", borderBottom: "6px solid transparent", borderRight: `9px solid ${color}` }} />
-          )}
-        </div>
-      )}
     </div>
   );
 }
