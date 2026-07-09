@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export function SiteFooter() {
+  const build = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7);
   return (
     <footer className="mt-20 border-t border-border">
       <div className="mx-auto max-w-4xl px-6 py-10 text-center text-xs text-muted-foreground">
@@ -21,7 +22,7 @@ export function SiteFooter() {
           factual measure, not financial advice, an endorsement, or a judgement of
           a company&apos;s overall sustainability performance.
         </p>
-        <p className="mt-4">© 2026 ThermoStat</p>
+        <p className="mt-4">© 2026 ThermoStat{build ? ` · build ${build}` : ""}</p>
       </div>
     </footer>
   );
