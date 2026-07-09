@@ -67,7 +67,7 @@ function Dashboard({ rows }: { rows: CompanyScore[] }) {
     (a, b) => (a.thermostat_score_location ?? 99) - (b.thermostat_score_location ?? 99),
   );
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2">
       {sorted.map((c) => (
         <Link key={c.company_id} href={`/company/${c.company_id}`} className="block transition hover:opacity-90">
           <ScoreCard c={c} />
