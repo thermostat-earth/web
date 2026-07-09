@@ -50,10 +50,12 @@ function TrajectoryChart({
   trajectory,
   basis,
   color,
+  getValue,
 }: {
   trajectory: TrajectoryYear[];
   basis: Basis;
   color: string;
+  getValue: (t: TrajectoryYear) => number | null;
 }) {
   const W = Math.max(320, trajectory.length * 64);
   const H = 190;
@@ -63,22 +65,20 @@ function TrajectoryChart({
   const plotH = H - padTop - padBottom;
   const slotW = (W - padX * 2) / trajectory.length;
   const barW = Math.min(30, slotW * 0.5);
-  const totals = trajectory.map((t) =>
-    basis === "location" ? t.total_location : t.total_market,
-  );
+  const values = trajectory.map(getValue);
   const inWin = trajectory.map((t, i) => ({ t, i })).filter((x) => x.t.inWindow);
-  const max = Math.max(1, ...totals.map((v) => v ?? 0));
+  const max = Math.max(1, ...values.map((v) => v ?? 0));
   const colX = (i: number) => padX + slotW * (i + 0.5);
   const barH = (v: number | null) => (v && v > 0 ? Math.max((v / max) * plotH, 3) : 0);
   const topY = (v: number | null) => padTop + plotH - barH(v);
   // Trend line + dots only span the in-window years, so they align with the bars.
-  const linePts = inWin.map((x) => `${colX(x.i)},${topY(totals[x.i])}`).join(" ");
+  const linePts = inWin.map((x) => `${colX(x.i)},${topY(values[x.i])}`).join(" ");
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: 220 }}>
       <line x1={padX} y1={padTop + plotH} x2={W - padX} y2={padTop + plotH} stroke="hsl(var(--border))" strokeWidth="1" />
       {trajectory.map((t, i) => {
-        const v = totals[i];
+        const v = values[i];
         const x = colX(i);
         return (
           <g key={t.year}>
@@ -105,7 +105,7 @@ function TrajectoryChart({
       })}
       <polyline points={linePts} fill="none" stroke={color} strokeWidth="1.5" opacity="0.9" pointerEvents="none" />
       {inWin.map((x) => (
-        <circle key={x.t.year} cx={colX(x.i)} cy={topY(totals[x.i])} r="3" fill={color} pointerEvents="none" />
+        <circle key={x.t.year} cx={colX(x.i)} cy={topY(values[x.i])} r="3" fill={color} pointerEvents="none" />
       ))}
     </svg>
   );
@@ -238,7 +238,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} />
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} />
           {(h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
@@ -297,6 +297,10 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           )}
         </>
       )}
+
+      {/* Scope-3 over time */}
+      <SectionHeading>Scope 3 over time</SectionHeading>
+      <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => t.scope3} />
 
       {/* Scope-3 breakdown — all 15 categories with their state */}
       <SectionHeading>Scope 3 by category{latestYear ? ` · ${latestYear}` : ""}</SectionHeading>
