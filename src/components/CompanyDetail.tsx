@@ -156,26 +156,15 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <Link href="/scores" className="text-sm text-muted-foreground transition hover:text-foreground">
+      <div className="flex items-start justify-between gap-4">
+        <Link href="/scores" className="mt-1 text-sm text-muted-foreground transition hover:text-foreground">
           ← All scores
         </Link>
-        <Link href="/methodology" className="text-sm text-muted-foreground transition hover:text-foreground">
-          How scoring works →
-        </Link>
-      </div>
-
-      {/* Header */}
-      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-stretch sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{h.company_name}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{meta}</p>
-          {(h.assessment_year_start || h.assessment_year_end) && (
-            <p className="mt-3 font-mono text-xs text-muted-foreground">
-              Assessed {h.assessment_year_start}–{h.assessment_year_end}
-            </p>
-          )}
-          <div className="mt-4 inline-flex items-center gap-2">
+        <div className="flex flex-col items-end gap-2">
+          <Link href="/methodology" className="text-sm text-muted-foreground transition hover:text-foreground">
+            How scoring works →
+          </Link>
+          <div className="inline-flex items-center gap-2">
             <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
               {(["location", "market"] as Basis[]).map((opt) => (
                 <button
@@ -194,8 +183,21 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             <InfoTip text={`${GLOSSARY.location} ${GLOSSARY.market}`} label="Location vs market-based" />
           </div>
           {!bothAvailable && (
-            <p className="mt-1 text-[11px] text-muted-foreground/70">
+            <p className="text-[11px] text-muted-foreground/70">
               Only {initial}-based data is available for this company.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="mt-4 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{h.company_name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{meta}</p>
+          {(h.assessment_year_start || h.assessment_year_end) && (
+            <p className="mt-3 font-mono text-xs text-muted-foreground">
+              Assessed {h.assessment_year_start}–{h.assessment_year_end}
             </p>
           )}
         </div>
