@@ -37,9 +37,9 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="truncate text-sm font-medium">{c.company_name}</div>
         <div className="truncate text-xs text-muted-foreground">{meta}</div>
-        <div className="mt-4 whitespace-nowrap font-mono text-6xl font-semibold leading-none" style={{ color }}>
+        <div className="mt-4 whitespace-nowrap font-mono text-5xl font-semibold leading-none" style={{ color }}>
           {formatScore(score, aboveMax, belowMin).replace(/\s+/g, "")}
-          <span className="ml-1 text-2xl font-medium">°C</span>
+          <span className="ml-1 text-xl font-medium">°C</span>
         </div>
         {vsSector && (
           <div className="mt-2.5 text-xs" style={{ color: vsSector.startsWith("≈") ? undefined : color }}>
@@ -79,12 +79,12 @@ function VerticalThermo({
   return (
     <div className="flex shrink-0 items-stretch gap-1.5">
       {/* company-vs-sector arrow (left of the tube, where there's room) */}
-      <div className="relative w-2.5" style={{ paddingTop: CAP, paddingBottom: CAP }}>
+      <div className="relative w-2" style={{ paddingTop: CAP, paddingBottom: CAP }}>
         <div className="relative h-full">
           {showArrow && (
             <>
-              {/* gap fill: a slice of the same gradient as the tube, sector → company */}
-              <div className="absolute left-1/2 w-2.5 -translate-x-1/2 overflow-hidden rounded-full" style={{ bottom: `${lo}%`, height: `${gapPct}%` }}>
+              {/* gap fill: a slim slice of the same gradient as the tube, sector → company */}
+              <div className="absolute left-1/2 w-1.5 -translate-x-1/2 overflow-hidden rounded-full" style={{ bottom: `${lo}%`, height: `${gapPct}%` }}>
                 <div className="absolute inset-x-0" style={{ height: `${10000 / gapPct}%`, bottom: `${(-lo / gapPct) * 100}%`, background: TUBE_GRADIENT }} />
               </div>
               {/* arrowhead ending at the company marker */}
@@ -94,9 +94,9 @@ function VerticalThermo({
                   bottom: `calc(${pos}% - 3px)`,
                   width: 0,
                   height: 0,
-                  borderLeft: "5px solid transparent",
-                  borderRight: "5px solid transparent",
-                  ...(companyAbove ? { borderBottom: `7px solid ${color}` } : { borderTop: `7px solid ${color}` }),
+                  borderLeft: "4px solid transparent",
+                  borderRight: "4px solid transparent",
+                  ...(companyAbove ? { borderBottom: `6px solid ${color}` } : { borderTop: `6px solid ${color}` }),
                 }}
               />
             </>
