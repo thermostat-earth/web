@@ -77,6 +77,8 @@ function VerticalThermo({
   const dotBottom = aboveMax ? "calc(100% + 13px)" : belowMin ? "-13px" : `${pos}%`;
   // When company ≈ sector, the sector line snaps to the company dot (incl. off-scale).
   const sectorBottom = sectorPos == null ? null : approxSector ? dotBottom : `${sectorPos}%`;
+  // Rule: the arrowhead is vertically centred on the company circle (9px tall → offset half).
+  const headBottom = aboveMax ? "calc(100% + 8.5px)" : belowMin ? "-17.5px" : `calc(${pos}% - 4.5px)`;
 
   const showArrow = !approxSector && sectorPos != null && Math.abs(pos - sectorPos) > 1;
   const companyAbove = sectorPos != null && pos >= sectorPos;
@@ -112,8 +114,7 @@ function VerticalThermo({
               <div
                 className="absolute left-1/2 -translate-x-1/2"
                 style={{
-                  // base sits ON the line end (pos), tip points out toward the marker — fully covers the line end
-                  bottom: companyAbove ? `${pos}%` : `calc(${pos}% - 9px)`,
+                  bottom: headBottom,
                   width: 0,
                   height: 0,
                   borderLeft: "5px solid transparent",

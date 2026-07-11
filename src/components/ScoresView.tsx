@@ -27,6 +27,11 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
 
   return (
     <div>
+      <p className="mb-10 text-muted-foreground">
+        {view === "thermometer"
+          ? "Every company on one temperature scale — coolest at the bottom."
+          : "Every company's climate score against IPCC pathways — coolest first."}
+      </p>
       <div className="mb-10 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
           {(["dashboard", "thermometer"] as View[]).map((v) => (

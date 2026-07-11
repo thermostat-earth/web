@@ -12,10 +12,7 @@ export default async function ScoresPage() {
       <SiteHeader />
       <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
         <h1 className="text-3xl font-bold tracking-tight">Scores</h1>
-        <p className="mt-2 text-muted-foreground">
-          Every company on one temperature scale — coolest at the bottom. Switch to the dashboard for cards.
-        </p>
-        <div className="mt-10">
+        <div className="mt-2">
           <ScoresView scores={scores} />
         </div>
       </main>
