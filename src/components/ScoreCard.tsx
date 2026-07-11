@@ -88,8 +88,8 @@ function VerticalThermo({
 
   return (
     <div className="flex shrink-0 flex-col items-end">
-      {/* key (top-right) */}
-      <div className="mb-7 flex items-center gap-3 text-[10px] leading-none text-muted-foreground">
+      {/* key (top-right) — h-5 matches the company-name line so they align vertically */}
+      <div className="mb-6 flex h-5 items-center gap-3 text-[10px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: color, border: "2px solid hsl(var(--background))" }} />
           This company
@@ -111,6 +111,13 @@ function VerticalThermo({
               <div className="absolute left-1/2 w-1 -translate-x-1/2 overflow-hidden rounded-full" style={{ bottom: `${lo}%`, height: `${gapPct}%` }}>
                 <div className="absolute inset-x-0" style={{ height: `${10000 / gapPct}%`, bottom: `${(-lo / gapPct) * 100}%`, background: TUBE_GRADIENT }} />
               </div>
+              {/* off-scale: bridge the tube end up/down to the centred arrowhead so the line stays joined */}
+              {aboveMax && (
+                <div className="absolute left-1/2 w-1 -translate-x-1/2" style={{ bottom: "100%", height: "8.5px", background: "hsl(0 72% 51%)" }} />
+              )}
+              {belowMin && (
+                <div className="absolute left-1/2 w-1 -translate-x-1/2" style={{ top: "100%", height: "8.5px", background: "hsl(145 60% 42%)" }} />
+              )}
               <div
                 className="absolute left-1/2 -translate-x-1/2"
                 style={{
