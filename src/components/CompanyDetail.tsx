@@ -221,7 +221,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           {(() => {
             const d = score - b.sectorMedian;
             if (Math.abs(d) < 0.05)
-              return `${h.company_name} is aligned in line with their sector's average.`;
+              return `${h.company_name}'s climate pathway is aligned with their sector's average.`;
             return `${h.company_name} is aligned to a climate pathway ${Math.abs(d).toFixed(2)}°C ${d > 0 ? "higher" : "lower"} than their sector's average.`;
           })()}
         </p>
