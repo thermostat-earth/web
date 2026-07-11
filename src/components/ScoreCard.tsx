@@ -73,8 +73,8 @@ function VerticalThermo({
 }) {
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
-  // Off-scale dots sit well clear above/below the tube (the key margin gives the room).
-  const dotBottom = aboveMax ? "calc(100% + 18px)" : belowMin ? "-18px" : `${pos}%`;
+  // Off-scale dots sit just clear of the tube end (small gap, not floating high).
+  const dotBottom = aboveMax ? "calc(100% + 13px)" : belowMin ? "-13px" : `${pos}%`;
   // When company ≈ sector, the sector line snaps to the company dot (incl. off-scale).
   const sectorBottom = sectorPos == null ? null : approxSector ? dotBottom : `${sectorPos}%`;
 
@@ -112,7 +112,8 @@ function VerticalThermo({
               <div
                 className="absolute left-1/2 -translate-x-1/2"
                 style={{
-                  bottom: companyAbove ? `calc(${pos}% - 9px)` : `${pos}%`,
+                  // base sits ON the line end (pos), tip points out toward the marker — fully covers the line end
+                  bottom: companyAbove ? `${pos}%` : `calc(${pos}% - 9px)`,
                   width: 0,
                   height: 0,
                   borderLeft: "5px solid transparent",
