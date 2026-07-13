@@ -111,6 +111,17 @@ export default function MethodologyPage() {
           </Step>
         </div>
 
+        <H2>The temperature scale (1.4°C to 4.0°C)</H2>
+        <p className="text-sm text-muted-foreground">
+          The scale runs from 1.4°C, the most ambitious IPCC pathway, to 4.0°C.
+          The 4.0°C ceiling is not arbitrary. It is the warmest pathway the IPCC
+          AR6 scenario database defines robustly. A company whose trajectory is
+          hotter than the 4.0°C pathway is shown as &ldquo;&gt;4.0°C&rdquo;,
+          meaning it is beyond the top of the modelled scale rather than a precise
+          figure. A company outperforming the 1.4°C pathway is shown as
+          &ldquo;&lt;1.4°C&rdquo;.
+        </p>
+
         <H2>What the temperature refers to</H2>
         <p className="text-sm text-muted-foreground">
           The score is a global figure. It refers to the long-term rise in
@@ -123,17 +134,6 @@ export default function MethodologyPage() {
           reports that pathway&apos;s temperature. So a 2.7°C score means the
           company&apos;s achieved pace matches a world heading toward roughly
           2.7°C of warming.
-        </p>
-
-        <H2>The temperature scale (1.4°C to 4.0°C)</H2>
-        <p className="text-sm text-muted-foreground">
-          The scale runs from 1.4°C, the most ambitious IPCC pathway, to 4.0°C.
-          The 4.0°C ceiling is not arbitrary. It is the warmest pathway the IPCC
-          AR6 scenario database defines robustly. A company whose trajectory is
-          hotter than the 4.0°C pathway is shown as &ldquo;&gt;4.0°C&rdquo;,
-          meaning it is beyond the top of the modelled scale rather than a precise
-          figure. A company outperforming the 1.4°C pathway is shown as
-          &ldquo;&lt;1.4°C&rdquo;.
         </p>
 
         <H2>Location vs market-based</H2>
