@@ -137,6 +137,17 @@ export default function AboutPage() {
               </li>
               <li>
                 <span className="font-medium text-foreground">
+                  Climate performance is contextual.
+                </span>{" "}
+                A temperature score is one factual measure, not a company&apos;s
+                whole story. How much weight it deserves depends on the
+                environment a company operates in, and on what its suppliers,
+                customers and investors will accept, alongside the company&apos;s
+                wider environmental, social and financial sustainability. We give
+                you the climate number; the broader judgement is yours.
+              </li>
+              <li>
+                <span className="font-medium text-foreground">
                   No loaded words.
                 </span>{" "}
                 You will not see &ldquo;good&rdquo;, &ldquo;bad&rdquo;, or
