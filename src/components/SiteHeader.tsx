@@ -4,8 +4,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NAV = [
   { href: "/scores", label: "Scores" },
-  { href: "/methodology", label: "Methodology" },
   { href: "/about", label: "About" },
+  { href: "/methodology", label: "Methodology" },
 ];
 
 export function SiteHeader() {
