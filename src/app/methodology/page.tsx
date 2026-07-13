@@ -111,6 +111,20 @@ export default function MethodologyPage() {
           </Step>
         </div>
 
+        <H2>What the temperature refers to</H2>
+        <p className="text-sm text-muted-foreground">
+          The score is a global figure. It refers to the long-term rise in
+          global average surface temperature above pre-industrial levels (taken
+          as 1850–1900), the same basis the IPCC and the Paris Agreement use for
+          goals like 1.5°C and 2°C. It is not the warming a single company
+          causes, and it is not a local temperature. Each IPCC AR6 pathway is
+          labelled by the global warming it leads to. ThermoStat finds the
+          pathway whose decarbonisation pace matches the company&apos;s, and
+          reports that pathway&apos;s temperature. So a 2.7°C score means the
+          company&apos;s achieved pace matches a world heading toward roughly
+          2.7°C of warming.
+        </p>
+
         <H2>The temperature scale (1.4°C to 4.0°C)</H2>
         <p className="text-sm text-muted-foreground">
           The scale runs from 1.4°C, the most ambitious IPCC pathway, to 4.0°C.

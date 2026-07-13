@@ -29,9 +29,8 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">The problem</h2>
             <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                We are in a climate crisis. What&apos;s more, we normally
-                can&apos;t even tell who is making it better, and who is making it
-                worse.
+                We are in a climate crisis, and most of the time we can&apos;t
+                even tell who is making it better, and who is making it worse.
               </p>
               <p>
                 Company climate performance is incredibly hard to compare.
@@ -60,6 +59,15 @@ export default function AboutPage() {
                 world moved at that company&apos;s pace. You can then use that
                 warming figure to understand what global warming impacts the
                 company is aligned to.
+              </p>
+              <p>
+                The temperature is a global figure, not the company&apos;s own.
+                It refers to the rise in the world&apos;s average surface
+                temperature above pre-industrial levels, the same measure used
+                for the Paris Agreement goals of 1.5°C and 2°C. A score of 2.7°C
+                does not mean the company warms the planet by 2.7°C on its own.
+                It means that if the whole world cut emissions at that
+                company&apos;s pace, warming would head toward about 2.7°C.
               </p>
               <p>
                 Each score comes with its sector average, the methodology behind
