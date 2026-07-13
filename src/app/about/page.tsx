@@ -42,8 +42,7 @@ export default function AboutPage() {
               <p>
                 There is no quick, neutral, easily accessible way for someone to
                 see a company&apos;s real emissions path, and how that pathway
-                lines up with the tangible impacts on our planet and its
-                societies.
+                lines up with the tangible impacts on our planet.
               </p>
             </div>
           </section>
