@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata = {
   title: "About — ThermoStat",
   description:
-    "ThermoStat turns a company's achieved emissions into a single temperature score — comparable, transparent, free and public.",
+    "ThermoStat's mission, the problem it solves, how it works, its principles, and who's behind it.",
 };
 
 export default function AboutPage() {
@@ -12,16 +12,16 @@ export default function AboutPage() {
     <>
       <SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
-        {/* Mission statement */}
+        {/* Mission */}
         <p className="text-sm font-medium text-muted-foreground">About ThermoStat</p>
         <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-          Corporate climate performance should be as easy to compare as the
-          temperature itself.
+          Corporate climate performance should be easy to compare.
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-          ThermoStat turns what a company has actually achieved into a single
-          number — in degrees — so anyone can see how it measures up. Based on
-          what&apos;s been done, not what&apos;s been pledged.
+          ThermoStat&apos;s mission is to show how well companies are really
+          cutting their emissions, and to measure and communicate this in a way
+          that allows anyone to consider climate performance when buying from,
+          selling to, or investing in a company.
         </p>
 
         <div className="mt-14 space-y-14">
@@ -30,16 +30,22 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">The problem</h2>
             <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                Company climate performance isn&apos;t comparable. Emissions
-                disclosures vary in scope, timeframe, and completeness — and
-                consumer-facing claims describe ambition far more often than
-                achievement.
+                We are in a climate crisis. What&apos;s more, we normally
+                can&apos;t even tell who is making it better, and who is making it
+                worse.
               </p>
               <p>
-                So a reader — a journalist, an investor, a sustainability lead, a
-                procurement team, or simply a curious customer — has no quick,
-                neutral way to see whether a company&apos;s real emissions
-                trajectory lines up with a 1.5°C world.
+                Company climate performance is incredibly hard to compare.
+                Emissions disclosures cover different scopes and timeframes, and
+                vary in how complete they are. And what companies say in public
+                is often incomplete, focusing on what they plan to do, rather
+                than what they have already done.
+              </p>
+              <p>
+                There is no quick, neutral, easily accessible way for someone to
+                see a company&apos;s real emissions path, and how that pathway
+                lines up with the tangible impacts on our planet and its
+                societies.
               </p>
             </div>
           </section>
@@ -49,15 +55,19 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">What we do</h2>
             <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                ThermoStat converts a company&apos;s achieved emissions
-                trajectory into a single temperature score, in °C — the global
-                warming outcome if the whole world moved at their pace.
+                ThermoStat takes what a company has actually done to cut its
+                emissions and turns it into a single climate temperature score,
+                in °C. You can read that as the warming outcome if the whole
+                world moved at that company&apos;s pace. You can then use that
+                warming figure to understand what global warming impacts the
+                company is aligned to.
               </p>
               <p>
-                Every score sits alongside its sector average, a transparent
-                methodology, and an honest &ldquo;Unknown&rdquo; wherever the
-                data won&apos;t support a number. It&apos;s free, public, and open
-                to anyone who needs it.
+                Each score comes with its sector average, the methodology behind
+                it, and a clear &ldquo;Unknown&rdquo; wherever the data will not
+                support a number. The scores are free to read. Later on we may
+                license deeper data or offer a premium version to help fund the
+                work.
               </p>
             </div>
           </section>
@@ -70,36 +80,38 @@ export default function AboutPage() {
             <ul className="mt-4 space-y-3 leading-relaxed text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">
-                  Comparable by construction.
+                  One method, applied the same way.
                 </span>{" "}
-                The same method applied to every company, so company-to-company
-                and sector-to-sector comparisons actually hold.
+                The same approach runs across every company, so comparisons
+                between companies and sectors hold up.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  A unit everyone already knows.
+                  A unit people already understand.
                 </span>{" "}
-                The climate is measured in degrees; ThermoStat brings the same
-                unit to corporate performance — no translation layer.
+                The climate and its impacts are most commonly measured in
+                degrees. ThermoStat puts company performance in the same unit, so
+                there is nothing to translate.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  Achievement, not ambition.
+                  Based on results.
                 </span>{" "}
-                The score reflects what has been done, not what has been pledged.
+                The score reflects what a company has reported and cut so far.
+                Targets and pledges do not move it.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  Transparent by design.
+                  You can check the working.
                 </span>{" "}
-                The methodology, its version, and the time window are shown on
-                every score.
+                Every score shows the methodology, its scope, version, and the
+                years it covers.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  Free and public.
+                  Free to read.
                 </span>{" "}
-                All of it, for anyone who needs it.
+                Anyone can read the scores at no cost.
               </li>
             </ul>
           </section>
@@ -112,30 +124,32 @@ export default function AboutPage() {
             <ul className="mt-4 space-y-3 leading-relaxed text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">
-                  A description, not a verdict.
+                  We listen and we don&apos;t judge.
                 </span>{" "}
-                ThermoStat is not an ESG rating, a certification, a prediction,
-                or a target validation. It reports what has happened — it
-                doesn&apos;t pass judgement.
+                ThermoStat reports what has happened and leaves the verdict to
+                you.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  No moral language.
+                  No loaded words.
                 </span>{" "}
-                No &ldquo;good&rdquo;, &ldquo;bad&rdquo;, or &ldquo;leading&rdquo;
-                — just the number and the workings.
+                You will not see &ldquo;good&rdquo;, &ldquo;bad&rdquo;, or
+                &ldquo;leading&rdquo;. Just the number and how we reached it.
               </li>
               <li>
                 <span className="font-medium text-foreground">
-                  Anchored to time and scope.
+                  Tied to time and scope.
                 </span>{" "}
-                Every figure states the years and boundaries it covers.
+                Every figure states the years and the boundaries it covers. We
+                determine the required scope by including any emissions category
+                deemed relevant and material, in line with the principles of the
+                GHG Protocol.
               </li>
               <li>
                 <span className="font-medium text-foreground">
                   Methodology in the open.
                 </span>{" "}
-                Shown, versioned, and visible on every page.
+                It is published, versioned, and shown on every page.
               </li>
               <li>
                 <span className="font-medium text-foreground">
@@ -153,16 +167,19 @@ export default function AboutPage() {
             </h2>
             <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                ThermoStat is built by Felix Edge-Partington. For version one,
-                every company&apos;s Scope 3 emissions are reviewed by hand, with
-                sampled audits across Scope 1 and 2 — so the numbers are checked
-                by a person, not just a pipeline.
+                ThermoStat is built by Felix Edge-Partington. Although AI is used
+                to ingest publicly available emissions data, each year of a
+                company&apos;s emissions figures goes through a review process
+                where a human climate expert ensures all relevant Scope 3
+                emissions categories have been included, and randomly samples the
+                Scope 1, 2 and 3 figures.
               </p>
               <p>
-                It&apos;s independent and free to use, and takes no money from the
-                companies it scores. ThermoStat is currently self-funded by its
-                founder; a non-profit entity will be formed once the model is
-                proven.
+                ThermoStat is independent and takes no money from the companies
+                it scores. It is self-funded for now and free to read. Any paid
+                income later would come from licensing data or a premium version,
+                not from the companies being scored. The plan is to move it into
+                a non-profit once the model is proven.
               </p>
             </div>
           </section>
