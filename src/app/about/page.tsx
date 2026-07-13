@@ -130,21 +130,14 @@ export default function AboutPage() {
             <ul className="mt-4 space-y-3 leading-relaxed text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">
-                  We listen and we don&apos;t judge.
-                </span>{" "}
-                ThermoStat reports what has happened and leaves the verdict to
-                you.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
                   Climate performance is contextual.
                 </span>{" "}
                 A temperature score is one factual measure, not a company&apos;s
-                whole story. How much weight it deserves depends on the
-                environment a company operates in, and on what its suppliers,
-                customers and investors will accept, alongside the company&apos;s
-                wider environmental, social and financial sustainability. We give
-                you the climate number; the broader judgement is yours.
+                whole story. How much weight it deserves depends on what you are
+                willing to accept in the context of its wider environmental,
+                social and financial sustainability performance, and how this
+                compares to other companies in the sector and beyond. We give you
+                the climate number; the broader judgement is yours.
               </li>
               <li>
                 <span className="font-medium text-foreground">
