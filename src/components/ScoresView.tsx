@@ -108,7 +108,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
 
   // Fit the page while there are few companies; grow downward (the reader
   // scrolls) only once there are enough to warrant a taller scale.
-  const H = Math.max(vh - 380, scored.length * 62, 300);
+  const H = Math.max(vh - 450, scored.length * 58, 280);
   const TOP = 40; // gap above the tube for the top tick + any off-scale dot
   const OFF = 28; // how far an off-scale dot sits beyond the tube end
   const cx = w / 2;
@@ -156,23 +156,6 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
 
   return (
     <div>
-      {/* key */}
-      <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <span
-            className="inline-block h-3.5 w-3.5 rounded-full bg-foreground"
-            style={{ border: "2px solid hsl(var(--background))" }}
-          />
-          A company&apos;s climate temperature score
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="font-mono">&gt;</span>
-          <span>/</span>
-          <span className="font-mono">&lt;</span>
-          beyond the 1.4–4.0°C scale
-        </span>
-      </div>
-
       <div ref={ref} className="relative" style={{ height: contentH }}>
         {/* connectors */}
         <svg className="absolute inset-0" width={w} height={contentH} pointerEvents="none">
