@@ -191,7 +191,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
             className="absolute -translate-x-1/2 -translate-y-1/2"
             style={{ left: cx, top: TOP + (H - scalePosition(v) * H) }}
           >
-            <span className="rounded-sm border border-border bg-background/85 px-1 py-px font-mono text-[10px] leading-none text-muted-foreground">
+            <span className="rounded border border-border bg-background/85 px-1.5 py-0.5 font-mono text-xs leading-none text-muted-foreground">
               {v.toFixed(1)}°C
             </span>
           </div>
