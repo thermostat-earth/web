@@ -15,7 +15,7 @@ export default function AboutPage() {
         {/* Mission */}
         <p className="text-sm font-medium text-muted-foreground">About ThermoStat</p>
         <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-          Corporate climate performance should be easy to compare.
+          Corporate climate performance should be easy for anyone to compare.
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
           ThermoStat&apos;s mission is to show how well companies are really
