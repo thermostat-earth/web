@@ -15,7 +15,7 @@ export default async function HomePage() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-6">
         <section className="py-20">
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Compare climate performance — based on reality, not promises.
+            Compare climate performance based on reality, not promises.
           </h1>
           <p className="mt-6 max-w-2xl text-muted-foreground">
             ThermoStat turns a company&apos;s achieved emissions into a single
