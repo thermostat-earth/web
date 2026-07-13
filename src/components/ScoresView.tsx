@@ -10,7 +10,7 @@ type View = "thermometer" | "dashboard";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
-const GAP = 34; // min vertical spacing between labels on one side
+const GAP = 40; // min vertical spacing between labels on one side
 const TICKS = [1.4, 2, 3, 4];
 
 export function ScoresView({ scores }: { scores: CompanyScore[] }) {
@@ -93,6 +93,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(760);
   const [vh, setVh] = useState(720);
+  const [hovered, setHovered] = useState<string | null>(null);
   useEffect(() => {
     const on = () => {
       setW(ref.current?.offsetWidth ?? 760);
@@ -107,9 +108,9 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
 
   // Fit the page while there are few companies; grow downward (the reader
   // scrolls) only once there are enough to warrant a taller scale.
-  const H = Math.max(vh - 380, scored.length * 60, 300);
-  const TOP = 34; // gap above the tube for the top tick + any off-scale dot
-  const OFF = 14; // how far an off-scale dot sits beyond the tube end
+  const H = Math.max(vh - 380, scored.length * 62, 300);
+  const TOP = 40; // gap above the tube for the top tick + any off-scale dot
+  const OFF = 28; // how far an off-scale dot sits beyond the tube end
   const cx = w / 2;
 
   const items = useMemo(() => {
@@ -120,8 +121,8 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
         const belowMin = !!s.score_below_min_location;
         const frac = aboveMax ? 1 : belowMin ? 0 : scalePosition(score);
         let y = H - frac * H; // coolest (low °C) at the bottom
-        if (aboveMax) y = -OFF; // just above the hot (top) end
-        if (belowMin) y = H + OFF; // just below the cool (bottom) end
+        if (aboveMax) y = -OFF; // clear above the hot (top) end
+        if (belowMin) y = H + OFF; // clear below the cool (bottom) end
         return {
           s,
           score,
@@ -151,13 +152,15 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
 
   if (scored.length === 0) return <Empty />;
 
+  const dimmed = (id: string) => hovered != null && hovered !== id;
+
   return (
     <div>
       {/* key */}
-      <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-muted-foreground">
+      <div className="mb-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span
-            className="inline-block h-3 w-3 rounded-full bg-foreground"
+            className="inline-block h-3.5 w-3.5 rounded-full bg-foreground"
             style={{ border: "2px solid hsl(var(--background))" }}
           />
           A company&apos;s climate temperature score
@@ -175,7 +178,7 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
         <svg className="absolute inset-0" width={w} height={contentH} pointerEvents="none">
           {items.map((it) => {
             const fromX = cx + (it.side === "left" ? -7 : 7);
-            const toX = cx + (it.side === "left" ? -30 : 30);
+            const toX = cx + (it.side === "left" ? -32 : 32);
             return (
               <line
                 key={it.s.company_id}
@@ -185,6 +188,8 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
                 y2={it.labelY + TOP}
                 stroke="hsl(var(--border))"
                 strokeWidth="1"
+                strokeOpacity={dimmed(it.s.company_id) ? 0.15 : 1}
+                className="transition-opacity duration-150"
               />
             );
           })}
@@ -203,32 +208,25 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
             className="absolute -translate-x-1/2 -translate-y-1/2"
             style={{ left: cx, top: TOP + (H - scalePosition(v) * H) }}
           >
-            <span className="rounded-sm border border-border bg-background/85 px-1 py-px font-mono text-[9px] leading-none text-muted-foreground">
+            <span className="rounded-sm border border-border bg-background/85 px-1 py-px font-mono text-[10px] leading-none text-muted-foreground">
               {v.toFixed(1)}°C
             </span>
           </div>
         ))}
 
-        {/* off-scale bridges + company markers */}
+        {/* company markers */}
         {items.map((it) => (
-          <div key={it.s.company_id}>
-            {it.aboveMax && (
-              <div
-                className="absolute w-1 -translate-x-1/2"
-                style={{ left: cx, top: TOP - OFF, height: OFF, background: "hsl(0 72% 51%)" }}
-              />
-            )}
-            {it.belowMin && (
-              <div
-                className="absolute w-1 -translate-x-1/2"
-                style={{ left: cx, top: TOP + H, height: OFF, background: "hsl(145 60% 42%)" }}
-              />
-            )}
-            <div
-              className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow"
-              style={{ left: cx, top: it.y + TOP, background: it.color, border: "2px solid hsl(var(--background))" }}
-            />
-          </div>
+          <div
+            key={it.s.company_id}
+            className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full shadow transition-opacity duration-150"
+            style={{
+              left: cx,
+              top: it.y + TOP,
+              background: it.color,
+              border: "2.5px solid hsl(var(--background))",
+              opacity: dimmed(it.s.company_id) ? 0.25 : 1,
+            }}
+          />
         ))}
 
         {/* labels on both sides */}
@@ -236,16 +234,22 @@ function Thermometer({ rows }: { rows: CompanyScore[] }) {
           <Link
             key={it.s.company_id}
             href={`/company/${it.s.company_id}`}
-            className={`group absolute flex -translate-y-1/2 items-center gap-2 rounded-md px-2 py-0.5 transition hover:bg-secondary ${
+            onMouseEnter={() => setHovered(it.s.company_id)}
+            onMouseLeave={() => setHovered(null)}
+            className={`group absolute flex -translate-y-1/2 items-center gap-2.5 rounded-md px-2 py-1 transition-opacity duration-150 hover:bg-secondary ${
               it.side === "left" ? "flex-row-reverse text-right" : "text-left"
             }`}
-            style={it.side === "left" ? { right: w - cx + 32, top: it.labelY + TOP } : { left: cx + 32, top: it.labelY + TOP }}
+            style={{
+              ...(it.side === "left" ? { right: w - cx + 34 } : { left: cx + 34 }),
+              top: it.labelY + TOP,
+              opacity: dimmed(it.s.company_id) ? 0.3 : 1,
+            }}
           >
-            <span className="font-mono text-sm font-semibold tabular-nums" style={{ color: it.color }}>
+            <span className="font-mono text-lg font-semibold tabular-nums" style={{ color: it.color }}>
               {formatScore(it.score, it.aboveMax, it.belowMin)}°C
             </span>
-            <span className="text-sm font-medium text-foreground">{it.s.company_name}</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">{it.s.sector}</span>
+            <span className="text-base font-medium text-foreground">{it.s.company_name}</span>
+            <span className="hidden text-sm text-muted-foreground sm:inline">{it.s.sector}</span>
           </Link>
         ))}
       </div>
