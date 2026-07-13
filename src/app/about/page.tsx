@@ -20,8 +20,7 @@ export default function AboutPage() {
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
           ThermoStat&apos;s mission is to show how well companies are really
           cutting their emissions, and to measure and communicate this in a way
-          that allows anyone to consider climate performance when buying from,
-          selling to, or investing in a company.
+          that allows anyone to consider climate performance.
         </p>
 
         <div className="mt-14 space-y-14">
