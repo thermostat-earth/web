@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ScoreCard } from "@/components/ScoreCard";
+import { HeroScale } from "@/components/HeroScale";
 import { getScores } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,8 @@ export default async function HomePage() {
               How it works
             </Link>
           </div>
+
+          <HeroScale scores={scores} />
         </section>
 
         {/* What the number means */}
