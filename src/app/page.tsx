@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ScoreCard } from "@/components/ScoreCard";
 import { HeroScale } from "@/components/HeroScale";
 import { getScores } from "@/lib/scores";
 
@@ -9,10 +8,6 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const scores = await getScores();
-  const examples = [...scores].sort(
-    (a, b) =>
-      (a.thermostat_score_location ?? 99) - (b.thermostat_score_location ?? 99),
-  );
   return (
     <>
       <SiteHeader />
@@ -55,28 +50,6 @@ export default async function HomePage() {
             global average warming above pre-industrial levels, the same scale as
             the Paris 1.5°C and 2°C goals.
           </p>
-        </section>
-
-        {/* Example scores */}
-        <section className="border-t border-border py-14">
-          <h2 className="text-xl font-semibold tracking-tight">Example scores</h2>
-          <div className="mt-6 grid max-w-3xl gap-6 sm:grid-cols-2">
-            {examples.map((c) => (
-              <Link
-                key={c.company_id}
-                href={`/company/${c.company_id}`}
-                className="block transition hover:opacity-90"
-              >
-                <ScoreCard c={c} />
-              </Link>
-            ))}
-          </div>
-          <Link
-            href="/scores"
-            className="mt-6 inline-block text-sm font-medium text-foreground underline underline-offset-4"
-          >
-            See all scores →
-          </Link>
         </section>
 
         {/* How a company becomes a temperature */}

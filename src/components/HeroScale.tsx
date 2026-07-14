@@ -6,9 +6,12 @@ import type { CompanyScore } from "@/lib/scores";
 
 const H_GRADIENT =
   "linear-gradient(to right, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
+const TICKS = [1.4, 2, 3, 4];
 
 // A wide temperature scale with the scored companies pinned along it, coolest
-// (green) on the left to hottest (red) on the right. Animates in on load.
+// (green, left) to hottest (red, right). Scale ruler sits below the bar;
+// company labels stack above it, staggered so clusters don't collide. Animates
+// in on load.
 export function HeroScale({ scores }: { scores: CompanyScore[] }) {
   const [shown, setShown] = useState(false);
   useEffect(() => {
@@ -28,15 +31,16 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
     .sort((a, b) => a.pos - b.pos);
 
   return (
-    <div className="relative mt-16">
+    <div className="relative mt-12">
       {/* soft gradient glow behind the scale */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 h-48 -translate-y-1/2 opacity-30 blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 h-56 -translate-y-1/2 opacity-30 blur-3xl"
         style={{ background: H_GRADIENT }}
       />
 
-      <div className="relative py-16">
+      {/* room above for stacked company labels, below for the ruler */}
+      <div className="relative pb-12 pt-28">
         <div className="relative">
           {/* the gradient bar (draws in left to right) */}
           <div
@@ -48,30 +52,42 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
             }}
           />
 
-          {/* interior ticks 2 / 3 */}
+          {/* interior tick marks on the bar */}
           {[2, 3].map((v) => (
             <span
               key={v}
-              className="absolute top-1/2 h-5 w-px -translate-y-1/2 bg-white/15"
+              className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-white/20"
               style={{
                 left: `${scalePosition(v) * 100}%`,
                 opacity: shown ? 1 : 0,
-                transition: "opacity 600ms 450ms",
+                transition: "opacity 500ms 500ms",
               }}
             />
           ))}
 
-          {/* end labels */}
-          <span className="absolute left-0 top-full mt-2 font-mono text-[11px] text-muted-foreground">
-            1.4°C
-          </span>
-          <span className="absolute right-0 top-full mt-2 font-mono text-[11px] text-muted-foreground">
-            4.0°C
-          </span>
+          {/* scale ruler below the bar: 1.4 / 2 / 3 / 4 °C */}
+          {TICKS.map((v, idx) => {
+            const p = scalePosition(v) * 100;
+            const anchor: React.CSSProperties =
+              idx === 0
+                ? { left: 0 }
+                : idx === TICKS.length - 1
+                  ? { right: 0 }
+                  : { left: `${p}%`, transform: "translateX(-50%)" };
+            return (
+              <span
+                key={v}
+                className="absolute top-full mt-3 font-mono text-[11px] text-muted-foreground"
+                style={{ ...anchor, opacity: shown ? 1 : 0, transition: "opacity 500ms 550ms" }}
+              >
+                {v.toFixed(1)}°C
+              </span>
+            );
+          })}
 
-          {/* company markers + labels */}
+          {/* company markers + stacked labels above */}
           {items.map((it, i) => {
-            const above = i % 2 === 1;
+            const row = i % 2; // 0 = near bar, 1 = higher — separates clusters
             const markerLeft = it.aboveMax
               ? "calc(100% + 12px)"
               : it.belowMin
@@ -79,13 +95,17 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                 : `${it.pos}%`;
             let labelLeft = markerLeft;
             let tX = "-50%";
-            if (it.aboveMax || it.pos > 88) {
+            let textAlign: "left" | "center" | "right" = "center";
+            if (it.aboveMax || it.pos > 85) {
               labelLeft = "100%";
               tX = "-100%";
-            } else if (it.belowMin || it.pos < 12) {
+              textAlign = "right";
+            } else if (it.belowMin || it.pos < 15) {
               labelLeft = "0%";
               tX = "0%";
+              textAlign = "left";
             }
+            const conn = row === 0 ? 26 : 62;
             const delay = 300 + i * 110;
             return (
               <div key={it.s.company_id}>
@@ -94,8 +114,8 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                   className="absolute w-px bg-white/25"
                   style={{
                     left: markerLeft,
-                    [above ? "bottom" : "top"]: "50%",
-                    height: 18,
+                    bottom: "50%",
+                    height: conn,
                     transform: "translateX(-50%)",
                     opacity: shown ? 1 : 0,
                     transition: `opacity 400ms ${delay}ms`,
@@ -118,8 +138,9 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                   className="absolute whitespace-nowrap"
                   style={{
                     left: labelLeft,
+                    bottom: `calc(50% + ${conn}px)`,
                     transform: `translateX(${tX})`,
-                    [above ? "bottom" : "top"]: "calc(50% + 22px)",
+                    textAlign,
                     opacity: shown ? 1 : 0,
                     transition: `opacity 500ms ${delay + 90}ms`,
                   }}
