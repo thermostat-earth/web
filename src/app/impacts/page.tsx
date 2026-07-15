@@ -15,14 +15,14 @@ const METRICS = [
     title: "Heatwaves",
     caption: "The scorcher that used to come once a decade now comes…",
     values: ["every 2–3 years", "every 2 years", "most years", "almost every year"],
-    you: "At 1.5°C, heat already kills thousands of people in the UK each year. At 4°C, that could pass 10,000 deaths a year by the 2050s — with many more days too hot to work or sleep.",
+    you: "At 1.5°C, heat already kills thousands of people in the UK each year. At 4°C, that could pass 10,000 deaths a year by the 2050s, with many more days too hot to work or sleep.",
     source: "UKHSA, 2023",
   },
   {
     title: "Flooding downpours",
     caption: "The deluge that used to come once a decade now comes…",
     values: ["~every 7 years", "~every 6 years", "~every 5 years", "~every 4 years"],
-    you: "At 1.5°C, flooding and home-insurance costs are already climbing. At 4°C, some homes flood so often they become uninsurable — even now, 1 in 4 English homes could be in a flood-risk area by 2050, and new-builds since 2009 aren't covered by the Flood Re scheme.",
+    you: "At 1.5°C, flooding and home-insurance costs are already climbing. At 4°C, some homes flood so often they become uninsurable. Even now, 1 in 4 English homes could be in a flood-risk area by 2050, and new-builds since 2009 aren't covered by the Flood Re scheme.",
     source: "Environment Agency, 2024; ABI / Flood Re",
   },
   {
@@ -36,7 +36,7 @@ const METRICS = [
     title: "Harvests",
     caption: "Staple crops yield…",
     values: ["a tenth less", "a seventh less", "a fifth less", "a third less"],
-    you: "At 1.5°C, you see it in specific items — coffee, chocolate and olive oil are already spiking. At 4°C, staple crops yield a third less, so higher prices spread across your whole weekly shop.",
+    you: "At 1.5°C, you see it in specific items like coffee, chocolate and olive oil, which are already spiking. At 4°C, staple crops yield a third less, so higher prices spread across your whole weekly shop.",
     source: "Kotz et al., 2024",
   },
 ];
