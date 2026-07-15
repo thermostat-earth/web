@@ -47,8 +47,9 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
 
       {/* room above for stacked labels, below for the ruler */}
       <div className="relative pb-14 pt-36">
-        {/* inset so off-scale markers + labels have room on both sides */}
-        <div className="relative mx-6 sm:mx-16">
+        {/* left edge flush with the page text; right inset leaves room for
+            off-scale markers + labels */}
+        <div className="relative mr-6 sm:mr-16">
           {/* the gradient bar (draws in left to right) */}
           <div
             className="h-3 origin-left rounded-full ring-1 ring-white/10"
