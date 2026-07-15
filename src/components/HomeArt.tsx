@@ -17,36 +17,32 @@ const common = {
 // labelled at their ends.
 export function NumberArt({ className }: ArtProps) {
   const base = 130;
-  const bw = 18;
-  const tops = [44, 52, 48, 60, 66, 72, 78, 82]; // top-y per column (declining)
+  const barW = 14;
+  const tops = [46, 54, 50, 62, 68, 74, 80, 84]; // top-y per column (declining)
   return (
-    <svg viewBox="0 0 250 148" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 250 146" className={className} fill="none" aria-hidden="true">
       {/* baseline */}
-      <line x1="14" y1={base} x2="210" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.4" />
-      {/* emission columns */}
+      <line x1="10" y1={base} x2="208" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.4" />
+      {/* emission columns — solid white, rounded (as on the company page) */}
       {tops.map((top, i) => (
         <rect
           key={i}
-          x={16 + i * 24}
+          x={14 + i * 24}
           y={top}
-          width={bw}
+          width={barW}
           height={base - top}
-          rx="1.5"
-          fill="currentColor"
-          fillOpacity="0.16"
-          stroke="currentColor"
-          strokeWidth="1"
-          strokeOpacity="0.8"
+          rx="2"
+          fill="hsl(var(--foreground))"
         />
       ))}
-      {/* temperature pathways, fanning from a common start */}
-      <path d="M20 46 C 90 50, 150 52, 208 54" stroke="hsl(0 72% 56%)" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M20 46 C 92 66, 150 84, 208 92" stroke="hsl(32 90% 55%)" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M20 46 C 84 86, 150 116, 208 126" stroke="hsl(145 60% 46%)" strokeWidth="2.4" strokeLinecap="round" />
+      {/* temperature pathways — thin, dotted */}
+      <path d="M16 48 C 88 52, 150 54, 206 56" stroke="hsl(0 72% 58%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
+      <path d="M16 48 C 90 68, 150 86, 206 94" stroke="hsl(32 90% 56%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
+      <path d="M16 48 C 82 88, 150 116, 206 126" stroke="hsl(145 60% 48%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
       {/* pathway labels */}
-      <text x="214" y="58" className="font-mono" fontSize="11" fill="hsl(0 72% 63%)">4°</text>
-      <text x="214" y="96" className="font-mono" fontSize="11" fill="hsl(32 90% 60%)">3°</text>
-      <text x="214" y="130" className="font-mono" fontSize="11" fill="hsl(145 55% 56%)">1.5°</text>
+      <text x="212" y="60" className="font-mono" fontSize="11" fill="hsl(0 72% 64%)">4°</text>
+      <text x="212" y="98" className="font-mono" fontSize="11" fill="hsl(32 90% 60%)">3°</text>
+      <text x="212" y="130" className="font-mono" fontSize="11" fill="hsl(145 55% 58%)">1.5°</text>
     </svg>
   );
 }
