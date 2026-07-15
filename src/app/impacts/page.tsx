@@ -5,7 +5,7 @@ import { scoreColor } from "@/lib/temperature";
 export const metadata = {
   title: "What each temperature means for you — ThermoStat",
   description:
-    "What global warming of 1.5, 2, 3 and 4°C means for everyday life — heat, floods, money and food.",
+    "What global warming of 1.5, 2, 3 and 4°C means for everyday life: heat, floods, money and food.",
 };
 
 const BANDS = [1.5, 2, 3, 4];
