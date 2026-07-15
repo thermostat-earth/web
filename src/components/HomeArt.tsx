@@ -12,21 +12,44 @@ const common = {
   "aria-hidden": true as const,
 };
 
-// What the number means: a globe beside a thermometer.
+// What the number means: a company's emission columns (white) with the
+// temperature pathways curving over the top (1.5°C green, 3°C orange, 4°C red).
 export function NumberArt({ className }: ArtProps) {
+  const base = 132;
+  const bw = 20;
+  const bars = [40, 48, 44, 58, 62, 70, 74]; // top-y of each column (taller = more)
   return (
-    <svg viewBox="0 0 220 150" className={className} {...common}>
-      <circle cx="72" cy="75" r="46" />
-      <ellipse cx="72" cy="75" rx="19" ry="46" />
-      <line x1="26" y1="75" x2="118" y2="75" />
-      <path d="M36 50 H108" opacity="0.55" />
-      <path d="M36 100 H108" opacity="0.55" />
-      <path d="M162 42 a9 9 0 0 1 18 0 v56 a15 15 0 1 1 -18 0 z" />
-      <circle cx="171" cy="110" r="7.5" fill="currentColor" stroke="none" />
-      <line x1="171" y1="104" x2="171" y2="66" strokeWidth="4" />
-      <line x1="185" y1="60" x2="192" y2="60" />
-      <line x1="185" y1="76" x2="192" y2="76" />
-      <line x1="185" y1="92" x2="192" y2="92" />
+    <svg viewBox="0 0 240 150" className={className} fill="none" aria-hidden="true">
+      {/* baseline */}
+      <line
+        x1="16"
+        y1={base}
+        x2="228"
+        y2={base}
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeOpacity="0.45"
+      />
+      {/* emission columns */}
+      {bars.map((top, i) => (
+        <rect
+          key={i}
+          x={22 + i * 29}
+          y={top}
+          width={bw}
+          height={base - top}
+          rx="1.5"
+          fill="currentColor"
+          fillOpacity="0.12"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeOpacity="0.65"
+        />
+      ))}
+      {/* temperature pathways, fanning from a common start */}
+      <path d="M26 42 C 92 47, 152 51, 220 54" stroke="hsl(0 72% 56%)" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M26 42 C 94 62, 152 80, 220 92" stroke="hsl(32 90% 55%)" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M26 42 C 88 82, 150 114, 220 126" stroke="hsl(145 60% 46%)" strokeWidth="2.2" strokeLinecap="round" />
     </svg>
   );
 }
