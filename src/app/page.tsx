@@ -64,7 +64,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ArtCard>
-              <NumberArt className="w-full max-w-[240px]" />
+              <NumberArt className="w-full max-w-[320px]" />
             </ArtCard>
           </div>
         </section>
