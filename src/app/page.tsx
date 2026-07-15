@@ -48,7 +48,7 @@ export default async function HomePage() {
 
         {/* What the number means — text left, art right */}
         <section className="border-t border-border py-16">
-          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 What the number means
@@ -59,6 +59,9 @@ export default async function HomePage() {
                 It&apos;s global average warming above pre-industrial levels, the
                 same scale as the Paris 1.5°C and 2°C goals.
               </p>
+              <Link href="/impacts" className={`${btnSecondary} mt-6`}>
+                See what each temperature means →
+              </Link>
             </div>
             <ArtCard>
               <NumberArt className="w-full max-w-[240px]" />
@@ -68,7 +71,7 @@ export default async function HomePage() {
 
         {/* Independent — art left, text right */}
         <section className="border-t border-border py-16">
-          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <ArtCard>
               <IndependentArt className="w-full max-w-[190px]" />
             </ArtCard>
@@ -91,7 +94,7 @@ export default async function HomePage() {
 
         {/* How a company becomes a temperature — text left, art right */}
         <section className="border-t border-border py-16">
-          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 How a company becomes a temperature

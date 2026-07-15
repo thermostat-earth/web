@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
 
@@ -9,9 +10,9 @@ const H_GRADIENT =
 const TICKS = [1.4, 2, 3, 4];
 
 // A wide temperature scale with the scored companies pinned along it, coolest
-// (green, left) to hottest (red, right). Ruler sits below the bar; company
-// labels stack above it, staggered so clusters don't collide. Hovering a
-// company dims the rest. Animates in on load.
+// (green, left) to hottest (red, right). Ruler below the bar; company labels
+// stack above, staggered so clusters don't collide. Hovering a company dims the
+// rest and shows a "Go to score" button; dots and labels link to the company.
 export function HeroScale({ scores }: { scores: CompanyScore[] }) {
   const [barIn, setBarIn] = useState(false);
   const [dotsIn, setDotsIn] = useState(false);
@@ -97,6 +98,7 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
           {items.map((it, i) => {
             const row = i % 2; // 0 = near bar, 1 = higher — separates clusters
             const dim = hovered != null && hovered !== it.s.company_id;
+            const rightAnchored = it.aboveMax || it.pos > 85;
             const markerLeft = it.aboveMax
               ? "calc(100% + 12px)"
               : it.belowMin
@@ -105,7 +107,7 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
             let labelLeft = markerLeft;
             let tX = "-50%";
             let textAlign: "left" | "center" | "right" = "center";
-            if (it.aboveMax || it.pos > 85) {
+            if (rightAnchored) {
               labelLeft = "100%";
               tX = "-100%";
               textAlign = "right";
@@ -115,6 +117,7 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
               textAlign = "left";
             }
             const conn = row === 0 ? 34 : 88;
+            const href = `/company/${it.s.company_id}`;
             const onEnter = () => setHovered(it.s.company_id);
             const onLeave = () => setHovered(null);
             return (
@@ -131,11 +134,13 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                     transition: "opacity 250ms",
                   }}
                 />
-                {/* marker dot */}
-                <span
+                {/* marker dot (links to the company) */}
+                <Link
+                  href={href}
+                  aria-label={`${it.s.company_name} score`}
                   onMouseEnter={onEnter}
                   onMouseLeave={onLeave}
-                  className="absolute top-1/2 h-4 w-4 cursor-default rounded-full shadow"
+                  className="absolute top-1/2 block h-4 w-4 rounded-full shadow"
                   style={{
                     left: markerLeft,
                     transform: "translate(-50%,-50%)",
@@ -145,11 +150,12 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                     transition: "opacity 250ms",
                   }}
                 />
-                {/* label */}
-                <div
+                {/* label (links to the company; shows a Go-to-score button on hover) */}
+                <Link
+                  href={href}
                   onMouseEnter={onEnter}
                   onMouseLeave={onLeave}
-                  className="absolute cursor-default whitespace-nowrap"
+                  className="absolute whitespace-nowrap"
                   style={{
                     left: labelLeft,
                     bottom: `calc(50% + ${conn}px)`,
@@ -159,6 +165,15 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                     transition: "opacity 250ms",
                   }}
                 >
+                  {hovered === it.s.company_id && (
+                    <span
+                      className={`absolute bottom-full z-10 pb-1.5 ${rightAnchored ? "right-0" : "left-0"}`}
+                    >
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground shadow-md">
+                        Go to score →
+                      </span>
+                    </span>
+                  )}
                   <div
                     className="font-mono text-sm font-semibold leading-tight"
                     style={{ color: dim ? "hsl(var(--muted-foreground))" : it.color }}
@@ -175,7 +190,7 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                   >
                     {it.s.company_name}
                   </div>
-                </div>
+                </Link>
               </div>
             );
           })}
