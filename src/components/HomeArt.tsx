@@ -20,7 +20,7 @@ export function NumberArt({ className }: ArtProps) {
   const barW = 14;
   const tops = [46, 54, 50, 62, 68, 74, 80, 84]; // top-y per column (declining)
   return (
-    <svg viewBox="0 0 250 146" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 262 146" className={className} fill="none" aria-hidden="true">
       {/* baseline */}
       <line x1="10" y1={base} x2="208" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.4" />
       {/* emission columns — solid white, rounded (as on the company page) */}
@@ -40,9 +40,9 @@ export function NumberArt({ className }: ArtProps) {
       <path d="M16 48 C 90 68, 150 86, 206 94" stroke="hsl(32 90% 56%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
       <path d="M16 48 C 82 88, 150 116, 206 126" stroke="hsl(145 60% 48%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
       {/* pathway labels */}
-      <text x="212" y="60" className="font-mono" fontSize="11" fill="hsl(0 72% 64%)">4°</text>
-      <text x="212" y="98" className="font-mono" fontSize="11" fill="hsl(32 90% 60%)">3°</text>
-      <text x="212" y="130" className="font-mono" fontSize="11" fill="hsl(145 55% 58%)">1.5°</text>
+      <text x="212" y="60" className="font-mono" fontSize="11" fill="hsl(0 72% 64%)">4°C</text>
+      <text x="212" y="98" className="font-mono" fontSize="11" fill="hsl(32 90% 60%)">3°C</text>
+      <text x="212" y="130" className="font-mono" fontSize="11" fill="hsl(145 55% 58%)">1.5°C</text>
     </svg>
   );
 }
