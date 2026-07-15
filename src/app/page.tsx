@@ -82,7 +82,7 @@ export default async function HomePage() {
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 ThermoStat is free at its core and takes no money from the
                 companies it scores. Paid data licences may come later to fund the
-                work, but the public scores stay free to read. The aim is simple:
+                work, but the public scores stay free to read and methodologies will never be influenced by financial gain. The aim is simple:
                 give anyone a straight, comparable read on climate performance.
               </p>
               <Link href="/about" className={`${btnSecondary} mt-6`}>
