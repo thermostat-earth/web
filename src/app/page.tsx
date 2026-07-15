@@ -6,6 +6,11 @@ import { getScores } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
 
+const btnPrimary =
+  "inline-flex rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-90";
+const btnSecondary =
+  "inline-flex rounded-md border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-muted";
+
 export default async function HomePage() {
   const scores = await getScores();
   return (
@@ -21,30 +26,23 @@ export default async function HomePage() {
             ThermoStat turns a company&apos;s real emissions record into a single
             climate temperature score, in °C.
           </p>
-          <div className="mt-8 flex gap-3">
-            <Link
-              href="/scores"
-              className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-            >
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/scores" className={btnPrimary}>
               Explore scores
             </Link>
-            <Link
-              href="/methodology"
-              className="rounded-md border border-border px-5 py-2.5 text-sm font-medium hover:bg-muted"
-            >
+            <Link href="/methodology" className={btnSecondary}>
               How it works
             </Link>
           </div>
-
           <HeroScale scores={scores} />
         </section>
 
         {/* What the number means */}
-        <section className="border-t border-border py-14">
-          <h2 className="text-xl font-semibold tracking-tight">
+        <section className="grid gap-6 border-t border-border py-16 md:grid-cols-[1fr_1.6fr] md:gap-12">
+          <h2 className="text-2xl font-bold tracking-tight">
             What the number means
           </h2>
-          <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
+          <p className="leading-relaxed text-muted-foreground">
             A score of 2.7°C means that if the whole world cut emissions at that
             company&apos;s pace, warming would head toward about 2.7°C. It&apos;s
             global average warming above pre-industrial levels, the same scale as
@@ -52,13 +50,32 @@ export default async function HomePage() {
           </p>
         </section>
 
+        {/* About */}
+        <section className="grid gap-6 border-t border-border py-16 md:grid-cols-[1fr_1.6fr] md:gap-12">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Independent, and not for sale.
+          </h2>
+          <div>
+            <p className="leading-relaxed text-muted-foreground">
+              ThermoStat scores what companies have actually done to cut their
+              emissions, and takes no money from the companies it scores.
+              It&apos;s a free, public project with one aim: give anyone a
+              straight, comparable read on climate performance, so action counts
+              for more than announcements.
+            </p>
+            <Link href="/about" className={`${btnSecondary} mt-6`}>
+              About ThermoStat
+            </Link>
+          </div>
+        </section>
+
         {/* How a company becomes a temperature */}
-        <section className="border-t border-border py-14">
-          <div className="rounded-lg border border-border bg-card p-8">
-            <h2 className="text-2xl font-bold tracking-tight">
-              How a company becomes a temperature
-            </h2>
-            <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
+        <section className="grid gap-6 border-t border-border py-16 md:grid-cols-[1fr_1.6fr] md:gap-12">
+          <h2 className="text-2xl font-bold tracking-tight">
+            How a company becomes a temperature
+          </h2>
+          <div>
+            <p className="leading-relaxed text-muted-foreground">
               Every year, companies report their emissions in long documents that
               are hard to read and harder to compare. ThermoStat takes that
               public data, has a human check for what actually counts, and
@@ -69,20 +86,9 @@ export default async function HomePage() {
               any other company, with every figure traceable to the source, and
               use it to understand real climate impacts.
             </p>
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
-              <Link
-                href="/about"
-                className="text-foreground underline underline-offset-4"
-              >
-                About ThermoStat →
-              </Link>
-              <Link
-                href="/methodology"
-                className="text-foreground underline underline-offset-4"
-              >
-                The full methodology →
-              </Link>
-            </div>
+            <Link href="/methodology" className={`${btnSecondary} mt-6`}>
+              The full methodology
+            </Link>
           </div>
         </section>
       </main>

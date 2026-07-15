@@ -9,14 +9,20 @@ const H_GRADIENT =
 const TICKS = [1.4, 2, 3, 4];
 
 // A wide temperature scale with the scored companies pinned along it, coolest
-// (green, left) to hottest (red, right). Scale ruler sits below the bar;
-// company labels stack above it, staggered so clusters don't collide. Animates
-// in on load.
+// (green, left) to hottest (red, right). Ruler sits below the bar; company
+// labels stack above it, staggered so clusters don't collide. Hovering a
+// company dims the rest. Animates in on load.
 export function HeroScale({ scores }: { scores: CompanyScore[] }) {
-  const [shown, setShown] = useState(false);
+  const [barIn, setBarIn] = useState(false);
+  const [dotsIn, setDotsIn] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
   useEffect(() => {
-    const t = setTimeout(() => setShown(true), 60);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => setBarIn(true), 60);
+    const t2 = setTimeout(() => setDotsIn(true), 560);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   const items = scores
@@ -32,22 +38,23 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
 
   return (
     <div className="relative mt-12">
-      {/* soft gradient glow behind the scale */}
+      {/* soft gradient glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 h-56 -translate-y-1/2 opacity-30 blur-3xl"
         style={{ background: H_GRADIENT }}
       />
 
-      {/* room above for stacked company labels, below for the ruler */}
-      <div className="relative pb-12 pt-28">
-        <div className="relative">
+      {/* room above for stacked labels, below for the ruler */}
+      <div className="relative pb-14 pt-36">
+        {/* inset so off-scale markers + labels have room on both sides */}
+        <div className="relative mx-6 sm:mx-16">
           {/* the gradient bar (draws in left to right) */}
           <div
             className="h-3 origin-left rounded-full ring-1 ring-white/10"
             style={{
               background: H_GRADIENT,
-              transform: shown ? "scaleX(1)" : "scaleX(0)",
+              transform: barIn ? "scaleX(1)" : "scaleX(0)",
               transition: "transform 800ms cubic-bezier(0.16,1,0.3,1)",
             }}
           />
@@ -59,13 +66,13 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
               className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-white/20"
               style={{
                 left: `${scalePosition(v) * 100}%`,
-                opacity: shown ? 1 : 0,
-                transition: "opacity 500ms 500ms",
+                opacity: dotsIn ? 1 : 0,
+                transition: "opacity 400ms",
               }}
             />
           ))}
 
-          {/* scale ruler below the bar: 1.4 / 2 / 3 / 4 °C */}
+          {/* scale ruler below: 1.4 / 2 / 3 / 4 °C */}
           {TICKS.map((v, idx) => {
             const p = scalePosition(v) * 100;
             const anchor: React.CSSProperties =
@@ -78,16 +85,17 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
               <span
                 key={v}
                 className="absolute top-full mt-3 font-mono text-[11px] text-muted-foreground"
-                style={{ ...anchor, opacity: shown ? 1 : 0, transition: "opacity 500ms 550ms" }}
+                style={{ ...anchor, opacity: dotsIn ? 1 : 0, transition: "opacity 400ms" }}
               >
                 {v.toFixed(1)}°C
               </span>
             );
           })}
 
-          {/* company markers + stacked labels above */}
+          {/* company markers + stacked labels */}
           {items.map((it, i) => {
             const row = i % 2; // 0 = near bar, 1 = higher — separates clusters
+            const dim = hovered != null && hovered !== it.s.company_id;
             const markerLeft = it.aboveMax
               ? "calc(100% + 12px)"
               : it.belowMin
@@ -105,8 +113,9 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
               tX = "0%";
               textAlign = "left";
             }
-            const conn = row === 0 ? 26 : 62;
-            const delay = 300 + i * 110;
+            const conn = row === 0 ? 34 : 88;
+            const onEnter = () => setHovered(it.s.company_id);
+            const onLeave = () => setHovered(null);
             return (
               <div key={it.s.company_id}>
                 {/* connector */}
@@ -117,41 +126,52 @@ export function HeroScale({ scores }: { scores: CompanyScore[] }) {
                     bottom: "50%",
                     height: conn,
                     transform: "translateX(-50%)",
-                    opacity: shown ? 1 : 0,
-                    transition: `opacity 400ms ${delay}ms`,
+                    opacity: !dotsIn ? 0 : dim ? 0.1 : 1,
+                    transition: "opacity 250ms",
                   }}
                 />
                 {/* marker dot */}
                 <span
-                  className="absolute top-1/2 h-4 w-4 rounded-full shadow"
+                  onMouseEnter={onEnter}
+                  onMouseLeave={onLeave}
+                  className="absolute top-1/2 h-4 w-4 cursor-default rounded-full shadow"
                   style={{
                     left: markerLeft,
                     transform: "translate(-50%,-50%)",
                     background: it.color,
                     border: "2.5px solid hsl(var(--background))",
-                    opacity: shown ? 1 : 0,
-                    transition: `opacity 400ms ${delay}ms`,
+                    opacity: !dotsIn ? 0 : dim ? 0.18 : 1,
+                    transition: "opacity 250ms",
                   }}
                 />
                 {/* label */}
                 <div
-                  className="absolute whitespace-nowrap"
+                  onMouseEnter={onEnter}
+                  onMouseLeave={onLeave}
+                  className="absolute cursor-default whitespace-nowrap"
                   style={{
                     left: labelLeft,
                     bottom: `calc(50% + ${conn}px)`,
                     transform: `translateX(${tX})`,
                     textAlign,
-                    opacity: shown ? 1 : 0,
-                    transition: `opacity 500ms ${delay + 90}ms`,
+                    opacity: !dotsIn ? 0 : dim ? 0.3 : 1,
+                    transition: "opacity 250ms",
                   }}
                 >
                   <div
                     className="font-mono text-sm font-semibold leading-tight"
-                    style={{ color: it.color }}
+                    style={{ color: dim ? "hsl(var(--muted-foreground))" : it.color }}
                   >
                     {formatScore(it.score, it.aboveMax, it.belowMin)}°C
                   </div>
-                  <div className="text-xs font-medium leading-tight text-foreground">
+                  <div
+                    className="text-xs font-medium leading-tight"
+                    style={{
+                      color: dim
+                        ? "hsl(var(--muted-foreground))"
+                        : "hsl(var(--foreground))",
+                    }}
+                  >
                     {it.s.company_name}
                   </div>
                 </div>
