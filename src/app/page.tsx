@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroScale } from "@/components/HeroScale";
-import { NumberArt, IndependentArt, MethodArt } from "@/components/HomeArt";
+import { NumberArt, MagnifyArt, MethodArt } from "@/components/HomeArt";
 import { getScores } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
@@ -64,7 +64,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ArtCard>
-              <IndependentArt className="w-full max-w-[190px]" />
+              <MagnifyArt className="w-full max-w-[300px]" />
             </ArtCard>
           </div>
         </section>

@@ -89,18 +89,63 @@ export function NumberArt({ className }: ArtProps) {
   );
 }
 
-// Independent, not for sale: a coin, struck through.
-export function IndependentArt({ className }: ArtProps) {
+// What ThermoStat is for: a magnifier over messy reports — the clutter of
+// disclosures made clear and checkable (one clean, green reading in the lens).
+export function MagnifyArt({ className }: ArtProps) {
+  const lx = 152;
+  const ly = 84;
+  const lr = 33;
   return (
-    <svg viewBox="0 0 160 150" className={className} {...common}>
-      <circle cx="80" cy="75" r="48" />
-      <circle cx="80" cy="75" r="37" opacity="0.5" />
-      {/* a plain currency mark */}
-      <path d="M88 60 a11 11 0 0 0 -19 8 v22" />
-      <line x1="66" y1="92" x2="92" y2="92" />
-      <line x1="64" y1="78" x2="83" y2="78" />
-      {/* struck through */}
-      <line x1="46" y1="109" x2="114" y2="41" strokeWidth="2.5" />
+    <svg viewBox="0 0 240 160" className={className} fill="none" aria-hidden="true">
+      <defs>
+        <clipPath id="ts-lens-clip">
+          <circle cx={lx} cy={ly} r={lr - 1.5} />
+        </clipPath>
+        <filter id="ts-lens-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="2.4" floodColor="#ffffff" floodOpacity="0.35" />
+        </filter>
+      </defs>
+
+      {/* messy reports behind */}
+      <g
+        stroke="hsl(var(--foreground))"
+        strokeOpacity="0.4"
+        strokeWidth="1.3"
+        fill="hsl(var(--foreground))"
+        fillOpacity="0.04"
+        strokeLinejoin="round"
+      >
+        <g transform="rotate(-10 67 64)">
+          <rect x="40" y="28" width="54" height="72" rx="3" />
+          <line x1="50" y1="45" x2="84" y2="45" strokeOpacity="0.32" />
+          <line x1="50" y1="57" x2="84" y2="57" strokeOpacity="0.32" />
+          <line x1="50" y1="69" x2="74" y2="69" strokeOpacity="0.32" />
+        </g>
+        <g transform="rotate(8 92 78)">
+          <rect x="66" y="42" width="54" height="72" rx="3" />
+          <line x1="76" y1="59" x2="110" y2="59" strokeOpacity="0.32" />
+          <line x1="76" y1="71" x2="110" y2="71" strokeOpacity="0.32" />
+          <line x1="76" y1="83" x2="98" y2="83" strokeOpacity="0.32" />
+        </g>
+        <g transform="rotate(-3 80 94)">
+          <rect x="54" y="56" width="54" height="72" rx="3" />
+          <line x1="64" y1="73" x2="98" y2="73" strokeOpacity="0.32" />
+          <line x1="64" y1="85" x2="98" y2="85" strokeOpacity="0.32" />
+          <line x1="64" y1="97" x2="86" y2="97" strokeOpacity="0.32" />
+        </g>
+      </g>
+
+      {/* clean, magnified reading inside the lens */}
+      <g clipPath="url(#ts-lens-clip)">
+        <circle cx={lx} cy={ly} r={lr} fill="hsl(var(--background))" fillOpacity="0.6" />
+        <line x1={lx - 20} y1={ly - 8} x2={lx + 18} y2={ly - 8} stroke="hsl(145 60% 56%)" strokeWidth="2.6" strokeLinecap="round" />
+        <line x1={lx - 20} y1={ly + 2} x2={lx + 14} y2={ly + 2} stroke="hsl(var(--foreground))" strokeOpacity="0.85" strokeWidth="2" strokeLinecap="round" />
+        <line x1={lx - 20} y1={ly + 11} x2={lx + 8} y2={ly + 11} stroke="hsl(var(--foreground))" strokeOpacity="0.6" strokeWidth="2" strokeLinecap="round" />
+      </g>
+
+      {/* lens rim + handle */}
+      <line x1={lx + 22} y1={ly + 23} x2={lx + 44} y2={ly + 45} stroke="hsl(var(--foreground))" strokeWidth="7" strokeLinecap="round" filter="url(#ts-lens-glow)" />
+      <circle cx={lx} cy={ly} r={lr} stroke="hsl(var(--foreground))" strokeWidth="3.4" filter="url(#ts-lens-glow)" />
     </svg>
   );
 }
