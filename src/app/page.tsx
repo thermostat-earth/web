@@ -46,35 +46,9 @@ export default async function HomePage() {
           <HeroScale scores={scores} />
         </section>
 
-        {/* What the number means — text left, art right */}
+        {/* What ThermoStat is for — text left, art right */}
         <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                What the number means
-              </h2>
-              <p className="mt-4 leading-relaxed text-muted-foreground">
-                A score of 2.7°C means that if the whole world cut emissions at
-                that company&apos;s pace, warming would head toward about 2.7°C.
-                It&apos;s global average warming above pre-industrial levels, the
-                same scale as the Paris 1.5°C and 2°C goals.
-              </p>
-              <Link href="/impacts" className={`${btnSecondary} mt-6`}>
-                See what each temperature means →
-              </Link>
-            </div>
-            <ArtCard>
-              <NumberArt className="w-full max-w-[410px]" />
-            </ArtCard>
-          </div>
-        </section>
-
-        {/* Independent — art left, text right */}
-        <section className="py-16">
-          <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-            <ArtCard>
-              <IndependentArt className="w-full max-w-[190px]" />
-            </ArtCard>
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 What ThermoStat is for
@@ -89,12 +63,18 @@ export default async function HomePage() {
                 About ThermoStat
               </Link>
             </div>
+            <ArtCard>
+              <IndependentArt className="w-full max-w-[190px]" />
+            </ArtCard>
           </div>
         </section>
 
-        {/* How a company becomes a temperature — text left, art right */}
+        {/* How a company becomes a temperature — art left, text right */}
         <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
+            <ArtCard>
+              <MethodArt className="w-full max-w-[260px]" />
+            </ArtCard>
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 How a company becomes a temperature
@@ -114,8 +94,28 @@ export default async function HomePage() {
                 The full methodology
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* What the number means — text left, art right */}
+        <section className="py-16">
+          <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                What the number means
+              </h2>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                A score of 2.7°C means that if the whole world cut emissions at
+                that company&apos;s pace, warming would head toward about 2.7°C.
+                It&apos;s global average warming above pre-industrial levels, the
+                same scale as the Paris 1.5°C and 2°C goals.
+              </p>
+              <Link href="/impacts" className={`${btnSecondary} mt-6`}>
+                See what each temperature means →
+              </Link>
+            </div>
             <ArtCard>
-              <MethodArt className="w-full max-w-[260px]" />
+              <NumberArt className="w-full max-w-[410px]" />
             </ArtCard>
           </div>
         </section>
