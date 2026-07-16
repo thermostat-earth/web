@@ -25,16 +25,24 @@ export function NumberArt({ className }: ArtProps) {
     { y: 107, text: "1.5°C", w: 42, color: "hsl(145 55% 58%)" },
   ];
   return (
-    <svg viewBox="0 0 240 172" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 240 178" className={className} fill="none" aria-hidden="true">
       <defs>
-        <filter id="ts-bar-shadow" x="-30%" y="-30%" width="160%" height="170%">
-          <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="hsl(220 60% 3%)" floodOpacity="0.55" />
+        <filter id="ts-bar-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#ffffff" floodOpacity="0.4" />
         </filter>
       </defs>
-      {/* baseline */}
+      {/* legend: the bars are a company's emissions */}
+      <rect x="16" y="9" width="9" height="9" rx="2" fill="hsl(var(--foreground))" />
+      <text x="30" y="17" className="font-mono" fontSize="10" fill="hsl(var(--muted-foreground))">
+        Company emissions
+      </text>
+      {/* baseline + time hint */}
       <line x1="16" y1={base} x2="224" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.35" />
-      {/* emission columns — translucent white, soft shadow (glassy) */}
-      <g filter="url(#ts-bar-shadow)">
+      <text x="224" y={base + 15} textAnchor="end" className="font-mono" fontSize="10" fill="hsl(var(--muted-foreground))">
+        over time →
+      </text>
+      {/* emission columns — solid white, glowing */}
+      <g filter="url(#ts-bar-glow)">
         {tops.map((top, i) => (
           <rect
             key={i}
@@ -44,10 +52,6 @@ export function NumberArt({ className }: ArtProps) {
             height={base - top}
             rx="2.5"
             fill="hsl(var(--foreground))"
-            fillOpacity="0.5"
-            stroke="hsl(var(--foreground))"
-            strokeOpacity="0.25"
-            strokeWidth="0.75"
           />
         ))}
       </g>
