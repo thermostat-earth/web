@@ -47,7 +47,7 @@ export default async function HomePage() {
         </section>
 
         {/* What the number means — text left, art right */}
-        <section className="border-t border-border py-16">
+        <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -70,7 +70,7 @@ export default async function HomePage() {
         </section>
 
         {/* Independent — art left, text right */}
-        <section className="border-t border-border py-16">
+        <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <ArtCard>
               <IndependentArt className="w-full max-w-[190px]" />
@@ -93,7 +93,7 @@ export default async function HomePage() {
         </section>
 
         {/* How a company becomes a temperature — text left, art right */}
-        <section className="border-t border-border py-16">
+        <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">

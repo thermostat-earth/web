@@ -16,33 +16,65 @@ const common = {
 // temperature pathways curving over the top (1.5°C green, 3°C orange, 4°C red),
 // labelled at their ends.
 export function NumberArt({ className }: ArtProps) {
-  const base = 130;
-  const barW = 14;
-  const tops = [46, 54, 50, 62, 68, 74, 80, 84]; // top-y per column (declining)
+  const base = 150;
+  const barW = 16;
+  const tops = [52, 60, 56, 70, 78, 86, 94, 100]; // top-y per column (declining)
+  const labels = [
+    { y: 50, text: "4°C", w: 30, color: "hsl(0 72% 64%)" },
+    { y: 75, text: "3°C", w: 30, color: "hsl(32 90% 60%)" },
+    { y: 107, text: "1.5°C", w: 42, color: "hsl(145 55% 58%)" },
+  ];
   return (
-    <svg viewBox="0 0 262 146" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 240 172" className={className} fill="none" aria-hidden="true">
+      <defs>
+        <filter id="ts-bar-shadow" x="-30%" y="-30%" width="160%" height="170%">
+          <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="hsl(220 60% 3%)" floodOpacity="0.55" />
+        </filter>
+      </defs>
       {/* baseline */}
-      <line x1="10" y1={base} x2="208" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.4" />
-      {/* emission columns — solid white, rounded (as on the company page) */}
-      {tops.map((top, i) => (
-        <rect
-          key={i}
-          x={14 + i * 24}
-          y={top}
-          width={barW}
-          height={base - top}
-          rx="2"
-          fill="hsl(var(--foreground))"
-        />
-      ))}
+      <line x1="16" y1={base} x2="224" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.35" />
+      {/* emission columns — translucent white, soft shadow (glassy) */}
+      <g filter="url(#ts-bar-shadow)">
+        {tops.map((top, i) => (
+          <rect
+            key={i}
+            x={22 + i * 25}
+            y={top}
+            width={barW}
+            height={base - top}
+            rx="2.5"
+            fill="hsl(var(--foreground))"
+            fillOpacity="0.5"
+            stroke="hsl(var(--foreground))"
+            strokeOpacity="0.25"
+            strokeWidth="0.75"
+          />
+        ))}
+      </g>
       {/* temperature pathways — thin, dotted */}
-      <path d="M16 48 C 88 52, 150 54, 206 56" stroke="hsl(0 72% 58%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
-      <path d="M16 48 C 90 68, 150 86, 206 94" stroke="hsl(32 90% 56%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
-      <path d="M16 48 C 82 88, 150 116, 206 126" stroke="hsl(145 60% 48%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
-      {/* pathway labels */}
-      <text x="212" y="60" className="font-mono" fontSize="11" fill="hsl(0 72% 64%)">4°C</text>
-      <text x="212" y="98" className="font-mono" fontSize="11" fill="hsl(32 90% 60%)">3°C</text>
-      <text x="212" y="130" className="font-mono" fontSize="11" fill="hsl(145 55% 58%)">1.5°C</text>
+      <path d="M22 42 C 92 49, 150 53, 218 57" stroke="hsl(0 72% 58%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
+      <path d="M22 42 C 92 66, 150 86, 218 98" stroke="hsl(32 90% 56%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
+      <path d="M22 42 C 82 92, 150 130, 218 146" stroke="hsl(145 60% 48%)" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 5" />
+      {/* labels — rounded translucent pills, centred on each line */}
+      {labels.map((l) => (
+        <g key={l.text}>
+          <rect
+            x={120 - l.w / 2}
+            y={l.y - 9}
+            width={l.w}
+            height="18"
+            rx="6"
+            fill="hsl(var(--background))"
+            fillOpacity="0.8"
+            stroke={l.color}
+            strokeOpacity="0.45"
+            strokeWidth="1"
+          />
+          <text x="120" y={l.y + 3.5} textAnchor="middle" className="font-mono" fontSize="11" fill={l.color}>
+            {l.text}
+          </text>
+        </g>
+      ))}
     </svg>
   );
 }
