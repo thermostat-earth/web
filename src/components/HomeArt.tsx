@@ -36,9 +36,9 @@ export function NumberArt({ className }: ArtProps) {
         </filter>
       </defs>
 
-      {/* legend: the bars are a company's emissions */}
-      <rect x="16" y="8" width="8.5" height="8.5" rx="2.5" fill="hsl(var(--foreground))" />
-      <text x="29" y="15.5" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
+      {/* legend: the bars are a company's emissions (left edge aligned to the bars) */}
+      <rect x="20" y="8" width="8.5" height="8.5" rx="2.5" fill="hsl(var(--foreground))" />
+      <text x="33" y="15.5" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
         Company emissions
       </text>
 
