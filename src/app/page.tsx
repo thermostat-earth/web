@@ -77,13 +77,13 @@ export default async function HomePage() {
             </ArtCard>
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Independent, and not for sale.
+                What ThermoStat is for
               </h2>
               <p className="mt-4 leading-relaxed text-muted-foreground">
-                ThermoStat is free at its core and takes no money from the
-                companies it scores. Paid data licences may come later to fund the
-                work, but the public scores stay free to read and methodologies will never be influenced by financial gain. The aim is simple:
-                give anyone a straight, comparable read on climate performance.
+                ThermoStat exists to make company climate performance easy to see
+                and compare, based on what a company has actually done. It&apos;s
+                an independent, public project that shows its full working, so
+                anyone can check the numbers for themselves.
               </p>
               <Link href="/about" className={`${btnSecondary} mt-6`}>
                 About ThermoStat
