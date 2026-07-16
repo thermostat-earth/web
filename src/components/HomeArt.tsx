@@ -34,6 +34,9 @@ export function NumberArt({ className }: ArtProps) {
         <filter id="ts-bar-glow" x="-40%" y="-40%" width="180%" height="180%">
           <feDropShadow dx="0" dy="0" stdDeviation="3.6" floodColor="#ffffff" floodOpacity="0.5" />
         </filter>
+        <filter id="ts-path-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="0" stdDeviation="1.6" floodColor="hsl(220 55% 4%)" floodOpacity="0.9" />
+        </filter>
       </defs>
 
       {/* legend: the bars are a company's emissions (left edge aligned to the bars) */}
@@ -43,7 +46,7 @@ export function NumberArt({ className }: ArtProps) {
       </text>
 
       {/* baseline + time hint */}
-      <line x1="16" y1={base} x2="286" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.28" />
+      <line x1="20" y1={base} x2="286" y2={base} stroke="currentColor" strokeWidth="1" strokeOpacity="0.28" />
       <text x="286" y={base + 14} textAnchor="end" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
         over time →
       </text>
@@ -55,10 +58,12 @@ export function NumberArt({ className }: ArtProps) {
         ))}
       </g>
 
-      {/* temperature pathways — fine dotted */}
-      <path d="M20 40 C 110 46, 200 49, 285 52" stroke="hsl(0 72% 58%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
-      <path d="M20 40 C 110 60, 200 76, 285 84" stroke="hsl(32 90% 56%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
-      <path d="M20 40 C 100 82, 200 112, 285 122" stroke="hsl(145 60% 48%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+      {/* temperature pathways — fine dotted, dark halo so they read over the white bars */}
+      <g filter="url(#ts-path-shadow)">
+        <path d="M20 40 C 110 46, 200 49, 285 52" stroke="hsl(0 72% 58%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        <path d="M20 40 C 110 60, 200 76, 285 84" stroke="hsl(32 90% 56%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        <path d="M20 40 C 100 82, 200 112, 285 122" stroke="hsl(145 60% 48%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+      </g>
 
       {/* pathway labels — refined pills centred on each line */}
       {labels.map((l) => (
