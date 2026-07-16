@@ -14,7 +14,7 @@ const btnSecondary =
 
 function ArtCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-center rounded-2xl border border-border bg-card px-8 py-14 text-foreground/70">
+    <div className="flex items-center justify-center rounded-2xl border border-border bg-card px-8 py-10 text-foreground/70">
       {children}
     </div>
   );
@@ -64,7 +64,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ArtCard>
-              <NumberArt className="w-full" />
+              <NumberArt className="w-full max-w-[340px]" />
             </ArtCard>
           </div>
         </section>
