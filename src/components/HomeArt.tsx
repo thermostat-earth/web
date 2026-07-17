@@ -92,22 +92,22 @@ export function NumberArt({ className }: ArtProps) {
 // What ThermoStat is for: a magnifier over messy reports — the clutter of
 // disclosures made clear and checkable (one clean, green reading in the lens).
 export function MagnifyArt({ className }: ArtProps) {
-  const lx = 194;
-  const ly = 72;
+  const lx = 150;
+  const ly = 76;
   const lr = 50;
   const docs = [
-    { r: -11, ox: 34, oy: 6 },
-    { r: 9, ox: 66, oy: 20 },
-    { r: -4, ox: 50, oy: 36 },
+    { r: -11, ox: 26, oy: 6 },
+    { r: 9, ox: 58, oy: 20 },
+    { r: -4, ox: 42, oy: 36 },
   ];
-  // three colour-coded readings inside the lens: green (short) → red (long)
+  // colour-coded readings (green shortest → red longest), vertical order mixed
   const bars = [
-    { y: ly - 13, len: 26, color: "hsl(145 60% 56%)" },
-    { y: ly - 1, len: 40, color: "hsl(38 92% 56%)" },
-    { y: ly + 11, len: 52, color: "hsl(0 75% 58%)" },
+    { y: ly - 13, len: 40, color: "hsl(38 92% 56%)" },
+    { y: ly - 1, len: 52, color: "hsl(0 75% 58%)" },
+    { y: ly + 11, len: 26, color: "hsl(145 60% 56%)" },
   ];
   return (
-    <svg viewBox="0 0 280 168" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 236 152" className={className} fill="none" aria-hidden="true">
       <defs>
         <clipPath id="ts-lens-clip">
           <circle cx={lx} cy={ly} r={lr - 2} />
@@ -140,7 +140,7 @@ export function MagnifyArt({ className }: ArtProps) {
 
       {/* clean, magnified reading inside the lens */}
       <g clipPath="url(#ts-lens-clip)">
-        <circle cx={lx} cy={ly} r={lr} fill="hsl(var(--background))" fillOpacity="0.68" />
+        <circle cx={lx} cy={ly} r={lr} fill="hsl(var(--background))" fillOpacity="0.82" />
         {bars.map((b, i) => (
           <line
             key={i}
