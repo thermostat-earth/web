@@ -16,16 +16,16 @@ const common = {
 // temperature pathways curving over the top (1.5°C green, 3°C orange, 4°C red),
 // labelled at their ends.
 export function NumberArt({ className }: ArtProps) {
-  const base = 132;
+  const base = 160;
   const barW = 15;
-  const tops = [46, 52, 48, 56, 54, 62, 66, 72, 76, 82, 86, 90]; // 12 columns, declining
+  const tops = [32, 42, 36, 50, 58, 68, 78, 88, 96, 106, 114, 122]; // 12 columns, declining
   const labels = [
-    { y: 47, text: "4°C", w: 27, color: "hsl(0 85% 73%)" },
-    { y: 67, text: "3°C", w: 27, color: "hsl(35 95% 68%)" },
-    { y: 93, text: "1.5°C", w: 38, color: "hsl(145 62% 68%)" },
+    { y: 40, text: "4°C", w: 27, color: "hsl(0 85% 73%)" },
+    { y: 69, text: "3°C", w: 27, color: "hsl(35 95% 68%)" },
+    { y: 109, text: "1.5°C", w: 38, color: "hsl(145 62% 68%)" },
   ];
   return (
-    <svg viewBox="0 0 300 156" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 300 188" className={className} fill="none" aria-hidden="true">
       <defs>
         <linearGradient id="ts-bar-fill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="hsl(var(--foreground))" stopOpacity="1" />
@@ -60,9 +60,9 @@ export function NumberArt({ className }: ArtProps) {
 
       {/* temperature pathways — fine dotted, dark halo so they read over the white bars */}
       <g filter="url(#ts-path-shadow)">
-        <path d="M20 40 C 110 46, 200 49, 285 52" stroke="hsl(0 72% 58%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
-        <path d="M20 40 C 110 60, 200 76, 285 84" stroke="hsl(32 90% 56%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
-        <path d="M20 40 C 100 82, 200 112, 285 122" stroke="hsl(145 60% 48%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        <path d="M20 28 C 110 40, 200 43, 285 46" stroke="hsl(0 72% 58%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        <path d="M20 28 C 110 60, 200 82, 285 96" stroke="hsl(32 90% 56%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        <path d="M20 28 C 100 96, 200 134, 285 150" stroke="hsl(145 60% 48%)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
       </g>
 
       {/* pathway labels — refined pills centred on each line */}

@@ -73,7 +73,7 @@ export default async function HomePage() {
         <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <ArtCard>
-              <MethodArt className="w-full max-w-[260px]" />
+              <NumberArt className="w-full max-w-[460px]" />
             </ArtCard>
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -82,7 +82,7 @@ export default async function HomePage() {
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 Every year, companies report their emissions in long documents
                 that are hard to read and harder to compare. ThermoStat takes that
-                public data, has a human check for what actually counts, and
+                public data, applies a human check for what actually counts, and
                 measures how fast a company has really cut its emissions over
                 recent years. It then finds the global climate pathway moving at
                 that same pace, and reports the temperature that pathway leads to.
@@ -115,7 +115,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ArtCard>
-              <NumberArt className="w-full max-w-[410px]" />
+              <MethodArt className="w-full max-w-[300px]" />
             </ArtCard>
           </div>
         </section>
