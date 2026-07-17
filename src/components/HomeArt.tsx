@@ -92,22 +92,28 @@ export function NumberArt({ className }: ArtProps) {
 // What ThermoStat is for: a magnifier over messy reports — the clutter of
 // disclosures made clear and checkable (one clean, green reading in the lens).
 export function MagnifyArt({ className }: ArtProps) {
-  const lx = 178;
-  const ly = 90;
-  const lr = 42;
+  const lx = 194;
+  const ly = 72;
+  const lr = 50;
   const docs = [
-    { r: -11, ox: 40, oy: 26 },
-    { r: 9, ox: 74, oy: 40 },
-    { r: -4, ox: 58, oy: 58 },
+    { r: -11, ox: 34, oy: 6 },
+    { r: 9, ox: 66, oy: 20 },
+    { r: -4, ox: 50, oy: 36 },
+  ];
+  // three colour-coded readings inside the lens: green (short) → red (long)
+  const bars = [
+    { y: ly - 13, len: 26, color: "hsl(145 60% 56%)" },
+    { y: ly - 1, len: 40, color: "hsl(38 92% 56%)" },
+    { y: ly + 11, len: 52, color: "hsl(0 75% 58%)" },
   ];
   return (
-    <svg viewBox="0 0 264 176" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 280 168" className={className} fill="none" aria-hidden="true">
       <defs>
         <clipPath id="ts-lens-clip">
           <circle cx={lx} cy={ly} r={lr - 2} />
         </clipPath>
         <filter id="ts-lens-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="2.8" floodColor="#ffffff" floodOpacity="0.32" />
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ffffff" floodOpacity="0.32" />
         </filter>
       </defs>
 
@@ -122,7 +128,7 @@ export function MagnifyArt({ className }: ArtProps) {
         strokeLinecap="round"
       >
         {docs.map((d, i) => (
-          <g key={i} transform={`rotate(${d.r} ${d.ox + 28} ${d.oy + 38})`}>
+          <g key={i} transform={`rotate(${d.r} ${d.ox + 27} ${d.oy + 37})`}>
             <path d={`M${d.ox} ${d.oy} h42 l13 13 v61 h-55 z`} />
             <path d={`M${d.ox + 42} ${d.oy} v13 h13`} />
             <line x1={d.ox + 10} y1={d.oy + 30} x2={d.ox + 44} y2={d.oy + 30} strokeOpacity="0.3" />
@@ -134,16 +140,25 @@ export function MagnifyArt({ className }: ArtProps) {
 
       {/* clean, magnified reading inside the lens */}
       <g clipPath="url(#ts-lens-clip)">
-        <circle cx={lx} cy={ly} r={lr} fill="hsl(var(--background))" fillOpacity="0.66" />
-        <line x1={lx - 24} y1={ly - 10} x2={lx + 22} y2={ly - 10} stroke="hsl(145 60% 58%)" strokeWidth="3" strokeLinecap="round" />
-        <line x1={lx - 24} y1={ly + 1} x2={lx + 18} y2={ly + 1} stroke="hsl(var(--foreground))" strokeOpacity="0.85" strokeWidth="2.2" strokeLinecap="round" />
-        <line x1={lx - 24} y1={ly + 12} x2={lx + 8} y2={ly + 12} stroke="hsl(var(--foreground))" strokeOpacity="0.6" strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx={lx} cy={ly} r={lr} fill="hsl(var(--background))" fillOpacity="0.68" />
+        {bars.map((b, i) => (
+          <line
+            key={i}
+            x1={lx - 26}
+            y1={b.y}
+            x2={lx - 26 + b.len}
+            y2={b.y}
+            stroke={b.color}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        ))}
       </g>
 
-      {/* handle, rim, and a soft glass glint */}
-      <line x1={lx + 29} y1={ly + 29} x2={lx + 54} y2={ly + 54} stroke="hsl(var(--foreground))" strokeWidth="8" strokeLinecap="round" filter="url(#ts-lens-glow)" />
-      <circle cx={lx} cy={ly} r={lr} stroke="hsl(var(--foreground))" strokeWidth="3.6" filter="url(#ts-lens-glow)" />
-      <path d={`M${lx - 27} ${ly - 12} Q ${lx - 24} ${ly - 27} ${lx - 10} ${ly - 32}`} stroke="#ffffff" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" />
+      {/* handle, rim, and a glass glint that follows the lens curve */}
+      <line x1={lx + 35} y1={ly + 35} x2={lx + 60} y2={ly + 60} stroke="hsl(var(--foreground))" strokeWidth="8.5" strokeLinecap="round" filter="url(#ts-lens-glow)" />
+      <circle cx={lx} cy={ly} r={lr} stroke="hsl(var(--foreground))" strokeWidth="3.8" filter="url(#ts-lens-glow)" />
+      <path d={`M${lx - 39} ${ly - 18} A 43 43 0 0 1 ${lx - 15} ${ly - 40}`} stroke="#ffffff" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
