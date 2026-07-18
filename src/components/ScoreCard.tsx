@@ -5,7 +5,7 @@ const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
 const TICKS = [1.4, 2, 3, 4];
 
-export function ScoreCard({ c }: { c: CompanyScore }) {
+export function ScoreCard({ c, soloSector = false }: { c: CompanyScore; soloSector?: boolean }) {
   const score = c.thermostat_score_location;
   const meta = [c.sector, c.country_hq].filter(Boolean).join(" · ");
 
@@ -20,13 +20,19 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
   }
 
   const color = scoreColor(score);
-  const median = c.sector_median_score_location;
+  // Solo sector → no meaningful average; drop the comparison visual + swap the label.
+  const median = soloSector ? null : c.sector_median_score_location;
   const aboveMax = !!c.score_above_max_location;
   const belowMin = !!c.score_below_min_location;
   const diff = median != null ? score - median : null;
   const approx = diff != null && Math.abs(diff) < 0.05;
-  const vsSector =
-    diff == null ? null : approx ? "≈ sector average" : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector`;
+  const vsSector = soloSector
+    ? "Only company in this sector so far"
+    : diff == null
+      ? null
+      : approx
+        ? "≈ sector average"
+        : `${diff > 0 ? "+" : "−"}${Math.abs(diff).toFixed(2)}°C vs sector`;
 
   return (
     <div className="flex items-stretch justify-between gap-4 rounded-lg border border-border bg-card px-6 py-8" style={{ borderLeft: `3px solid ${color}` }}>
@@ -38,7 +44,7 @@ export function ScoreCard({ c }: { c: CompanyScore }) {
           <span className="ml-1 text-2xl font-medium">°C</span>
         </div>
         {vsSector && (
-          <div className="mt-2.5 text-xs" style={{ color: approx ? undefined : color }}>
+          <div className="mt-2.5 text-xs" style={{ color: approx || soloSector ? undefined : color }}>
             {vsSector}
           </div>
         )}

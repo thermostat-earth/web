@@ -30,17 +30,22 @@ function TriDown({ color }: { color: string }) {
 
 export function HorizontalThermometer({
   score,
-  sectorMedian,
+  sectorMedian: sectorMedianRaw,
   companyName,
   aboveMax = false,
   belowMin = false,
+  soloSector = false,
 }: {
   score: number;
   sectorMedian: number | null;
   companyName: string;
   aboveMax?: boolean;
   belowMin?: boolean;
+  soloSector?: boolean;
 }) {
+  // With only one company in the sector, the "sector average" is just this
+  // company's own score — so we drop the comparison entirely.
+  const sectorMedian = soloSector ? null : sectorMedianRaw;
   const color = scoreColor(score);
   const pos = aboveMax ? 100 : belowMin ? 0 : scalePosition(score) * 100;
   const sectorPos = sectorMedian != null ? scalePosition(sectorMedian) * 100 : null;
@@ -108,6 +113,7 @@ export function HorizontalThermometer({
       <div className="relative mb-2 h-8">
         <div ref={companyRef} className="absolute top-0 whitespace-nowrap text-xs font-medium" style={{ ...styleForCSS(companyCenter, align.company), color }}>
           {companyName}
+          {soloSector && <span className="font-normal text-muted-foreground"> · Only company in this sector so far</span>}
           {coincident && <span className="font-normal text-muted-foreground"> · ≈ Sector average</span>}
         </div>
         <div className="absolute bottom-0 -translate-x-1/2" style={{ left: companyCenter }}><TriDown color={color} /></div>

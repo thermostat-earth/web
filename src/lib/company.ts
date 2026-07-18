@@ -28,6 +28,7 @@ export type CompanyHeader = {
   country_hq: string | null;
   assessment_year_start: number | null;
   assessment_year_end: number | null;
+  soloSector: boolean; // true when we track only this one company in its sector
   location: BasisScore;
   market: BasisScore;
 };
@@ -103,7 +104,7 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
   if (!h) return null;
   const head = h as Record<string, unknown>;
 
-  const [{ data: chartRows }, { data: s3Rows }, { data: reviewRows }] =
+  const [{ data: chartRows }, { data: s3Rows }, { data: reviewRows }, { count: sectorCount }] =
     await Promise.all([
       supabase
         .from("company_charts_public")
@@ -121,7 +122,15 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
         .select("year, source_url, source_notes")
         .eq("company_id", companyId)
         .order("year"),
+      // How many scored companies share this company's sector — 1 means no
+      // meaningful "sector average" exists yet.
+      supabase
+        .from("company_scores_public")
+        .select("company_id", { count: "exact", head: true })
+        .eq("sector", head.sector as string)
+        .not("thermostat_score_location", "is", null),
     ]);
+  const soloSector = (sectorCount ?? 0) <= 1;
 
   // Which years reported any Scope 3 at all — used to explain excluded years.
   const s3All = (s3Rows ?? []).map((r) => r as Record<string, unknown>);
@@ -220,6 +229,7 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     country_hq: (head.country_hq as string) ?? null,
     assessment_year_start: num(head.assessment_year_start),
     assessment_year_end: num(head.assessment_year_end),
+    soloSector,
     location: {
       score: num(head.thermostat_score_location),
       sectorMedian: num(head.sector_median_score_location),

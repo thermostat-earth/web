@@ -213,19 +213,25 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           companyName={h.company_name}
           aboveMax={b.aboveMax}
           belowMin={b.belowMin}
+          soloSector={h.soloSector}
         />
       )}
 
-      {score != null && b.sectorMedian != null && (
+      {score != null && h.soloSector ? (
+        <p className="mt-10 text-sm text-muted-foreground">
+          {h.company_name} is the only company we track in the {h.sector} sector
+          so far, so there is no sector average to compare against yet.
+        </p>
+      ) : score != null && b.sectorMedian != null ? (
         <p className="mt-10 text-sm font-bold" style={{ color }}>
           {(() => {
-            const d = score - b.sectorMedian;
+            const d = score - b.sectorMedian!;
             if (Math.abs(d) < 0.05)
               return `${h.company_name}'s climate pathway is aligned with their sector's average.`;
             return `${h.company_name} is aligned to a climate pathway ${Math.abs(d).toFixed(2)}°C ${d > 0 ? "higher" : "lower"} than their sector's average.`;
           })()}
         </p>
-      )}
+      ) : null}
 
       {/* Emissions trajectory */}
       <SectionHeading>Emissions trajectory · {basis}-based</SectionHeading>

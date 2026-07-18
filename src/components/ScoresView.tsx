@@ -31,6 +31,16 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
     () => (sector === "All" ? scores : scores.filter((s) => s.sector === sector)),
     [scores, sector],
   );
+  // Sectors where we track only one scored company — no meaningful average yet.
+  const soloSectors = useMemo(() => {
+    const count = new Map<string, number>();
+    for (const s of scores)
+      if (s.thermostat_score_location != null)
+        count.set(s.sector, (count.get(s.sector) ?? 0) + 1);
+    return new Set(
+      [...count.entries()].filter(([, n]) => n === 1).map(([k]) => k),
+    );
+  }, [scores]);
 
   return (
     <div>
@@ -68,12 +78,12 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
         </div>
       </div>
 
-      {view === "dashboard" ? <Dashboard rows={filtered} /> : <Thermometer rows={filtered} />}
+      {view === "dashboard" ? <Dashboard rows={filtered} soloSectors={soloSectors} /> : <Thermometer rows={filtered} />}
     </div>
   );
 }
 
-function Dashboard({ rows }: { rows: CompanyScore[] }) {
+function Dashboard({ rows, soloSectors }: { rows: CompanyScore[]; soloSectors: Set<string> }) {
   if (rows.length === 0) return <Empty />;
   const sorted = [...rows].sort(
     (a, b) => (a.thermostat_score_location ?? 99) - (b.thermostat_score_location ?? 99),
@@ -82,7 +92,7 @@ function Dashboard({ rows }: { rows: CompanyScore[] }) {
     <div className="grid gap-4 md:grid-cols-2">
       {sorted.map((c) => (
         <Link key={c.company_id} href={`/company/${c.company_id}`} className="block transition hover:opacity-90">
-          <ScoreCard c={c} />
+          <ScoreCard c={c} soloSector={soloSectors.has(c.sector)} />
         </Link>
       ))}
     </div>
