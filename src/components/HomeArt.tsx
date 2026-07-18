@@ -183,3 +183,78 @@ export function MethodArt({ className }: ArtProps) {
     </svg>
   );
 }
+
+// What the number means: a compact matrix summarising the Impacts page —
+// temperatures across the top, metrics down the side, severity green → red.
+export function ImpactsArt({ className }: ArtProps) {
+  const cols = [
+    { t: "1.5°C", c: "hsl(145 55% 46%)" },
+    { t: "2°C", c: "hsl(70 68% 46%)" },
+    { t: "3°C", c: "hsl(32 88% 52%)" },
+    { t: "4°C", c: "hsl(0 72% 52%)" },
+  ];
+  const rows = ["Heatwaves", "Floods", "Economy", "Harvests"];
+  const x0 = 76;
+  const cw = 40;
+  const gap = 5;
+  const y0 = 32;
+  const ch = 26;
+  const rgap = 6;
+  return (
+    <svg viewBox="0 0 260 172" className={className} fill="none" aria-hidden="true">
+      <defs>
+        <filter id="ts-cell-shadow" x="-25%" y="-25%" width="150%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2.4" floodColor="hsl(220 60% 3%)" floodOpacity="0.45" />
+        </filter>
+        <linearGradient id="ts-cell-sheen" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.18" />
+          <stop offset="0.55" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* temperature headers */}
+      {cols.map((col, ci) => (
+        <text
+          key={col.t}
+          x={x0 + ci * (cw + gap) + cw / 2}
+          y={19}
+          textAnchor="middle"
+          className="font-mono"
+          fontSize="11"
+          fill={col.c}
+        >
+          {col.t}
+        </text>
+      ))}
+
+      {/* metric row labels */}
+      {rows.map((r, ri) => (
+        <text
+          key={r}
+          x={68}
+          y={y0 + ri * (ch + rgap) + ch / 2 + 3.5}
+          textAnchor="end"
+          className="font-mono"
+          fontSize="9.5"
+          fill="hsl(var(--muted-foreground))"
+        >
+          {r}
+        </text>
+      ))}
+
+      {/* cells: heatmap, green → red */}
+      {rows.map((r, ri) =>
+        cols.map((col, ci) => {
+          const x = x0 + ci * (cw + gap);
+          const y = y0 + ri * (ch + rgap);
+          return (
+            <g key={`${ri}-${ci}`} filter="url(#ts-cell-shadow)">
+              <rect x={x} y={y} width={cw} height={ch} rx="5" fill={col.c} fillOpacity="0.9" />
+              <rect x={x} y={y} width={cw} height={ch} rx="5" fill="url(#ts-cell-sheen)" />
+            </g>
+          );
+        }),
+      )}
+    </svg>
+  );
+}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroScale } from "@/components/HeroScale";
-import { NumberArt, MagnifyArt, MethodArt } from "@/components/HomeArt";
+import { NumberArt, MagnifyArt, ImpactsArt } from "@/components/HomeArt";
 import { getScores } from "@/lib/scores";
 
 export const dynamic = "force-dynamic";
@@ -12,9 +12,15 @@ const btnPrimary =
 const btnSecondary =
   "inline-flex rounded-md border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-muted";
 
-function ArtCard({ children }: { children: React.ReactNode }) {
+function ArtCard({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="flex items-center justify-center text-foreground/85">
+    <div className={`flex items-center justify-center text-foreground/85 ${className}`}>
       {children}
     </div>
   );
@@ -72,7 +78,7 @@ export default async function HomePage() {
         {/* How a company becomes a temperature — art left, text right */}
         <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-            <ArtCard>
+            <ArtCard className="md:justify-start">
               <NumberArt className="w-full max-w-[460px]" />
             </ArtCard>
             <div>
@@ -81,9 +87,9 @@ export default async function HomePage() {
               </h2>
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 Every year, companies report their emissions in long documents
-                that are hard to read and harder to compare. ThermoStat takes that
-                public data, applies a human check for what actually counts, and
-                measures how fast a company has really cut its emissions over
+                that are hard to read and even harder to compare. ThermoStat takes
+                that public data, applies a human check for what actually counts,
+                and measures how fast a company has really cut its emissions over
                 recent years. It then finds the global climate pathway moving at
                 that same pace, and reports the temperature that pathway leads to.
                 So instead of a stack of reports, you get one number you can line
@@ -115,7 +121,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ArtCard>
-              <MethodArt className="w-full max-w-[300px]" />
+              <ImpactsArt className="w-full max-w-[380px]" />
             </ArtCard>
           </div>
         </section>
