@@ -78,10 +78,10 @@ export default async function HomePage() {
         {/* How a company becomes a temperature — art left, text right */}
         <section className="py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-            <ArtCard className="md:justify-start">
+            <ArtCard className="order-2 md:order-1 md:justify-start">
               <NumberArt className="w-full max-w-[460px]" />
             </ArtCard>
-            <div className="md:mx-auto md:max-w-[440px]">
+            <div className="order-1 md:order-2 md:mx-auto md:max-w-[440px]">
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 How a company becomes a temperature
               </h2>
