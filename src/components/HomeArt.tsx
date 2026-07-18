@@ -267,9 +267,9 @@ export function PaceArt({ className }: ArtProps) {
   const amber = "hsl(38 90% 55%)";
   const red = "hsl(0 72% 52%)";
   const cos = [
-    { t: "1.6°C", c: green, line: "M34 34 C 80 60, 120 92, 148 106", ex: 148, ey: 106, mark: 104, drop: "M148 106 C 138 128, 116 148, 104 158" },
-    { t: "2.7°C", c: amber, line: "M34 34 C 84 52, 122 72, 148 82", ex: 148, ey: 82, mark: 196, drop: "M148 82 C 168 110, 192 142, 196 158" },
-    { t: "3.9°C", c: red, line: "M34 34 C 86 42, 124 52, 148 58", ex: 148, ey: 58, mark: 296, drop: "M148 58 C 210 92, 284 132, 296 158" },
+    { t: "1.6°C", c: green, line: "M34 34 C 80 60, 120 92, 148 106", mx: 98, my: 75, ex: 148, ey: 106, mark: 104, drop: "M148 106 C 138 128, 116 148, 104 158" },
+    { t: "2.7°C", c: amber, line: "M34 34 C 84 52, 122 72, 148 82", mx: 100, my: 61, ex: 148, ey: 82, mark: 196, drop: "M148 82 C 168 110, 192 142, 196 158" },
+    { t: "3.9°C", c: red, line: "M34 34 C 86 42, 124 52, 148 58", mx: 102, my: 47, ex: 148, ey: 58, mark: 296, drop: "M148 58 C 210 92, 284 132, 296 158" },
   ];
   return (
     <svg viewBox="0 0 320 190" className={className} fill="none" aria-hidden="true">
@@ -291,9 +291,10 @@ export function PaceArt({ className }: ArtProps) {
       {/* company lines (steeper = faster cuts) + dotted drops to the scale */}
       {cos.map((c) => (
         <g key={c.t}>
-          <path d={c.line} stroke={c.c} strokeWidth="2.5" strokeLinecap="round" />
+          <path d={c.line} stroke={c.c} strokeWidth="1.8" strokeLinecap="round" />
+          <path d={c.drop} stroke={c.c} strokeOpacity="0.85" strokeWidth="1.25" strokeLinecap="round" strokeDasharray="0.5 5" />
+          <circle cx={c.mx} cy={c.my} r="2.6" fill={c.c} />
           <circle cx={c.ex} cy={c.ey} r="3" fill={c.c} />
-          <path d={c.drop} stroke={c.c} strokeOpacity="0.85" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
         </g>
       ))}
 
