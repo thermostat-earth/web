@@ -81,7 +81,7 @@ export default async function HomePage() {
             <ArtCard className="md:justify-start">
               <NumberArt className="w-full max-w-[460px]" />
             </ArtCard>
-            <div>
+            <div className="md:mx-auto md:max-w-[440px]">
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 How a company becomes a temperature
               </h2>
