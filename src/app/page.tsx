@@ -35,7 +35,7 @@ export default async function HomePage() {
         {/* Hero */}
         <section className="py-20">
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            Compare climate performance based on reality, not promises.
+            Compare climate performance on what companies have actually done.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
             ThermoStat turns a company&apos;s real emissions record into a single
@@ -65,7 +65,7 @@ export default async function HomePage() {
                 an independent, public project that shows its full working, so
                 anyone can check the numbers for themselves.
               </p>
-              <Link href="/about" className={`${btnSecondary} mt-6`}>
+              <Link href="/about" className={`${btnPrimary} mt-6`}>
                 About ThermoStat
               </Link>
             </div>
@@ -94,9 +94,9 @@ export default async function HomePage() {
                 that same pace, and reports the temperature that pathway leads to.
                 So instead of a stack of reports, you get one number you can line
                 up against any other company, with every figure traceable to the
-                source, and use it to understand real climate impacts.
+                source.
               </p>
-              <Link href="/methodology" className={`${btnSecondary} mt-6`}>
+              <Link href="/methodology" className={`${btnPrimary} mt-6`}>
                 The full methodology
               </Link>
             </div>
@@ -116,12 +116,12 @@ export default async function HomePage() {
                 It&apos;s global average warming above pre-industrial levels, the
                 same scale as the Paris 1.5°C and 2°C goals.
               </p>
-              <Link href="/impacts" className={`${btnSecondary} mt-6`}>
-                See what each temperature means →
+              <Link href="/impacts" className={`${btnPrimary} mt-6`}>
+                See what each temperature means
               </Link>
             </div>
             <ArtCard>
-              <ImpactsArt className="w-full max-w-[380px]" />
+              <ImpactsArt className="w-full max-w-[440px]" />
             </ArtCard>
           </div>
         </section>
