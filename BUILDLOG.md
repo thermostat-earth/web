@@ -1,0 +1,123 @@
+# ThermoStat build log
+
+_Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
+
+- 2026-07-18  Update STATUS.md (homepage redesign, hero, /impacts, 3 images); auto-generate BUILDLOG.md via post-commit hook
+- 2026-07-18  Impacts matrix: short values per cell, temperature-tinted tiles (readable)
+- 2026-07-18  Image 3 (What the number means): impacts matrix; left-align chart; copy tweaks
+- 2026-07-17  Move emissions chart into How-a-company-becomes-a-temperature (taller bars); copy: has->applies
+- 2026-07-17  Image 2: overlap papers + magnifier (papers behind); mix up the coloured bar order
+- 2026-07-17  Image 2: bigger lens, art moved up, colour-coded reading bars, curved glint follows the lens
+- 2026-07-17  Image 2: refined + bigger magnifier (folded docs, glass glint); remove art cards
+- 2026-07-16  Image 2 (What ThermoStat is for): magnifier over messy reports
+- 2026-07-16  Homepage: reorder sections (What ThermoStat is for, How a company becomes a temperature, What the number means)
+- 2026-07-16  Homepage section 2: reframe to general What ThermoStat is for
+- 2026-07-16  Image 1: align axis to first column; dark halo behind temp pathways
+- 2026-07-16  Image 1: align emissions legend with the bars
+- 2026-07-16  Image 1: 12 bars, wider, stronger glow, brighter label text
+- 2026-07-16  Image 1: head-designer polish (bar gradient, finer dots, refined pills), tighter card + smaller image
+- 2026-07-16  Image 1: solid white glowing bars + emissions legend + time axis
+- 2026-07-16  Image 1: glassy translucent bars + shadow, centred, mid-line pill labels; remove section dividers
+- 2026-07-15  Image 1: add C to labels, fill the card (w-full)
+- 2026-07-15  Image 1: solid white rounded columns, thin dotted pathways, no year labels
+- 2026-07-15  Image 1: larger, stronger columns, labelled pathway ends
+- 2026-07-15  Homepage image 1: emission columns with temperature pathways
+- 2026-07-15  Homepage: add methodology-integrity line to Independent section
+- 2026-07-15  Impacts: Flood Re explainer + hyperlinked (verified) sources
+- 2026-07-15  Impacts: em dash out of meta description
+- 2026-07-15  Impacts: remove em dashes per writing rules
+- 2026-07-15  Nav: add Impacts after Methodology
+- 2026-07-15  Add impacts page (was missed in prior commit)
+- 2026-07-15  Impacts page (spine + what-this-means-for-you); hero: Go-to-score popup + linked dots/labels; homepage: top-align headers, impacts CTA
+- 2026-07-15  Hero scale: left-align with page text (flush left, right inset kept)
+- 2026-07-15  Homepage: alternating cards with minimalist line drawings, titles above text; free-at-core copy allows future paid licences
+- 2026-07-15  Hero scale: side padding + hover-dim + more label spacing; homepage: wide two-col sections, split About/Methodology story with button CTAs; footer: hide build sha (kept as data attr)
+- 2026-07-14  Hero scale v2: ruler below, stacked company labels above; drop Example scores section
+- 2026-07-14  Homepage hero: living temperature scale with companies pinned + load animation
+- 2026-07-14  Homepage rebuild: hero, what the number means, example scores (full spread + link), how a company becomes a temperature story card
+- 2026-07-13  About: reword contextual principle; drop we-listen-we-dont-judge (now covered)
+- 2026-07-13  About: add principle - climate performance is contextual
+- 2026-07-13  Dark mode only (drop light theme + toggle); footer: ThermoStat scores not ranks; remove /score-layouts temp page
+- 2026-07-13  Home: drop em dash in hero
+- 2026-07-13  docs: About + temperature explainer done
+- 2026-07-13  About: mission -> just communicate
+- 2026-07-13  About: hero line -> easy for anyone to compare
+- 2026-07-13  Methodology: swap order of temperature scale and what-it-refers-to sections
+- 2026-07-13  About: trim problem paragraph (remove and its societies)
+- 2026-07-13  About+Methodology: explain what the temperature refers to; reword problem opener
+- 2026-07-13  About: trim mission statement ending
+- 2026-07-13  Header: order nav Scores, About, Methodology
+- 2026-07-13  About: final copy (Felix edits) — mission, problem, what we do, differences, principles, who is behind it
+- 2026-07-13  docs: About page done; drop from launch list
+- 2026-07-13  Consolidate Why?+About into one About page (mission, problem, what we do, differences, principles, who is behind it); redirect /why; update nav+footer
+- 2026-07-13  docs: Thermometer view done; drop it from the launch list
+- 2026-07-13  Thermometer view: larger degree tick labels
+- 2026-07-13  Thermometer view: remove the legend; shrink the tube to fit the page
+- 2026-07-13  Thermometer view: bigger dots+labels, off-scale sits further out, drop the off-scale bridge line, fade others on hover
+- 2026-07-13  Thermometer view: add 1.4/2/3/4 degC ticks, a key, and off-scale dot handling; fit the page then grow downward; deep-link via ?view=
+- 2026-07-13  docs: STATUS.md resume point (scores cards done; next = thermometer view, why/about, QA, legal, soft launch)
+- 2026-07-11  Copy: refer to it as climate temperature score
+- 2026-07-11  Company page: reword approx alignment statement to "…climate pathway is aligned with their sector average"
+- 2026-07-11  Cards: bridge off-scale line to the centred arrowhead so it stays joined; align key with company name
+- 2026-07-11  Cards: centre arrowhead on the company circle. Scores: view-aware subtitle (dashboard is not coolest-at-bottom)
+- 2026-07-11  Cards: smaller off-scale gap; arrowhead base covers the line end
+- 2026-07-09  Cards: replace inline labels with a key at top-right; thermometer sits below the key
+- 2026-07-09  Cards: larger score to use the wider card space
+- 2026-07-09  Cards: chunky arrowhead, generous off-scale gap, label the sector line + company dot, wider 2-col grid
+- 2026-07-09  Cards: taller tube (name->vs-sector), degC on ticks, thinner arrow set further off, sector line over dot when approx
+- 2026-07-09  Cards: fit the score so it no longer overlaps the tube; slim the gap arrow so it reads as an arrow not a twin tube
+- 2026-07-09  Cards: keep the score on one line (no > wrap)
+- 2026-07-09  Dashboard cards: bigger score, ticks 1.4/2/3/4 attached to tube, thicker gradient arrow ending at marker, top-aligned, kill dead space
+- 2026-07-09  Dashboard cards: reserve caps above/below the tube so off-scale dots sit clear of the tube end and stay off the card edge
+- 2026-07-09  Dashboard cards: back to vertical thermometer, with a vertical company-vs-sector arrow; clamped dots off the tube end with a gap, kept inside the card
+- 2026-07-09  Dashboard cards: full-width horizontal thermometer with company-vs-sector gap arrow; clamped dots sit off the bar with a gap but stay inside the card
+- 2026-07-09  Scores thermometer: fill toward page bottom (min, grows with data); nudge down so 4.0C label sits clear
+- 2026-07-09  Footer: show build commit id (from VERCEL_GIT_COMMIT_SHA) to confirm what is live
+- 2026-07-09  Scores: dashboard is default; thermometer height sized to the data
+- 2026-07-09  Scores page: Dashboard/Thermometer toggle; thermometer centred with companies fanning off both sides
+- 2026-07-09  Heat-map cells: opaque lightness ramp (theme-independent) with reliable dark/light text contrast
+- 2026-07-09  Trend line/dot halo; dark text on light heat-map cells; source hover shows provenance note (source_notes) + URL
+- 2026-07-09  Scope-3 gap label: n/a (data not available) instead of n/r — less accusatory
+- 2026-07-09  Scope-3 matrix: materiality is per-company (any year), so unreported material categories show n/r not blank; grey non-material rows; clearer key
+- 2026-07-09  Totals only shown when a year is complete (Scope 1+2+all material Scope 3), in chart AND table; not-reported Scope 3 shows dash not 0
+- 2026-07-09  Scope 3 by category: category×year heat-map table (years along top, categories as rows, cells shaded by size)
+- 2026-07-09  Add Scope 3 over-time chart (reuses trajectory chart via getValue)
+- 2026-07-09  Alignment statement: bold + more space below the thermometer
+- 2026-07-09  Scores page: vertical thermometer scale — all companies plotted by temperature (cool bottom, hot top), labels de-overlapped, click through
+- 2026-07-09  Company page: summary line below thermometer (aligned Xdeg higher/lower than sector avg), in score colour
+- 2026-07-09  Transpose emissions table: years along the top, Scope 1/2/3/Total as rows (each scope reads as a timeseries); excluded years faded + footnoted
+- 2026-07-09  Remove IPCC pathway overlay — back to just the emissions trajectory
+- 2026-07-09  Pathways: 0.5°C steps, all below company line + nearest above; solid translucent white lines with shadow; gap line inset so arrowhead fully covers it
+- 2026-07-09  IPCC pathway overlay on trajectory chart (nearest two, scaled to base year); line/dots in-window only; ≈ Sector average; bigger gap arrowhead tip at marker centre
+- 2026-07-09  Bigger difference-arrow head; tip lands on company triangle centre
+- 2026-07-09  Coincident company/sector merge into one label; align company label edge to dot edge for all companies
+- 2026-07-09  Difference arrow moved above the markers; capitalise Sector average
+- 2026-07-09  Gap arrow: single head on company side, flush to bar; company label anchors to off-end dot; bigger gap under toggle; marker spacing
+- 2026-07-09  Thermometer: °C on ticks, measured label alignment, double-headed gap arrow reaching off-end dot; toggle above All scores; top-align number; fix tCO2e casing
+- 2026-07-09  Thermometer: toggle above name, inline company + sector labels (key removed), edge-aware alignment, clamped arrow/dot aligned, degree ticks 1.4/2/3/4, coloured gap
+- 2026-07-09  Gap bar filled with the thermometer gradient (aligned) so it greens/reddens by direction vs sector
+- 2026-07-09  Revert loc/market toggle back to the left block
+- 2026-07-09  Company header: move loc/market toggle to top-right under How scoring works; thermometer arrows same side; gap shown as visible separate bar below
+- 2026-07-08  Company page: more right margin
+- 2026-07-08  Company header redesign: large temperature on the right, full-width horizontal thermometer below (arrows, company-vs-sector gap band, key)
+- 2026-07-08  Score-layout options preview (/score-layouts) + recentre logo to align with wordmark
+- 2026-07-08  Scope1 e.g., how-scoring-works moved to top-right (bottom section removed), basis-aware excluded reasons (lists all missing scopes incl. Scope 2)
+- 2026-07-08  Company page review fixes: one disclaimer, fixed-position tooltips, coloured bars (score colour), table units, reworked thermometer (clear company vs sector, clamp gap, legend), reword sector-avg
+- 2026-07-08  Batch 3 pt1: company page rebuild — location/market toggle, column-bar trajectory chart w/ assessment-window highlighting, all-15 scope-3 states (material/not-reported/not-material)
+- 2026-07-08  Batch 2: ⓘ tooltips + glossary (Scope 1/2/3) and light-mode toggle (no-flash, persisted)
+- 2026-07-08  Logo: thermometer centred on globe, protrudes equally above and below
+- 2026-07-08  Logo: thermometer is now a simple rounded capsule (no bulb), a bit wider
+- 2026-07-08  Logo: smaller bulb + thinner shaft
+- 2026-07-08  Logo: thinner strokes for a more refined mark
+- 2026-07-08  Vertical thermometer: replaces horizontal bars in score cards + company header (cool bottom, hot top, sector-avg tick)
+- 2026-07-08  Logo in header (tight gap) + favicon
+- 2026-07-08  Logo: transparent thermometer body via hsl(var(--background)) so it masks globe lines but matches page
+- 2026-07-08  Logo: rounder longitude curves + solid thermometer body
+- 2026-07-08  Logo A refined: thermometer centred over globe, single green→red gradient
+- 2026-07-08  Logo concepts preview page (/logos) for choosing a mark
+- 2026-07-08  Batch 1b: clean disclaimers (no em dash), off-bar marker when clamped + end gaps, sources grouped by year, methodology copy/spacing/em-dash cleanup, actually=italic
+- 2026-07-08  Review Batch 1: scale 1.4-4.0, footer disclaimer+cleanup, Why?, scope3 dedup fix, bigger score, Home 2 tiles+copy, Methodology edits
+- 2026-06-30  Methodology page: full plain-English write-up of the scoring method + caveats
+- 2026-06-30  Company-detail pages (scope 1/2/3 + sources) and dark mode as standard theme
+- 2026-06-29  Build: ThermoStat design system + Scores page wired to live Supabase data
+- 2026-06-29  Initial commit from Create Next App
