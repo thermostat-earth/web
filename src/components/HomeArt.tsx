@@ -185,37 +185,30 @@ export function MethodArt({ className }: ArtProps) {
 }
 
 // What the number means: a compact matrix summarising the Impacts page —
-// temperatures across the top, metrics down the side, each cell a short value
-// drawn straight from that page, tinted by its temperature (green → red).
+// temperatures across the top, metrics down the side, severity green → red.
 export function ImpactsArt({ className }: ArtProps) {
   const cols = [
-    { t: "1.5°C", c: "hsl(145 58% 52%)" },
-    { t: "2°C", c: "hsl(70 70% 52%)" },
-    { t: "3°C", c: "hsl(32 90% 56%)" },
-    { t: "4°C", c: "hsl(0 78% 62%)" },
+    { t: "1.5°C", c: "hsl(145 55% 46%)" },
+    { t: "2°C", c: "hsl(70 68% 46%)" },
+    { t: "3°C", c: "hsl(32 88% 52%)" },
+    { t: "4°C", c: "hsl(0 72% 52%)" },
   ];
-  // rows and their per-temperature values, condensed from the Impacts page
-  const rows = [
-    { label: "Heatwaves", vals: ["2–3 yr", "2 yr", "most yr", "~yearly"] },
-    { label: "Floods", vals: ["~7 yr", "~6 yr", "~5 yr", "~4 yr"] },
-    { label: "Economy", vals: ["−£2", "−£4", "−£9", "−£16"] },
-    { label: "Harvests", vals: ["−10%", "−14%", "−20%", "−33%"] },
-  ];
-  const x0 = 66;
-  const cw = 44;
-  const gap = 4;
-  const y0 = 34;
-  const ch = 28;
+  const rows = ["Heatwaves", "Floods", "Economy", "Harvests"];
+  const x0 = 76;
+  const cw = 40;
+  const gap = 5;
+  const y0 = 32;
+  const ch = 26;
   const rgap = 6;
   return (
-    <svg viewBox="0 0 262 176" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 260 172" className={className} fill="none" aria-hidden="true">
       <defs>
-        <filter id="ts-cell-shadow" x="-25%" y="-25%" width="150%" height="170%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2.2" floodColor="hsl(220 60% 3%)" floodOpacity="0.4" />
+        <filter id="ts-cell-shadow" x="-25%" y="-25%" width="150%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2.4" floodColor="hsl(220 60% 3%)" floodOpacity="0.45" />
         </filter>
         <linearGradient id="ts-cell-sheen" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.1" />
-          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.18" />
+          <stop offset="0.55" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
       </defs>
 
@@ -224,11 +217,10 @@ export function ImpactsArt({ className }: ArtProps) {
         <text
           key={col.t}
           x={x0 + ci * (cw + gap) + cw / 2}
-          y={21}
+          y={19}
           textAnchor="middle"
           className="font-mono"
           fontSize="11"
-          fontWeight="600"
           fill={col.c}
         >
           {col.t}
@@ -236,51 +228,29 @@ export function ImpactsArt({ className }: ArtProps) {
       ))}
 
       {/* metric row labels */}
-      {rows.map((row, ri) => (
+      {rows.map((r, ri) => (
         <text
-          key={row.label}
-          x={58}
-          y={y0 + ri * (ch + rgap) + ch / 2 + 3.4}
+          key={r}
+          x={68}
+          y={y0 + ri * (ch + rgap) + ch / 2 + 3.5}
           textAnchor="end"
           className="font-mono"
           fontSize="9.5"
           fill="hsl(var(--muted-foreground))"
         >
-          {row.label}
+          {r}
         </text>
       ))}
 
-      {/* cells: temperature-tinted tiles with the value in crisp white */}
-      {rows.map((row, ri) =>
+      {/* cells: heatmap, green → red */}
+      {rows.map((r, ri) =>
         cols.map((col, ci) => {
           const x = x0 + ci * (cw + gap);
           const y = y0 + ri * (ch + rgap);
           return (
-            <g key={`${ri}-${ci}`}>
-              <g filter="url(#ts-cell-shadow)">
-                <rect x={x} y={y} width={cw} height={ch} rx="6" fill={col.c} fillOpacity="0.16" />
-              </g>
-              <rect
-                x={x + 0.5}
-                y={y + 0.5}
-                width={cw - 1}
-                height={ch - 1}
-                rx="5.5"
-                fill="url(#ts-cell-sheen)"
-                stroke={col.c}
-                strokeOpacity="0.5"
-                strokeWidth="1"
-              />
-              <text
-                x={x + cw / 2}
-                y={y + ch / 2 + 3.2}
-                textAnchor="middle"
-                className="font-mono"
-                fontSize="9.5"
-                fill="hsl(var(--foreground))"
-              >
-                {row.vals[ci]}
-              </text>
+            <g key={`${ri}-${ci}`} filter="url(#ts-cell-shadow)">
+              <rect x={x} y={y} width={cw} height={ch} rx="5" fill={col.c} fillOpacity="0.9" />
+              <rect x={x} y={y} width={cw} height={ch} rx="5" fill="url(#ts-cell-sheen)" />
             </g>
           );
         }),
