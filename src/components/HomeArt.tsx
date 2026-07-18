@@ -258,3 +258,71 @@ export function ImpactsArt({ className }: ArtProps) {
     </svg>
   );
 }
+
+// About > What we do: a company's declining pace of cuts maps down to a single
+// point on the green → red temperature scale (the example score, 2.7°C).
+export function PaceArt({ className }: ArtProps) {
+  const green = "hsl(145 60% 46%)";
+  const amber = "hsl(38 90% 55%)";
+  const red = "hsl(0 72% 52%)";
+  const markX = 196; // ~2.7°C on a 1.5–4°C scale
+  return (
+    <svg viewBox="0 0 320 176" className={className} fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="ts-about-scale" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor={green} />
+          <stop offset="0.5" stopColor={amber} />
+          <stop offset="1" stopColor={red} />
+        </linearGradient>
+        <filter id="ts-about-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ffffff" floodOpacity="0.4" />
+        </filter>
+      </defs>
+
+      {/* label */}
+      <text x="22" y="16" className="font-mono" fontSize="9.5" fill="hsl(var(--muted-foreground))">
+        A company&apos;s pace of cuts
+      </text>
+
+      {/* declining company line, with soft glow */}
+      <g filter="url(#ts-about-glow)">
+        <path
+          d="M24 34 C 76 42, 114 66, 150 92"
+          stroke="hsl(var(--foreground))"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </g>
+      {([[24, 34], [88, 51], [150, 92]] as const).map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r="3" fill="hsl(var(--foreground))" />
+      ))}
+
+      {/* dotted pathway down to the temperature marker */}
+      <path
+        d="M150 92 C 172 110, 188 128, 196 146"
+        stroke="hsl(var(--foreground))"
+        strokeOpacity="0.7"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeDasharray="0.5 5"
+      />
+
+      {/* green → red temperature scale */}
+      <rect x="96" y="150" width="208" height="8" rx="4" fill="url(#ts-about-scale)" />
+      <text x="96" y="172" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
+        1.5°C
+      </text>
+      <text x="304" y="172" textAnchor="end" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
+        4°C
+      </text>
+
+      {/* the 2.7°C marker the pathway lands on */}
+      <line x1={markX} y1="134" x2={markX} y2="150" stroke={amber} strokeWidth="1.5" />
+      <circle cx={markX} cy="154" r="4.5" fill={amber} stroke="hsl(var(--background))" strokeWidth="2" />
+      <rect x={markX - 20} y="117" width="40" height="17" rx="8.5" fill="hsl(var(--background))" stroke={amber} strokeOpacity="0.5" strokeWidth="1" />
+      <text x={markX} y="129" textAnchor="middle" className="font-mono" fontSize="11" fontWeight="600" fill={amber}>
+        2.7°C
+      </text>
+    </svg>
+  );
+}

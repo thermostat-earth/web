@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PaceArt } from "@/components/HomeArt";
 
 export const metadata = {
   title: "About — ThermoStat",
@@ -59,6 +60,9 @@ export default function AboutPage() {
                 warming figure to understand what global warming impacts the
                 company is aligned to.
               </p>
+              <div className="flex justify-center py-3">
+                <PaceArt className="w-full max-w-[420px]" />
+              </div>
               <p>
                 The temperature is a global figure, not the company&apos;s own.
                 It refers to the rise in the world&apos;s average surface

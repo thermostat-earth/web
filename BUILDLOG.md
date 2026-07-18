@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-07-18  About: add pace->temperature diagram (PaceArt) in What we do
 - 2026-07-18  Phone: hamburger nav under sm (fixes logo/nav gap), tighter mobile section spacing; About: comma fix
 - 2026-07-18  Homepage: heading-first when stacked in section 2 (chart below header on narrow), chart stays left on desktop
 - 2026-07-18  Homepage: center section 2 text in its column (max-w-440) to align with the images above and below
