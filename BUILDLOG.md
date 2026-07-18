@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-07-18  STATUS: 2026-07-18 session — homepage/about polish, solo-sector QA fix, DATA-PROTOCOLS, ingestion pipeline design + data model; resume point = board UI
 - 2026-07-18  Add DATA-PROTOCOLS.md: add-company + refresh-data protocols, scoring rules, QA checklist
 - 2026-07-18  Solo-sector companies (Microsoft/Tech, ITV/Media): hide sector-average comparison, label "Only company in this sector so far" across dashboard, company thermometer + sentence
 - 2026-07-18  PaceArt: dots along each line (line runs through), thinner strokes

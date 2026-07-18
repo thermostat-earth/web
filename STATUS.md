@@ -3,34 +3,32 @@
 _Last updated: 2026-07-18_
 
 ## Where it runs
-- **Production / dev site:** thermostat-eta.vercel.app (`main` → Vercel). This is Felix's permanent dev/preview URL. Domain thermostat.earth not pointed yet (soft-launch step).
-- **Footer** carries `data-build="<sha>"` (hidden HTML attribute, from `VERCEL_GIT_COMMIT_SHA`) so you can confirm what's actually live without a visible build string on the page.
-- **Deploy flow:** edit in `/tmp/ts-company` → `scp` to VPS `~/thermostat/src` → `npm run build` on VPS → commit on `dev` → `git merge --ff-only dev` to `main` → push. `/tmp` is cleared between days; re-pull from the VPS with `scp`.
-- **Build log:** `BUILDLOG.md` is auto-generated from git history by a `post-commit` hook (`scripts/gen-buildlog.sh`) on every commit, so it can never be forgotten or drift. This STATUS.md is the hand-written human summary.
-- **Verify before refresh:** poll the live footer `data-build` for the new sha before telling Felix to refresh (Vercel lag ~30–90s). No headless-Chrome screenshots for routine deploys.
+- **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
+- **Footer** carries `data-build="<sha>"` (hidden attr) so you can confirm what's live.
+- **Deploy flow:** edit in `/tmp/ts-company` → `scp` to VPS `~/thermostat/src` → `npm run build` on VPS → commit on `dev` → `git merge --ff-only dev` to `main` → push. `/tmp` clears between days; re-pull with `scp`.
+- **Build log:** `BUILDLOG.md` auto-generates from git history via a `post-commit` hook (`scripts/gen-buildlog.sh`) — can't be forgotten. This STATUS.md is the hand-written summary.
+- **Data/scoring:** in Supabase Postgres, trigger-driven (`score_company` fn). Runbook: repo `DATA-PROTOCOLS.md`. DB access from the Mac via `~/.felixep/secrets/supabase-thermostat.env` + `~/.felixep/dbtool`.
 
-## Recently done
-- **Homepage redesign (2026-07-18):** dark-mode-only. Hero is a "living temperature scale" (`HeroScale`) — a horizontal green→red gradient bar with the scored companies pinned along it, a 1.4/2/3/4°C ruler, hover dims the others and shows a "Go to score →" popup; dots/labels link to each company page. Below the hero, three alternating story sections: (1) **What ThermoStat is for**, (2) **How a company becomes a temperature**, (3) **What the number means**. Section dividers removed. Bottom disclaimer says "ThermoStat scores" (not "ranks").
-- **Three custom section illustrations (`HomeArt.tsx`, 2026-07-18):** minimalist SVG line-drawings matched to the dark theme.
-  - *MagnifyArt* — a magnifier over messy overlapping reports, one clean colour-coded reading in the lens ("What ThermoStat is for").
-  - *NumberArt* — a company's glowing white emission columns with dotted temperature pathways (1.5°C green / 3°C orange / 4°C red) curving over the top, labelled mid-line ("How a company becomes a temperature"); chart left-aligned to the text.
-  - *ImpactsArt* — a compact 4×4 matrix summarising the Impacts page: temperatures across the top (1.5→4°C, green→red), metrics down the side (Heatwaves/Floods/Economy/Harvests), each cell a short value from that page in a temperature-tinted tile ("What the number means").
-- **/impacts page (2026-07-13/14):** four metric cards (Heatwaves / Flooding / Economy / Harvests), each with a 4-band (1.5/2/3/4°C) value row, a "what this means for you" note, and hyperlinked verified sources (links checked to 200; OECD left unlinked as bot-blocked). Linked from the homepage.
-- **Why? + About consolidated into one /about page (2026-07-13):** mission, the problem, what we do, what makes it different, principles, and "who's behind it" (founder Felix Edge-Partington + funding line). Copy went through Felix line-by-line. "What the temperature refers to" explainer on /about and /methodology. Nav: **Scores · About · Methodology**; old `/why` 307-redirects to `/about`.
-- **Thermometer view brought to the cards' standard (2026-07-13):** 1.4/2/3/4°C scale ticks; off-scale companies sit clear of the hot end labelled `>4.0°C`; bigger dots + labels; others fade on hover; deep-linkable via `/scores?view=thermometer`.
-- Scores page has **two views**: Dashboard (cards, default) and Thermometer.
-- Terminology locked: always **"climate temperature score"** (never "climate score"); always **tCO₂e**.
+## Recently done (2026-07-18 session)
+- **Homepage** finished: hero "living temperature scale"; three story sections with custom SVG art (magnifier / emissions-chart-with-pathways / impacts colour matrix); headline reworded off the antithesis; white CTAs; section-2 text aligned to the column; **mobile pass** (hamburger nav under `sm`, tighter mobile spacing, heading-first stacking).
+- **/about** restructured: pace→temperature diagram (three colour-coded paces 1.6/2.7/3.9°C); "What makes it different" + "Our principles" now icon rows; comma fix.
+- **Company-data QA** (all 4 companies): fixed the public **solo-sector** bug — Microsoft (Tech) and ITV (Media) are the only company in their sector, so "≈ sector average" was meaningless; now hidden + labelled "Only company in this sector so far" across dashboard cards, company thermometer, and the sentence. Cleared ITV's `'test'` restatement value; corrected Microsoft's bogus `last_updated`. Confirmed sources present. `last_updated` is not shown anywhere (freshness = the assessment window already on company pages).
+- **DATA-PROTOCOLS.md** added: how scoring works (auto via triggers), add-company / refresh-year / add-sector runbooks, QA checklist, verify queries.
+
+## In progress — data ingestion + review system (design DONE, build started)
+Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggests candidates → Felix curates a pipeline board → AI auto-scrapes + triages → review pool → Felix verifies (spot-checks + scope-3 relevance) → approve → auto-scores. Built on ops.felixep.com, reusing the build-in-public pattern.
+- **Milestone 1 (pipeline board) — data model DONE:** ops-DB tables `pipeline_sectors` + `pipeline_companies` created + seeded (8 sectors, existing 3 first; 21 companies; `parent_company_id` for brands).
+- **RESUME HERE →** build the **board UI** on ops.felixep.com (kanban to view/reorder/approve), modelled on the `tasks` tool; then deploy the ops app.
+- Then milestones 2–5: commit foundation (`apply-data-review`), auto scrape+triage, review tool, refresh monitoring.
+- **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
 ## Next — Track A to soft launch
-1. Delete temp preview pages still in the build: `/logos`, `/why` redirect aside, any `/score-layouts`.
-2. Phone/tablet responsive pass (incl. the new homepage hero + section images).
-3. **Full legal review** + disclaimers / Terms / corrections.
-4. **QA the 4 companies** (random checks vs sources; ITV 2025 dup row, Chanel missing 2024 source, Microsoft 2024 boundary check, Cat-11-materiality-for-fashion; **Microsoft "≈ sector average" vs off-scale dot** — the `above_max` flag and the score/median disagree, check the data).
-5. **Soft launch:** point thermostat.earth (framed "early build, more weekly").
-
-## Post-launch
-- Data ingestion + human-QA report system → grow 4 → 15 companies, weekly cadence.
-- Socials automation (Instagram + LinkedIn Company Page + X): draft → approve → post → measure → learn; ops "Socials" tool.
+1. **Methodology page updates** (new public copy → Felix sign-off): company selection (~50–60% sector revenue), non-disclosers shown as "Unknown", parent/child group scoring, sector-average-needs-2. (Sector-average one is already live.)
+2. Responsive pass on the other pages (scores, company, impacts) — homepage done.
+3. **Legal review** + disclaimers / Terms / corrections.
+4. Finish company QA: clear remaining internal **NEEDS REVIEW** flags (Felix, as reviewer); ITV duplicate FY2024 review row (reconcile during the FY2025 refresh).
+5. **FY2025 data refresh** for the 4 companies (all currently through FY2024) — run via the new ingestion system once built.
+6. **Soft launch:** point thermostat.earth (framed "early build, more weekly").
 
 ## Build journal (build-in-public)
-- Ops Supabase `build_log` table (env `~/.felixep/secrets/supabase-ops.env`, tool `~/.felixep/dbtool`). `[auto]` = internal marker (social=false); curated entries (social=true) are build-in-public candidates. Daily 09:00 London cron drafts → Telegram → approve → publish. Separate from the code `BUILDLOG.md` above.
+Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
