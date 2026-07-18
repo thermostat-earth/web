@@ -259,70 +259,63 @@ export function ImpactsArt({ className }: ArtProps) {
   );
 }
 
-// About > What we do: a company's declining pace of cuts maps down to a single
-// point on the green → red temperature scale (the example score, 2.7°C).
+// About > What we do: three companies cutting at different paces (steeper =
+// faster cuts) fan from a shared start and land on different points of the
+// green → red temperature scale — showing how the scoring works relatively.
 export function PaceArt({ className }: ArtProps) {
   const green = "hsl(145 60% 46%)";
   const amber = "hsl(38 90% 55%)";
   const red = "hsl(0 72% 52%)";
-  const markX = 196; // ~2.7°C on a 1.5–4°C scale
+  const cos = [
+    { t: "1.6°C", c: green, line: "M34 34 C 80 60, 120 92, 148 106", ex: 148, ey: 106, mark: 104, drop: "M148 106 C 138 128, 116 148, 104 158" },
+    { t: "2.7°C", c: amber, line: "M34 34 C 84 52, 122 72, 148 82", ex: 148, ey: 82, mark: 196, drop: "M148 82 C 168 110, 192 142, 196 158" },
+    { t: "3.9°C", c: red, line: "M34 34 C 86 42, 124 52, 148 58", ex: 148, ey: 58, mark: 296, drop: "M148 58 C 210 92, 284 132, 296 158" },
+  ];
   return (
-    <svg viewBox="0 0 320 176" className={className} fill="none" aria-hidden="true">
+    <svg viewBox="0 0 320 190" className={className} fill="none" aria-hidden="true">
       <defs>
         <linearGradient id="ts-about-scale" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor={green} />
           <stop offset="0.5" stopColor={amber} />
           <stop offset="1" stopColor={red} />
         </linearGradient>
-        <filter id="ts-about-glow" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ffffff" floodOpacity="0.4" />
-        </filter>
       </defs>
 
-      {/* label */}
-      <text x="22" y="16" className="font-mono" fontSize="9.5" fill="hsl(var(--muted-foreground))">
-        A company&apos;s pace of cuts
+      <text x="30" y="16" className="font-mono" fontSize="9.5" fill="hsl(var(--muted-foreground))">
+        Each company&apos;s pace of cuts
       </text>
 
-      {/* declining company line, with soft glow */}
-      <g filter="url(#ts-about-glow)">
-        <path
-          d="M24 34 C 76 42, 114 66, 150 92"
-          stroke="hsl(var(--foreground))"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-      </g>
-      {([[24, 34], [88, 51], [150, 92]] as const).map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="3" fill="hsl(var(--foreground))" />
+      {/* shared starting point */}
+      <circle cx="34" cy="34" r="3.2" fill="hsl(var(--foreground))" />
+
+      {/* company lines (steeper = faster cuts) + dotted drops to the scale */}
+      {cos.map((c) => (
+        <g key={c.t}>
+          <path d={c.line} stroke={c.c} strokeWidth="2.5" strokeLinecap="round" />
+          <circle cx={c.ex} cy={c.ey} r="3" fill={c.c} />
+          <path d={c.drop} stroke={c.c} strokeOpacity="0.85" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="0.5 5" />
+        </g>
       ))}
 
-      {/* dotted pathway down to the temperature marker */}
-      <path
-        d="M150 92 C 172 110, 188 128, 196 146"
-        stroke="hsl(var(--foreground))"
-        strokeOpacity="0.7"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeDasharray="0.5 5"
-      />
-
       {/* green → red temperature scale */}
-      <rect x="96" y="150" width="208" height="8" rx="4" fill="url(#ts-about-scale)" />
-      <text x="96" y="172" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
+      <rect x="96" y="156" width="208" height="8" rx="4" fill="url(#ts-about-scale)" />
+      <text x="96" y="180" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
         1.5°C
       </text>
-      <text x="304" y="172" textAnchor="end" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
+      <text x="304" y="180" textAnchor="end" className="font-mono" fontSize="9" fill="hsl(var(--muted-foreground))">
         4°C
       </text>
 
-      {/* the 2.7°C marker the pathway lands on */}
-      <line x1={markX} y1="134" x2={markX} y2="150" stroke={amber} strokeWidth="1.5" />
-      <circle cx={markX} cy="154" r="4.5" fill={amber} stroke="hsl(var(--background))" strokeWidth="2" />
-      <rect x={markX - 20} y="117" width="40" height="17" rx="8.5" fill="hsl(var(--background))" stroke={amber} strokeOpacity="0.5" strokeWidth="1" />
-      <text x={markX} y="129" textAnchor="middle" className="font-mono" fontSize="11" fontWeight="600" fill={amber}>
-        2.7°C
-      </text>
+      {/* markers + temperature pills */}
+      {cos.map((c) => (
+        <g key={`m-${c.t}`}>
+          <circle cx={c.mark} cy="160" r="4.5" fill={c.c} stroke="hsl(var(--background))" strokeWidth="2" />
+          <rect x={c.mark - 18} y="132" width="36" height="16" rx="8" fill="hsl(var(--background))" stroke={c.c} strokeOpacity="0.5" strokeWidth="1" />
+          <text x={c.mark} y="143.5" textAnchor="middle" className="font-mono" fontSize="10" fontWeight="600" fill={c.c}>
+            {c.t}
+          </text>
+        </g>
+      ))}
     </svg>
   );
 }

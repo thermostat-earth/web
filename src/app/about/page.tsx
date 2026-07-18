@@ -8,6 +8,151 @@ export const metadata = {
     "ThermoStat's mission, the problem it solves, how it works, its principles, and who's behind it.",
 };
 
+function Glyph({ children }: { children: React.ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+const DIFFERENTIATORS = [
+  {
+    icon: (
+      <Glyph>
+        <line x1="6" y1="6" x2="6" y2="18" />
+        <line x1="12" y1="6" x2="12" y2="18" />
+        <line x1="18" y1="6" x2="18" y2="18" />
+      </Glyph>
+    ),
+    title: "One method, applied the same way.",
+    body: "The same approach runs across every company, so comparisons between companies and sectors hold up.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <path d="M14 14.76V5a2 2 0 0 0-4 0v9.76a4 4 0 1 0 4 0z" />
+      </Glyph>
+    ),
+    title: "A unit people already understand.",
+    body: "The climate and its impacts are most commonly measured in degrees. ThermoStat puts company performance in the same unit, so there is nothing to translate.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+      </Glyph>
+    ),
+    title: "Based on results.",
+    body: "The score reflects what a company has reported and cut so far. Targets and pledges do not move it.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <circle cx="11" cy="11" r="6" />
+        <line x1="20" y1="20" x2="15.5" y2="15.5" />
+      </Glyph>
+    ),
+    title: "You can check the working.",
+    body: "Every score shows the methodology, its scope, version, and the years it covers.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <path d="M12 6.5C10 5.2 7 5.2 5 6.5v11c2-1.3 5-1.3 7 0 2-1.3 5-1.3 7 0v-11c-2-1.3-5-1.3-7 0z" />
+        <line x1="12" y1="6.5" x2="12" y2="17.5" />
+      </Glyph>
+    ),
+    title: "Free to read.",
+    body: "Anyone can read the scores at no cost.",
+  },
+];
+
+const PRINCIPLES = [
+  {
+    icon: (
+      <Glyph>
+        <path d="M12 3l9 5-9 5-9-5 9-5z" />
+        <path d="M3 13l9 5 9-5" />
+      </Glyph>
+    ),
+    title: "Climate performance is contextual.",
+    body: "A temperature score is one factual measure, not a company's whole story. How much weight it deserves depends on what you are willing to accept in the context of its wider environmental, social and financial sustainability performance, and how this compares to other companies in the sector and beyond. We give you the climate number; the broader judgement is yours.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <path d="M5 5h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H10l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />
+        <line x1="8" y1="10" x2="16" y2="10" />
+      </Glyph>
+    ),
+    title: "No loaded words.",
+    body: "You will not see “good”, “bad”, or “leading”. Just the number and how we reached it.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 7.5V12l3 2" />
+      </Glyph>
+    ),
+    title: "Tied to time and scope.",
+    body: "Every figure states the years and the boundaries it covers. We determine the required scope by including any emissions category deemed relevant and material, in line with the principles of the GHG Protocol.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" />
+        <circle cx="12" cy="12" r="2.6" />
+      </Glyph>
+    ),
+    title: "Methodology in the open.",
+    body: "It is published, versioned, and shown on every page.",
+  },
+  {
+    icon: (
+      <Glyph>
+        <path d="M4 20l1-4L15 6l3 3L8 19l-4 1z" />
+        <line x1="13.5" y1="7.5" x2="16.5" y2="10.5" />
+      </Glyph>
+    ),
+    title: "Corrections welcome.",
+    body: "If a company can show us better data, we update the score.",
+  },
+];
+
+function FeatureList({
+  items,
+}: {
+  items: { icon: React.ReactNode; title: string; body: string }[];
+}) {
+  return (
+    <ul className="mt-6 space-y-5">
+      {items.map((it) => (
+        <li key={it.title} className="flex gap-4">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-foreground/80">
+            {it.icon}
+          </span>
+          <div className="leading-relaxed">
+            <div className="font-medium text-foreground">{it.title}</div>
+            <p className="mt-1 text-muted-foreground">{it.body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function AboutPage() {
   return (
     <>
@@ -60,9 +205,6 @@ export default function AboutPage() {
                 warming figure to understand what global warming impacts the
                 company is aligned to.
               </p>
-              <div className="flex justify-center py-3">
-                <PaceArt className="w-full max-w-[420px]" />
-              </div>
               <p>
                 The temperature is a global figure, not the company&apos;s own.
                 It refers to the rise in the world&apos;s average surface
@@ -72,6 +214,9 @@ export default function AboutPage() {
                 It means that if the whole world cut emissions at that
                 company&apos;s pace, warming would head toward about 2.7°C.
               </p>
+              <div className="flex justify-center py-3">
+                <PaceArt className="w-full max-w-[420px]" />
+              </div>
               <p>
                 Each score comes with its sector average, the methodology behind
                 it, and a clear &ldquo;Unknown&rdquo; wherever the data will not
@@ -87,43 +232,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">
               What makes it different
             </h2>
-            <ul className="mt-4 space-y-3 leading-relaxed text-muted-foreground">
-              <li>
-                <span className="font-medium text-foreground">
-                  One method, applied the same way.
-                </span>{" "}
-                The same approach runs across every company, so comparisons
-                between companies and sectors hold up.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  A unit people already understand.
-                </span>{" "}
-                The climate and its impacts are most commonly measured in
-                degrees. ThermoStat puts company performance in the same unit, so
-                there is nothing to translate.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  Based on results.
-                </span>{" "}
-                The score reflects what a company has reported and cut so far.
-                Targets and pledges do not move it.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  You can check the working.
-                </span>{" "}
-                Every score shows the methodology, its scope, version, and the
-                years it covers.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  Free to read.
-                </span>{" "}
-                Anyone can read the scores at no cost.
-              </li>
-            </ul>
+            <FeatureList items={DIFFERENTIATORS} />
           </section>
 
           {/* Our principles */}
@@ -131,47 +240,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">
               Our principles
             </h2>
-            <ul className="mt-4 space-y-3 leading-relaxed text-muted-foreground">
-              <li>
-                <span className="font-medium text-foreground">
-                  Climate performance is contextual.
-                </span>{" "}
-                A temperature score is one factual measure, not a company&apos;s
-                whole story. How much weight it deserves depends on what you are
-                willing to accept in the context of its wider environmental,
-                social and financial sustainability performance, and how this
-                compares to other companies in the sector and beyond. We give you
-                the climate number; the broader judgement is yours.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  No loaded words.
-                </span>{" "}
-                You will not see &ldquo;good&rdquo;, &ldquo;bad&rdquo;, or
-                &ldquo;leading&rdquo;. Just the number and how we reached it.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  Tied to time and scope.
-                </span>{" "}
-                Every figure states the years and the boundaries it covers. We
-                determine the required scope by including any emissions category
-                deemed relevant and material, in line with the principles of the
-                GHG Protocol.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  Methodology in the open.
-                </span>{" "}
-                It is published, versioned, and shown on every page.
-              </li>
-              <li>
-                <span className="font-medium text-foreground">
-                  Corrections welcome.
-                </span>{" "}
-                If a company can show us better data, we update the score.
-              </li>
-            </ul>
+            <FeatureList items={PRINCIPLES} />
           </section>
 
           {/* Who's behind it */}
