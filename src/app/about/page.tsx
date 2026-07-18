@@ -29,7 +29,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-semibold tracking-tight">The problem</h2>
             <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
               <p>
-                We are in a climate crisis, and most of the time we can&apos;t
+                We are in a climate crisis, and most of the time, we can&apos;t
                 even tell who is making it better, and who is making it worse.
               </p>
               <p>

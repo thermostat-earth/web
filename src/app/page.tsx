@@ -33,7 +33,7 @@ export default async function HomePage() {
       <SiteHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-6">
         {/* Hero */}
-        <section className="py-20">
+        <section className="py-14 md:py-20">
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
             Compare climate performance on what companies have actually done.
           </h1>
@@ -53,7 +53,7 @@ export default async function HomePage() {
         </section>
 
         {/* What ThermoStat is for — text left, art right */}
-        <section className="py-16">
+        <section className="py-12 md:py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -76,7 +76,7 @@ export default async function HomePage() {
         </section>
 
         {/* How a company becomes a temperature — art left, text right */}
-        <section className="py-16">
+        <section className="py-12 md:py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <ArtCard className="order-2 md:order-1 md:justify-start">
               <NumberArt className="w-full max-w-[460px]" />
@@ -104,7 +104,7 @@ export default async function HomePage() {
         </section>
 
         {/* What the number means — text left, art right */}
-        <section className="py-16">
+        <section className="py-12 md:py-16">
           <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
             <div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
