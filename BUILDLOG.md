@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-07-18  Add DATA-PROTOCOLS.md: add-company + refresh-data protocols, scoring rules, QA checklist
 - 2026-07-18  Solo-sector companies (Microsoft/Tech, ITV/Media): hide sector-average comparison, label "Only company in this sector so far" across dashboard, company thermometer + sentence
 - 2026-07-18  PaceArt: dots along each line (line runs through), thinner strokes
 - 2026-07-18  About: structured icon rows for differences + principles; diagram below 2.7C para; PaceArt shows three colour-coded paces (1.6/2.7/3.9)
