@@ -1,6 +1,6 @@
 # ThermoStat — build status
 
-_Last updated: 2026-07-18_
+_Last updated: 2026-08-03_
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
@@ -17,9 +17,12 @@ _Last updated: 2026-07-18_
 
 ## In progress — data ingestion + review system (design DONE, build started)
 Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggests candidates → Felix curates a pipeline board → AI auto-scrapes + triages → review pool → Felix verifies (spot-checks + scope-3 relevance) → approve → auto-scores. Built on ops.felixep.com, reusing the build-in-public pattern.
-- **Milestone 1 (pipeline board) — data model DONE:** ops-DB tables `pipeline_sectors` + `pipeline_companies` created + seeded (8 sectors, existing 3 first; 21 companies; `parent_company_id` for brands).
-- **RESUME HERE →** build the **board UI** on ops.felixep.com (kanban to view/reorder/approve), modelled on the `tasks` tool; then deploy the ops app.
-- Then milestones 2–5: commit foundation (`apply-data-review`), auto scrape+triage, review tool, refresh monitoring.
+- **Milestone 1 (pipeline board) — DONE + reworked 2026-08-03.** The AI runs the board: it suggests candidates, ranks them, scrapes, and moves cards. Felix decides two things, both at Review. Sectors are the columns, stages are the bands, and a stage filter shows everything waiting on him in one place. Queued cards report a scrape status rather than offering a button.
+- **Milestone 4 (review page) — DONE 2026-08-03**, ahead of 2 and 3 because it is the screen Felix works in. `/dashboard/pipeline/[id]`: verdict banner with the five scoring gates computed from the staged payload, emissions table, attributed spot checks, scope-3 assessment grid, sources, review log. Worked Inditex example seeded under the DEMO owner only — its figures are invented.
+- **Rules page — `/dashboard/pipeline/rules`.** All 15 GHG Protocol activity tests with the standard's verbatim wording, 8 assessment principles, and the sector expectations grid. Read the chapter PDFs with `pdftotext -layout` on the VPS; hand-rolled extraction lost text twice and produced two wrong rules.
+- **Sector rules are EXPECTATIONS, not requirements** (2026-08-03). Applicability is settled per company by the GHG Protocol activity test; the sector flag only says where to look. The language is changed; the scoring gate in `score_company` still keys off the sector flag and moves once the assessment is producing determinations.
+- **RESUME HERE →** the four-pass relevance assessment: a business-model / value-chain pass (including the scope 1 & 2 consolidation boundary) in the scrape payload, then surface the evidence and the AI's recommendation per category on the review page.
+- Then: sector-expectations tab with evidence counts, rule-change review window, VPS scrape + research worker, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
 ## Next — Track A to soft launch
@@ -29,6 +32,9 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 4. Finish company QA: clear remaining internal **NEEDS REVIEW** flags (Felix, as reviewer); ITV duplicate FY2024 review row (reconcile during the FY2025 refresh).
 5. **FY2025 data refresh** for the 4 companies (all currently through FY2024) — run via the new ingestion system once built.
 6. **Soft launch:** point thermostat.earth (framed "early build, more weekly").
+
+> **Launch blocker found 2026-08-03.** The Supabase project pauses after about a week idle and takes the public site down with it — the site was returning 500 with no companies until it was restored from the dashboard. Nightly scraping will not prevent this, because that writes to the ops database, not ThermoStat's. Before the domain is pointed this needs a paid plan or a keep-alive, plus an uptime check that tells someone.
+
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
