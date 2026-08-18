@@ -1,6 +1,6 @@
 # ThermoStat — build status
 
-_Last updated: 2026-08-03_
+_Last updated: 2026-08-18_
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
@@ -33,7 +33,21 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 5. **FY2025 data refresh** for the 4 companies (all currently through FY2024) — run via the new ingestion system once built.
 6. **Soft launch:** point thermostat.earth (framed "early build, more weekly").
 
-> **Launch blocker found 2026-08-03.** The Supabase project pauses after about a week idle and takes the public site down with it — the site was returning 500 with no companies until it was restored from the dashboard. Nightly scraping will not prevent this, because that writes to the ops database, not ThermoStat's. Before the domain is pointed this needs a paid plan or a keep-alive, plus an uptime check that tells someone.
+> **Launch blocker found 2026-08-03 — and it happened again on 2026-08-18.** The Supabase project
+> pauses after about a week idle and takes the public site down with it. On 18 August the database
+> hostname stopped resolving entirely (NXDOMAIN from two networks) and **thermostat-eta.vercel.app
+> returned HTTP 500 on every page**. Nobody noticed; it was found by accident while answering an
+> unrelated question. Felix restored it from the Supabase dashboard the same evening and everything
+> came back intact — all 9 tables, 4 companies still `scored`, `last_updated` stamps still reading
+> March–July, which is the proof it was a genuine restore and not a blank re-init.
+>
+> Nightly scraping will not prevent this, because that writes to the ops database, not ThermoStat's.
+>
+> - ✅ **The uptime check now exists.** `felixep-infra/bot/site-monitor.mjs` runs every 15 minutes and
+>   Telegrams Felix when a site breaks. It checks `/scores` for a **company name**, not just a 200,
+>   so it fails if the database disappears even while the site still renders.
+> - ⬜ **Still open: the pause itself.** Before thermostat.earth is pointed at this, it needs a paid
+>   plan or a keep-alive. The monitor tells you it broke; it doesn't stop it breaking.
 
 
 ## Build journal (build-in-public)

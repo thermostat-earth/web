@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-18  STATUS: the 03 Aug pause blocker came true on 18 Aug; uptime check now exists
 - 2026-08-03  STATUS: 2026-08-03 — board reworked AI-first, review + rules pages shipped; Supabase pause is a launch blocker
 - 2026-07-18  STATUS: 2026-07-18 session — homepage/about polish, solo-sector QA fix, DATA-PROTOCOLS, ingestion pipeline design + data model; resume point = board UI
 - 2026-07-18  Add DATA-PROTOCOLS.md: add-company + refresh-data protocols, scoring rules, QA checklist
