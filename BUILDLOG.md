@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-19  STATUS: business-model claims are sourced, unsourced ones flagged in the panel
 - 2026-08-19  STATUS: the four-pass relevance assessment is built; the scrape worker is the next blocker
 - 2026-08-19  CLAUDE.md: fix broken @AGENTS.md import (correct relative path)
 - 2026-08-18  STATUS: the 03 Aug pause blocker came true on 18 Aug; uptime check now exists
