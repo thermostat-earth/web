@@ -1,1 +1,1 @@
-@AGENTS.md
+@../felixep-infra/AGENTS.md
