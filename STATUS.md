@@ -1,6 +1,6 @@
 # ThermoStat — build status
 
-_Last updated: 2026-08-18_
+_Last updated: 2026-08-19_
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
@@ -21,8 +21,13 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 - **Milestone 4 (review page) — DONE 2026-08-03**, ahead of 2 and 3 because it is the screen Felix works in. `/dashboard/pipeline/[id]`: verdict banner with the five scoring gates computed from the staged payload, emissions table, attributed spot checks, scope-3 assessment grid, sources, review log. Worked Inditex example seeded under the DEMO owner only — its figures are invented.
 - **Rules page — `/dashboard/pipeline/rules`.** All 15 GHG Protocol activity tests with the standard's verbatim wording, 8 assessment principles, and the sector expectations grid. Read the chapter PDFs with `pdftotext -layout` on the VPS; hand-rolled extraction lost text twice and produced two wrong rules.
 - **Sector rules are EXPECTATIONS, not requirements** (2026-08-03). Applicability is settled per company by the GHG Protocol activity test; the sector flag only says where to look. The language is changed; the scoring gate in `score_company` still keys off the sector flag and moves once the assessment is producing determinations.
-- **RESUME HERE →** the four-pass relevance assessment: a business-model / value-chain pass (including the scope 1 & 2 consolidation boundary) in the scrape payload, then surface the evidence and the AI's recommendation per category on the review page.
-- Then: sector-expectations tab with evidence counts, rule-change review window, VPS scrape + research worker, re-review of the existing 4, and the apply script that commits into ThermoStat.
+- **Four-pass relevance assessment — DONE 2026-08-19** (ops branch `thermostat-pipeline`, merged to `dev`). The question "does this category apply to this company?" is answered in four passes, each able to settle it without the next: **1** the GHG Protocol activity test, **2** the scope 1 & 2 consolidation boundary, **3** the company's own stated reason tested against `common_invalid_reasons`, **4** the recommendation. Passes 1-3 are evidence; only 4 is an opinion, and it stays **advisory** — Felix's determination is still the only thing that binds, and the page says so.
+  - `business_model` in the scrape payload carries the value chain, what the company sells, and the consolidation approach with a flag for whether the company **stated** it or the AI inferred it. Assessed once, applied to all fifteen categories — passes 1 and 2 turn on facts about the company, not the category.
+  - Review page: a **Business model & boundary** panel above the grid, then per category the activity test, each pass with its evidence, and the recommendation — collapsed behind a teaser that names *which pass settled it* ("already inside scope 1 & 2", "the activity doesn't happen here").
+  - Worked example seeded on the Inditex demo card (`ops-012`), chosen to exercise every pass: Cat 10 settles at pass 1, Cat 8 at pass 2 (leased stores already in scope 1 & 2), Cat 14 needs pass 3, Cat 9 deliberately left `unclear`.
+  - `scope3_category_guidance` gained an anon read policy (`ops-013`) — it is GHG Protocol reference data with no owner to scope to, so unconditional read is right there.
+- **Not yet built on top of it:** nothing writes `business_model` or `assessment` for a real company — that is the scrape worker's job, and it doesn't exist yet. The demo card is the only payload carrying an assessment. Also open: an "accept the AI's recommendation" button (today Felix retypes the rationale), and `evaluate()` still ignores `assessment` entirely, which is deliberate — the AI must not be able to clear a gap.
+- Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
 ## Next — Track A to soft launch
