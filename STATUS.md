@@ -1,6 +1,6 @@
 # ThermoStat — build status
 
-_Last updated: 2026-08-19_
+_Last updated: 2026-08-20_
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
@@ -28,6 +28,14 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
   - Worked example seeded on the Inditex demo card (`ops-012`), chosen to exercise every pass: Cat 10 settles at pass 1, Cat 8 at pass 2 (leased stores already in scope 1 & 2), Cat 14 needs pass 3, Cat 9 deliberately left `unclear`.
   - `scope3_category_guidance` gained an anon read policy (`ops-013`) — it is GHG Protocol reference data with no owner to scope to, so unconditional read is right there.
   - **Sources are real links, and they are checked** (2026-08-19, Felix's call). The whole reference is one click target — label and page together — and PDF sources deep-link to the page (`#page=112`) so a citation opens where it points rather than at the front of a 300-page document. Page numbers only; section labels like "note 17" are left alone. **`ops/scripts/check-links.mjs`** walks every staged payload plus the guidance table, names the exact JSON path of anything dead, and exits non-zero so it can gate a scrape. It immediately found two links that had already shipped: CDP's `/en/responses` (404, in the original ops-004 seed, five references), and `chapterUrl()` generating `Chapter5.pdf` when GHG Protocol names that one file `Ch5_GHGP_Tech.pdf`. Both fixed (`ops-015`). **A dead source link is worse than no source link** — it reads as evidence until the moment you click it to check something. Run this after every scrape.
+- ⚠️ **The scrape worker must never write "required" about a sector** (2026-08-20). Sector rules are
+  expectations; only the GHG Protocol activity test settles whether a category applies to the company
+  in front of you. Two seeded demo notes still read "Required for Fashion" and were caught by Felix
+  reviewing the page — fixed in ops-018, along with a review-log string that said "not required".
+  A sentence calling a sector rule a requirement undercuts the four-pass argument three inches
+  further down the same page, so the worker's prompt has to say **expected / not expected in this
+  sector**, and `scripts/check-links.mjs` is the model for how to catch it: assert on the output,
+  don't trust the prompt.
 - **Not yet built on top of it:** nothing writes `business_model` or `assessment` for a real company — that is the scrape worker's job, and it doesn't exist yet. The demo card is the only payload carrying an assessment. Also open: an "accept the AI's recommendation" button (today Felix retypes the rationale), and `evaluate()` still ignores `assessment` entirely, which is deliberate — the AI must not be able to clear a gap.
 - Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.

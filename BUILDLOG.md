@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-20  STATUS: the scrape worker must never call a sector rule 'required'
 - 2026-08-19  STATUS: sources are checked links; run check-links.mjs after every scrape
 - 2026-08-19  STATUS: business-model claims are sourced, unsourced ones flagged in the panel
 - 2026-08-19  STATUS: the four-pass relevance assessment is built; the scrape worker is the next blocker
