@@ -40,3 +40,18 @@ select company_id, thermostat_score_location, thermostat_score_market,
 from company_scores_public order by company_id;
 SQL
 ```
+
+---
+
+## Result — checked after step 2 (basis gating), 2026-08-21
+
+**Nothing moved.** All four identical, including H&M at 1.5095032111311140925670 and ITV at
+1.4528098473557398489030 — every decimal place. Those are the two that would have shifted, so the
+gating is genuinely inert rather than accidentally invisible.
+
+**And it does bite.** Proved rather than assumed: inside a transaction, ITV's 2023 and 2024 were
+moved to basis 2 and the company was re-scored. It came back `unknown` / `basis_change` — 2021-2022
+and 2023-2024 are two runs of two, and neither reaches three years on one basis. The transaction was
+rolled back and ITV re-reads 1.4528098473557398489030, unchanged.
+
+So the gate is off when there is no break and on when there is.
