@@ -1,0 +1,855 @@
+-- 003: total every year on the same basket of categories.
+--
+-- WHY category = ANY(v_required_cats) AND NOT effective_required
+--
+-- The basket is the set of categories that count in the most recent scored year.
+-- Every year must be totalled on THAT basket, so history is re-expressed on
+-- today's definition and the trend is like-for-like.
+--
+-- Before this, the basket decided which years QUALIFIED while each year's total
+-- was summed on its own required flags. A category required in 2021-23 and not in
+-- 2024 therefore inflated the earlier years against the latest one. Tested on ITV
+-- with category 11 counted: 712,779 / 840,151 / 833,546 / 318,654 — a 62% "fall"
+-- that was only the year they stopped disclosing it.
+--
+-- The rule this implements: adding or dropping a whole scope-3 category is NOT a
+-- basis break. The basket changes and the past is recalculated to match. A basis
+-- break is for a change INSIDE a figure, which no arithmetic can undo.
+
+CREATE OR REPLACE FUNCTION public.score_company(p_company_id text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+  v_sector                TEXT;
+  v_window_start          INTEGER;
+  v_window_end            INTEGER;
+  v_best_years            INTEGER[];
+  v_consecutive_years     INTEGER[];
+  v_window_years          INTEGER[];
+  v_assessment_date       DATE := CURRENT_DATE;
+  v_most_recent_year      INTEGER;
+  v_required_cats         INTEGER[];
+
+  v_base_location         NUMERIC;
+  v_base_market           NUMERIC;
+  v_total_location        NUMERIC;
+  v_total_market          NUMERIC;
+
+  v_company_index_loc     NUMERIC;
+  v_company_index_mkt     NUMERIC;
+  v_pathway_index         NUMERIC;
+  v_pathway_base          NUMERIC;
+  v_mae_loc               NUMERIC;  -- company carbon budget (location)
+  v_mae_mkt               NUMERIC;  -- company carbon budget (market)
+  v_best_temp_loc         NUMERIC;  -- lower bracket temperature (location)
+  v_best_temp_mkt         NUMERIC;  -- lower bracket temperature (market)
+  v_best_mae_loc          NUMERIC;  -- pathway budget at lower bracket (location)
+  v_best_mae_mkt          NUMERIC;  -- pathway budget at lower bracket (market)
+  v_second_mae_loc        NUMERIC;  -- pathway budget at upper bracket (location)
+  v_second_mae_mkt        NUMERIC;  -- pathway budget at upper bracket (market)
+  v_second_temp_loc       NUMERIC;  -- upper bracket temperature (location)
+  v_second_temp_mkt       NUMERIC;  -- upper bracket temperature (market)
+  v_score_loc             NUMERIC;
+  v_score_mkt             NUMERIC;
+  v_score_below_min_loc   BOOLEAN := FALSE;  -- company outperforms lowest bin
+  v_score_below_min_mkt   BOOLEAN := FALSE;
+  v_score_above_max_loc   BOOLEAN := FALSE;  -- company underperforms highest bin
+  v_score_above_max_mkt   BOOLEAN := FALSE;
+  v_fit_error_loc         NUMERIC := 0;
+  v_fit_error_mkt         NUMERIC := 0;
+  v_p10_budget_loc        NUMERIC;  -- p10 pathway budget at best-fit temp (loc)
+  v_p10_budget_mkt        NUMERIC;  -- p10 pathway budget at best-fit temp (mkt)
+  v_p90_budget_loc        NUMERIC;  -- p90 pathway budget at best-fit temp (loc)
+  v_p90_budget_mkt        NUMERIC;  -- p90 pathway budget at best-fit temp (mkt)
+  v_p10_base              NUMERIC;
+  v_p90_base              NUMERIC;
+
+  v_loc_available         BOOLEAN := TRUE;
+  v_mkt_available         BOOLEAN := TRUE;
+  v_unknown_reason        TEXT;
+
+  v_temp                  NUMERIC;
+  v_rec                   RECORD;
+  v_yr                    INTEGER;
+  v_n_years               INTEGER;
+  v_log_diff_sum_loc      NUMERIC;
+  v_log_diff_sum_mkt      NUMERIC;
+  v_pathway_budget        NUMERIC;  -- pathway budget for a single bin
+  v_all_temps             NUMERIC[];  -- all temperature bins in order
+  v_all_budgets           NUMERIC[];  -- corresponding pathway budgets
+  v_merged_temps          NUMERIC[];  -- monotonically ordered merged bins
+  v_merged_budgets        NUMERIC[];  -- budgets of merged bins
+  v_group_temp_sum        NUMERIC;    -- running sum of temps in current merge group
+  v_group_budget_sum      NUMERIC;    -- running sum of budgets in current merge group
+  v_group_count           INTEGER;    -- count of bins in current merge group
+  v_i                     INTEGER;    -- loop index for array traversal
+  v_chart_temp            NUMERIC;    -- nearest real bin to merged score (for charts)
+  v_max_bin_temp          NUMERIC;    -- highest temperature bin (always unmerged)
+  v_min_bin_temp          NUMERIC;    -- lowest temperature bin (always unmerged)
+
+BEGIN
+
+  -- ================================================================
+  -- GET SECTOR
+  -- ================================================================
+  SELECT sector INTO v_sector
+  FROM companies
+  WHERE company_id = p_company_id;
+
+  IF v_sector IS NULL THEN
+    RAISE EXCEPTION 'Company % not found', p_company_id;
+  END IF;
+
+  -- ================================================================
+  -- DETERMINE MOST-RECENT-YEAR CATEGORY SET
+  -- ================================================================
+  SELECT MAX(year) INTO v_most_recent_year
+  FROM scope3
+  WHERE company_id = p_company_id
+    AND reported = TRUE;
+
+  IF v_most_recent_year IS NULL THEN
+    INSERT INTO company_scores_public (company_id, company_name, sector, country_hq, score_status, unknown_reason, last_updated)
+    SELECT p_company_id, c.company_name, c.sector, c.country_hq, 'unknown', 'no_scope3_data', NOW()
+    FROM companies c WHERE c.company_id = p_company_id
+    ON CONFLICT (company_id) DO UPDATE SET
+      score_status = 'unknown', unknown_reason = 'no_scope3_data', last_updated = NOW();
+    RETURN;
+  END IF;
+
+  -- Get required categories from most recent year
+  SELECT ARRAY_AGG(DISTINCT category) INTO v_required_cats
+  FROM scope3_with_required
+  WHERE company_id        = p_company_id
+    AND year              = v_most_recent_year
+    AND effective_required = TRUE;
+
+  -- ================================================================
+  -- FIND VALID YEARS
+  -- ================================================================
+  SELECT ARRAY_AGG(sub.year ORDER BY sub.year) INTO v_window_years
+  FROM (
+    SELECT DISTINCT ON (s12.year) s12.year, s12.s12_status
+    FROM scope12 s12
+    WHERE s12.company_id = p_company_id
+      AND s12.year <= EXTRACT(YEAR FROM v_assessment_date)
+    ORDER BY s12.year, s12.reporting_year DESC
+  ) sub
+  WHERE sub.s12_status = 'ok'
+    -- All required categories must be present with row_status = 'ok'
+    -- (using DISTINCT ON to deduplicate restatements per category)
+    AND NOT EXISTS (
+      SELECT 1 FROM UNNEST(v_required_cats) AS req(cat)
+      WHERE NOT EXISTS (
+        SELECT 1
+        FROM (
+          SELECT DISTINCT ON (category) category, row_status
+          FROM scope3_with_required
+          WHERE company_id        = p_company_id
+            AND year              = sub.year
+            AND effective_required = TRUE
+          ORDER BY category, reporting_year DESC
+        ) s3d
+        WHERE s3d.category   = req.cat
+          AND s3d.row_status  = 'ok'
+      )
+    );
+
+  IF v_window_years IS NULL OR ARRAY_LENGTH(v_window_years, 1) = 0 THEN
+    INSERT INTO company_scores_public (company_id, company_name, sector, country_hq, score_status, unknown_reason, last_updated)
+    SELECT p_company_id, c.company_name, c.sector, c.country_hq, 'unknown', 'no_scope12_data', NOW()
+    FROM companies c WHERE c.company_id = p_company_id
+    ON CONFLICT (company_id) DO UPDATE SET
+      score_status = 'unknown', unknown_reason = 'no_scope12_data', last_updated = NOW();
+    RETURN;
+  END IF;
+
+  -- ================================================================
+  -- FIND MOST RECENT CONSECUTIVE RUN OF >= 3 YEARS
+  -- ================================================================
+  v_best_years        := NULL;
+  v_consecutive_years := ARRAY[v_window_years[1]];
+
+  FOR i IN 2..ARRAY_LENGTH(v_window_years, 1) LOOP
+    IF v_window_years[i] = v_window_years[i-1] + 1 THEN
+      v_consecutive_years := v_consecutive_years || v_window_years[i];
+    ELSE
+      IF ARRAY_LENGTH(v_consecutive_years, 1) >= 3
+        AND v_consecutive_years[ARRAY_LENGTH(v_consecutive_years, 1)]
+            >= EXTRACT(YEAR FROM v_assessment_date) - 2
+      THEN
+        v_best_years := v_consecutive_years;
+      END IF;
+      v_consecutive_years := ARRAY[v_window_years[i]];
+    END IF;
+  END LOOP;
+
+  -- Check final run
+  IF ARRAY_LENGTH(v_consecutive_years, 1) >= 3
+    AND v_consecutive_years[ARRAY_LENGTH(v_consecutive_years, 1)]
+        >= EXTRACT(YEAR FROM v_assessment_date) - 2
+  THEN
+    v_best_years := v_consecutive_years;
+  END IF;
+
+  IF v_best_years IS NULL THEN
+    IF v_window_years[ARRAY_LENGTH(v_window_years, 1)]
+       < EXTRACT(YEAR FROM v_assessment_date) - 2 THEN
+      v_unknown_reason := 'data_too_old';
+    ELSE
+      v_unknown_reason := 'window_too_short';
+    END IF;
+    INSERT INTO company_scores_public (company_id, company_name, sector, country_hq, score_status, unknown_reason, last_updated)
+    SELECT p_company_id, c.company_name, c.sector, c.country_hq, 'unknown', v_unknown_reason, NOW()
+    FROM companies c WHERE c.company_id = p_company_id
+    ON CONFLICT (company_id) DO UPDATE SET
+      score_status = 'unknown', unknown_reason = v_unknown_reason, last_updated = NOW();
+    RETURN;
+  END IF;
+
+  v_window_start := v_best_years[1];
+  v_window_end   := v_best_years[ARRAY_LENGTH(v_best_years, 1)];
+
+  -- ================================================================
+  -- CHECK SCOPE 2 AVAILABILITY
+  -- ================================================================
+  SELECT
+    BOOL_AND(scope2_location_disclosed AND scope2_location_ghg IS NOT NULL),
+    BOOL_AND(scope2_market_disclosed   AND scope2_market_ghg   IS NOT NULL)
+  INTO v_loc_available, v_mkt_available
+  FROM (
+    SELECT DISTINCT ON (year)
+      year, scope2_location_disclosed, scope2_location_ghg,
+      scope2_market_disclosed, scope2_market_ghg
+    FROM scope12
+    WHERE company_id = p_company_id
+      AND year = ANY(v_best_years)
+    ORDER BY year, reporting_year DESC
+  ) sub;
+
+  v_loc_available := COALESCE(v_loc_available, FALSE);
+  v_mkt_available := COALESCE(v_mkt_available, FALSE);
+
+  IF NOT v_loc_available AND NOT v_mkt_available THEN
+    INSERT INTO company_scores_public (company_id, company_name, sector, country_hq, score_status, unknown_reason, score_location_available, score_market_available, last_updated)
+    SELECT p_company_id, c.company_name, c.sector, c.country_hq, 'unknown', 'scope2_location_missing', FALSE, FALSE, NOW()
+    FROM companies c WHERE c.company_id = p_company_id
+    ON CONFLICT (company_id) DO UPDATE SET
+      score_status = 'unknown', unknown_reason = 'scope2_location_missing',
+      score_location_available = FALSE, score_market_available = FALSE, last_updated = NOW();
+    RETURN;
+  END IF;
+
+  -- ================================================================
+  -- COMPUTE BASE YEAR TOTALS
+  -- ================================================================
+  SELECT
+    s12.scope1_ghg
+      + CASE WHEN v_loc_available THEN s12.scope2_location_ghg ELSE 0 END
+      + COALESCE((
+          SELECT SUM(s3.ghg)
+          FROM (
+            SELECT DISTINCT ON (category) ghg
+            FROM scope3_with_required
+            WHERE company_id        = p_company_id
+              AND year              = v_window_start
+              AND category = ANY(v_required_cats)   -- the basket, not this year's own flags
+              AND row_status        = 'ok'
+            ORDER BY category, reporting_year DESC
+          ) s3
+        ), 0),
+    s12.scope1_ghg
+      + CASE WHEN v_mkt_available THEN s12.scope2_market_ghg ELSE 0 END
+      + COALESCE((
+          SELECT SUM(s3.ghg)
+          FROM (
+            SELECT DISTINCT ON (category) ghg
+            FROM scope3_with_required
+            WHERE company_id        = p_company_id
+              AND year              = v_window_start
+              AND category = ANY(v_required_cats)   -- the basket, not this year's own flags
+              AND row_status        = 'ok'
+            ORDER BY category, reporting_year DESC
+          ) s3
+        ), 0)
+  INTO v_base_location, v_base_market
+  FROM (
+    SELECT DISTINCT ON (year)
+      year, scope1_ghg, scope2_location_ghg, scope2_market_ghg
+    FROM scope12
+    WHERE company_id = p_company_id
+      AND year = v_window_start
+    ORDER BY year, reporting_year DESC
+  ) s12;
+
+  -- ================================================================
+  -- COMPUTE CARBON BUDGET AND SCORE
+  -- ================================================================
+  -- Methodology: compare company observed budget against pathway budgets
+  -- over the same reporting window, using all AR6 median scenarios with
+  -- a dynamic monotonic merge to handle near-term ordering violations.
+  --
+  -- Step 1: sum company indexed emissions over window years → company budget
+  -- Step 2: for each temperature bin, sum pathway indexed emissions over
+  --         the same window years → pathway budget
+  -- Step 3: apply monotonic merge — scan bins low-to-high temperature;
+  --         if a bin's budget is not strictly greater than the previous
+  --         merged group, merge it in and average temperature and budget.
+  --         This eliminates spurious precision where bins are indistinguishable
+  --         while preserving all available AR6 scenario information.
+  -- Step 4: bracket company budget between two adjacent merged bins and
+  --         interpolate linearly for the temperature score.
+  -- ================================================================
+  DELETE FROM company_charts_public
+  WHERE company_id = p_company_id;
+
+  -- Step 1: accumulate actual company index values across window years
+  v_log_diff_sum_loc := 0;
+  v_log_diff_sum_mkt := 0;
+  v_n_years          := 0;
+
+  FOREACH v_yr IN ARRAY v_best_years LOOP
+    SELECT
+      s12.scope1_ghg
+        + CASE WHEN v_loc_available THEN s12.scope2_location_ghg ELSE 0 END
+        + COALESCE((
+          SELECT SUM(s3.ghg)
+          FROM (
+            SELECT DISTINCT ON (category) ghg
+            FROM scope3_with_required
+            WHERE company_id        = p_company_id
+              AND year              = v_yr
+              AND category = ANY(v_required_cats)   -- the basket, not this year's own flags
+              AND row_status        = 'ok'
+            ORDER BY category, reporting_year DESC
+          ) s3
+        ), 0),
+      s12.scope1_ghg
+        + CASE WHEN v_mkt_available THEN s12.scope2_market_ghg ELSE 0 END
+        + COALESCE((
+          SELECT SUM(s3.ghg)
+          FROM (
+            SELECT DISTINCT ON (category) ghg
+            FROM scope3_with_required
+            WHERE company_id        = p_company_id
+              AND year              = v_yr
+              AND category = ANY(v_required_cats)   -- the basket, not this year's own flags
+              AND row_status        = 'ok'
+            ORDER BY category, reporting_year DESC
+          ) s3
+        ), 0)
+    INTO v_total_location, v_total_market
+    FROM (
+      SELECT DISTINCT ON (year)
+        year, scope1_ghg, scope2_location_ghg, scope2_market_ghg
+      FROM scope12
+      WHERE company_id = p_company_id
+        AND year = v_yr
+      ORDER BY year, reporting_year DESC
+    ) s12;
+
+    IF v_loc_available AND v_base_location > 0 THEN
+      v_log_diff_sum_loc := v_log_diff_sum_loc
+        + (v_total_location / v_base_location) * 100;
+      v_company_index_loc := (v_total_location / v_base_location) * 100;
+    END IF;
+
+    IF v_mkt_available AND v_base_market > 0 THEN
+      v_log_diff_sum_mkt := v_log_diff_sum_mkt
+        + (v_total_market / v_base_market) * 100;
+      v_company_index_mkt := (v_total_market / v_base_market) * 100;
+    END IF;
+
+    v_n_years := v_n_years + 1;
+  END LOOP;
+
+  -- Company budget = sum of indexed emissions over window years
+  v_mae_loc := v_log_diff_sum_loc;
+  v_mae_mkt := v_log_diff_sum_mkt;
+
+  -- ================================================================
+  -- COLLECT PATHWAY BUDGETS AND APPLY MONOTONIC MERGE
+  -- ================================================================
+  -- For each temperature bin, compute budget over the same company
+  -- window years. Then merge any adjacent bins that are not strictly
+  -- ordered (lower temp should have lower budget = more reductions).
+  -- Merged bins get averaged temperature and averaged budget, so no
+  -- information is discarded and the merged label reflects the centre
+  -- of the indistinguishable group.
+  -- ================================================================
+
+  v_all_temps   := ARRAY[]::NUMERIC[];
+  v_all_budgets := ARRAY[]::NUMERIC[];
+
+  FOR v_rec IN (
+    SELECT DISTINCT temperature_c
+    FROM climate_pathways
+    ORDER BY temperature_c
+  ) LOOP
+    v_temp := v_rec.temperature_c;
+
+    SELECT emissions_median_mtco2e INTO v_pathway_base
+    FROM climate_pathways
+    WHERE temperature_c = v_temp AND year = v_window_start;
+
+    IF v_pathway_base IS NULL OR v_pathway_base <= 0 THEN CONTINUE; END IF;
+
+    SELECT SUM((cp.emissions_median_mtco2e / v_pathway_base) * 100)
+    INTO v_pathway_budget
+    FROM climate_pathways cp
+    WHERE cp.temperature_c = v_temp
+      AND cp.year = ANY(v_best_years);
+
+    IF v_pathway_budget IS NULL THEN CONTINUE; END IF;
+
+    v_all_temps   := v_all_temps   || v_temp;
+    v_all_budgets := v_all_budgets || v_pathway_budget;
+  END LOOP;
+
+  -- Capture the true min and max real AR6 bin temperatures
+  -- (first and last elements of v_all_temps before merging)
+  v_min_bin_temp := v_all_temps[1];
+  v_max_bin_temp := v_all_temps[ARRAY_LENGTH(v_all_temps, 1)];
+
+  -- Apply monotonic merge:
+  -- Budgets must be non-decreasing (more warming = less reduction = higher budget).
+  -- If next bin's budget <= current group average, it is indistinguishable
+  -- from the group — merge it in and average both temp and budget.
+  v_merged_temps   := ARRAY[]::NUMERIC[];
+  v_merged_budgets := ARRAY[]::NUMERIC[];
+
+  -- The first (lowest) and last (highest) bins are never merged — they define
+  -- the absolute min/max of the scoring range and must remain as real AR6 bins.
+  -- Only intermediate bins are candidates for merging.
+  IF ARRAY_LENGTH(v_all_temps, 1) > 0 THEN
+    -- Always keep first bin as-is
+    v_merged_temps   := v_merged_temps   || v_all_temps[1];
+    v_merged_budgets := v_merged_budgets || v_all_budgets[1];
+
+    IF ARRAY_LENGTH(v_all_temps, 1) > 2 THEN
+      -- Process intermediate bins (2 to n-1) with monotonic merge
+      v_group_temp_sum   := v_all_temps[2];
+      v_group_budget_sum := v_all_budgets[2];
+      v_group_count      := 1;
+
+      FOR v_i IN 3..ARRAY_LENGTH(v_all_temps, 1) - 1 LOOP
+        IF v_all_budgets[v_i] > (v_group_budget_sum / v_group_count) THEN
+          -- Correctly ordered: flush current group
+          v_merged_temps   := v_merged_temps   || (v_group_temp_sum   / v_group_count);
+          v_merged_budgets := v_merged_budgets || (v_group_budget_sum / v_group_count);
+          v_group_temp_sum   := v_all_temps[v_i];
+          v_group_budget_sum := v_all_budgets[v_i];
+          v_group_count      := 1;
+        ELSE
+          -- Merge into current group
+          v_group_temp_sum   := v_group_temp_sum   + v_all_temps[v_i];
+          v_group_budget_sum := v_group_budget_sum + v_all_budgets[v_i];
+          v_group_count      := v_group_count + 1;
+        END IF;
+      END LOOP;
+
+      -- Flush final intermediate group
+      v_merged_temps   := v_merged_temps   || (v_group_temp_sum   / v_group_count);
+      v_merged_budgets := v_merged_budgets || (v_group_budget_sum / v_group_count);
+    ELSIF ARRAY_LENGTH(v_all_temps, 1) = 2 THEN
+      -- Only two bins total — both kept as-is (handled by last bin append below)
+      NULL;
+    END IF;
+
+    -- Always keep last bin as-is
+    v_merged_temps   := v_merged_temps   || v_all_temps[ARRAY_LENGTH(v_all_temps, 1)];
+    v_merged_budgets := v_merged_budgets || v_all_budgets[ARRAY_LENGTH(v_all_budgets, 1)];
+  END IF;
+
+  -- ================================================================
+  -- BRACKET COMPANY BUDGET AGAINST MERGED PATHWAY BINS
+  -- ================================================================
+  v_best_temp_loc   := NULL;
+  v_best_temp_mkt   := NULL;
+  v_second_temp_loc := NULL;
+  v_second_temp_mkt := NULL;
+  v_best_mae_loc    := NULL;
+  v_best_mae_mkt    := NULL;
+  v_second_mae_loc  := NULL;
+  v_second_mae_mkt  := NULL;
+
+  FOR v_i IN 1..COALESCE(ARRAY_LENGTH(v_merged_temps, 1), 0) LOOP
+    -- Location bracket
+    IF v_loc_available THEN
+      IF v_merged_budgets[v_i] <= v_mae_loc THEN
+        IF v_best_temp_loc IS NULL OR v_merged_budgets[v_i] > v_best_mae_loc THEN
+          v_best_temp_loc := v_merged_temps[v_i];
+          v_best_mae_loc  := v_merged_budgets[v_i];
+        END IF;
+      ELSE
+        IF v_second_temp_loc IS NULL OR v_merged_budgets[v_i] < v_second_mae_loc THEN
+          v_second_temp_loc := v_merged_temps[v_i];
+          v_second_mae_loc  := v_merged_budgets[v_i];
+        END IF;
+      END IF;
+    END IF;
+
+    -- Market bracket
+    IF v_mkt_available THEN
+      IF v_merged_budgets[v_i] <= v_mae_mkt THEN
+        IF v_best_temp_mkt IS NULL OR v_merged_budgets[v_i] > v_best_mae_mkt THEN
+          v_best_temp_mkt := v_merged_temps[v_i];
+          v_best_mae_mkt  := v_merged_budgets[v_i];
+        END IF;
+      ELSE
+        IF v_second_temp_mkt IS NULL OR v_merged_budgets[v_i] < v_second_mae_mkt THEN
+          v_second_temp_mkt := v_merged_temps[v_i];
+          v_second_mae_mkt  := v_merged_budgets[v_i];
+        END IF;
+      END IF;
+    END IF;
+  END LOOP;
+
+  -- ================================================================
+  -- INTERPOLATE SCORE BETWEEN BRACKETING BINS
+  -- ================================================================
+  -- Linear interpolation between the two merged pathway budgets that
+  -- bracket the company budget.
+  -- score = T_lower + (company_budget - budget_lower)
+  --                   / (budget_upper - budget_lower)
+  --                   * (T_upper - T_lower)
+  --
+  -- If company is below all bins (better than lowest): score = lowest bin,
+  -- flag score_below_min = TRUE → frontend displays "<1.4°C"
+  -- If company is above all bins (worse than highest): score = highest bin,
+  -- flag score_above_max = TRUE → frontend displays ">4.0°C"
+  IF v_loc_available THEN
+    IF v_best_temp_loc IS NOT NULL AND v_second_temp_loc IS NOT NULL THEN
+      -- Normal interpolation between two bracketing bins
+      v_score_loc := v_best_temp_loc
+        + (v_mae_loc - v_best_mae_loc)
+          / (v_second_mae_loc - v_best_mae_loc)
+          * (v_second_temp_loc - v_best_temp_loc);
+    ELSIF v_best_temp_loc IS NOT NULL AND v_second_temp_loc IS NULL THEN
+      -- Company budget above all pathway budgets: worse than highest bin
+      v_score_loc           := v_max_bin_temp;
+      v_score_above_max_loc := TRUE;
+    ELSIF v_best_temp_loc IS NULL AND v_second_temp_loc IS NOT NULL THEN
+      -- Company budget below all pathway budgets: better than lowest bin
+      v_score_loc           := v_min_bin_temp;
+      v_score_below_min_loc := TRUE;
+    END IF;
+  END IF;
+
+  IF v_mkt_available THEN
+    IF v_best_temp_mkt IS NOT NULL AND v_second_temp_mkt IS NOT NULL THEN
+      v_score_mkt := v_best_temp_mkt
+        + (v_mae_mkt - v_best_mae_mkt)
+          / (v_second_mae_mkt - v_best_mae_mkt)
+          * (v_second_temp_mkt - v_best_temp_mkt);
+    ELSIF v_best_temp_mkt IS NOT NULL AND v_second_temp_mkt IS NULL THEN
+      v_score_mkt           := v_max_bin_temp;
+      v_score_above_max_mkt := TRUE;
+    ELSIF v_best_temp_mkt IS NULL AND v_second_temp_mkt IS NOT NULL THEN
+      v_score_mkt           := v_min_bin_temp;
+      v_score_below_min_mkt := TRUE;
+    END IF;
+  END IF;
+
+  -- ================================================================
+  -- COMPUTE FIT ERROR FROM P10/P90 SPREAD AT BEST-FIT TEMPERATURE
+  -- ================================================================
+  -- For each available score type, sum the p10 and p90 pathway budgets
+  -- at the best-fit temperature over the same window years.
+  -- fit_error = 0 if company budget is within the p10-p90 range.
+  -- fit_error > 0 if outside: fraction beyond the nearest bound.
+
+  IF v_loc_available AND COALESCE(v_best_temp_loc, v_second_temp_loc) IS NOT NULL THEN
+    -- Find nearest real bin to the (possibly merged) best-fit temperature
+    SELECT temperature_c INTO v_chart_temp
+    FROM climate_pathways
+    ORDER BY ABS(temperature_c - COALESCE(v_best_temp_loc, v_second_temp_loc))
+    LIMIT 1;
+
+    SELECT emissions_p10_mtco2e, emissions_p90_mtco2e
+    INTO v_p10_base, v_p90_base
+    FROM climate_pathways
+    WHERE temperature_c = v_chart_temp
+      AND year = v_window_start;
+
+    IF v_p10_base > 0 AND v_p90_base > 0 THEN
+      -- Sum p10/p90 over company window years using nearest real bin
+      SELECT
+        SUM((cp.emissions_p10_mtco2e / v_p10_base) * 100),
+        SUM((cp.emissions_p90_mtco2e / v_p90_base) * 100)
+      INTO v_p10_budget_loc, v_p90_budget_loc
+      FROM climate_pathways cp
+      WHERE cp.temperature_c = v_chart_temp
+        AND cp.year = ANY(v_best_years);
+
+      IF v_mae_loc < v_p10_budget_loc AND v_p10_budget_loc > 0 THEN
+        v_fit_error_loc := (v_p10_budget_loc - v_mae_loc) / v_p10_budget_loc;
+      ELSIF v_mae_loc > v_p90_budget_loc AND v_p90_budget_loc > 0 THEN
+        v_fit_error_loc := (v_mae_loc - v_p90_budget_loc) / v_p90_budget_loc;
+      ELSE
+        v_fit_error_loc := 0;
+      END IF;
+    END IF;
+  END IF;
+
+  IF v_mkt_available AND COALESCE(v_best_temp_mkt, v_second_temp_mkt) IS NOT NULL THEN
+    SELECT temperature_c INTO v_chart_temp
+    FROM climate_pathways
+    ORDER BY ABS(temperature_c - COALESCE(v_best_temp_mkt, v_second_temp_mkt))
+    LIMIT 1;
+
+    SELECT emissions_p10_mtco2e, emissions_p90_mtco2e
+    INTO v_p10_base, v_p90_base
+    FROM climate_pathways
+    WHERE temperature_c = v_chart_temp
+      AND year = v_window_start;
+
+    IF v_p10_base > 0 AND v_p90_base > 0 THEN
+      -- Sum p10/p90 over company window years using nearest real bin
+      SELECT
+        SUM((cp.emissions_p10_mtco2e / v_p10_base) * 100),
+        SUM((cp.emissions_p90_mtco2e / v_p90_base) * 100)
+      INTO v_p10_budget_mkt, v_p90_budget_mkt
+      FROM climate_pathways cp
+      WHERE cp.temperature_c = v_chart_temp
+        AND cp.year = ANY(v_best_years);
+
+      IF v_mae_mkt < v_p10_budget_mkt AND v_p10_budget_mkt > 0 THEN
+        v_fit_error_mkt := (v_p10_budget_mkt - v_mae_mkt) / v_p10_budget_mkt;
+      ELSIF v_mae_mkt > v_p90_budget_mkt AND v_p90_budget_mkt > 0 THEN
+        v_fit_error_mkt := (v_mae_mkt - v_p90_budget_mkt) / v_p90_budget_mkt;
+      ELSE
+        v_fit_error_mkt := 0;
+      END IF;
+    END IF;
+  END IF;
+
+  -- ================================================================
+  -- WRITE TO company_scores_public
+  -- ================================================================
+  INSERT INTO company_scores_public (
+    company_id,
+    company_name,
+    sector,
+    country_hq,
+    thermostat_score_location,
+    thermostat_score_market,
+    score_location_available,
+    score_market_available,
+    fit_error_location,
+    fit_error_market,
+    score_status,
+    assessment_year_start,
+    assessment_year_end,
+    latest_data_year,
+    score_below_min_location,
+    score_below_min_market,
+    score_above_max_location,
+    score_above_max_market,
+    last_updated
+  )
+  SELECT
+    p_company_id,
+    c.company_name,
+    c.sector,
+    c.country_hq,
+    v_score_loc,
+    v_score_mkt,
+    v_loc_available,
+    v_mkt_available,
+    v_fit_error_loc,
+    v_fit_error_mkt,
+    'scored',
+    v_window_start,
+    v_window_end,
+    v_window_end,
+    v_score_below_min_loc,
+    v_score_below_min_mkt,
+    v_score_above_max_loc,
+    v_score_above_max_mkt,
+    NOW()
+  FROM companies c
+  WHERE c.company_id = p_company_id
+  ON CONFLICT (company_id) DO UPDATE SET
+    company_name              = EXCLUDED.company_name,
+    sector                    = EXCLUDED.sector,
+    country_hq                = EXCLUDED.country_hq,
+    thermostat_score_location = EXCLUDED.thermostat_score_location,
+    thermostat_score_market   = EXCLUDED.thermostat_score_market,
+    score_location_available  = EXCLUDED.score_location_available,
+    score_market_available    = EXCLUDED.score_market_available,
+    fit_error_location        = EXCLUDED.fit_error_location,
+    fit_error_market          = EXCLUDED.fit_error_market,
+    score_status              = EXCLUDED.score_status,
+    unknown_reason            = NULL,
+    assessment_year_start     = EXCLUDED.assessment_year_start,
+    assessment_year_end       = EXCLUDED.assessment_year_end,
+    latest_data_year          = EXCLUDED.latest_data_year,
+    score_below_min_location  = EXCLUDED.score_below_min_location,
+    score_below_min_market    = EXCLUDED.score_below_min_market,
+    score_above_max_location  = EXCLUDED.score_above_max_location,
+    score_above_max_market    = EXCLUDED.score_above_max_market,
+    last_updated              = EXCLUDED.last_updated;
+
+  -- ================================================================
+  -- WRITE TO company_charts_public
+  -- ================================================================
+  -- For chart pathway line: interpolate between the two bracketing bins
+  -- at the exact score temperature, so the line visually matches the score.
+  -- If above_max or below_min, suppress pathway_index (NULL) — the line
+  -- would be outside the bin range and is not meaningful to display.
+  --
+  -- Use location score as primary; fall back to market if loc unavailable.
+  -- v_chart_temp stores the interpolated score temp for pathway_temp column.
+
+  -- Only compute interpolated pathway if within range
+  DECLARE
+    v_lower_base   NUMERIC;
+    v_upper_base   NUMERIC;
+    v_lower_temp   NUMERIC;
+    v_upper_temp   NUMERIC;
+    v_interp_w     NUMERIC;  -- interpolation weight (0=lower bin, 1=upper bin)
+    v_show_pathway BOOLEAN;
+  BEGIN
+    v_lower_temp := COALESCE(v_best_temp_loc,  v_best_temp_mkt);
+    v_upper_temp := COALESCE(v_second_temp_loc, v_second_temp_mkt);
+    v_chart_temp := COALESCE(v_score_loc, v_score_mkt);
+
+    -- Show pathway only when both brackets exist (not above/below range)
+    v_show_pathway := (v_lower_temp IS NOT NULL AND v_upper_temp IS NOT NULL);
+
+    -- When above/below range, null out chart_temp so pathway_temp is NULL in output
+    IF NOT v_show_pathway THEN
+      v_chart_temp := NULL;
+    END IF;
+
+    IF v_show_pathway THEN
+      -- Interpolation weight: 0 = lower bin, 1 = upper bin
+      IF v_upper_temp > v_lower_temp THEN
+        v_interp_w := (v_chart_temp - v_lower_temp) / (v_upper_temp - v_lower_temp);
+      ELSE
+        v_interp_w := 0;
+      END IF;
+
+      -- Get pathway bases at window start for both bracketing bins
+      SELECT emissions_median_mtco2e INTO v_lower_base
+      FROM climate_pathways
+      WHERE temperature_c = v_lower_temp AND year = v_window_start;
+
+      SELECT emissions_median_mtco2e INTO v_upper_base
+      FROM climate_pathways
+      WHERE temperature_c = v_upper_temp AND year = v_window_start;
+    END IF;
+
+    FOR v_rec IN (
+      SELECT DISTINCT ON (s12.year)
+        s12.year,
+        s12.reporting_year,
+        s12.scope1_ghg,
+        CASE WHEN v_loc_available THEN s12.scope2_location_ghg ELSE NULL END AS scope2_loc,
+        CASE WHEN v_mkt_available THEN s12.scope2_market_ghg   ELSE NULL END AS scope2_mkt,
+        COALESCE((
+          SELECT SUM(s3.ghg)
+          FROM (
+            SELECT DISTINCT ON (category) ghg
+            FROM scope3_with_required
+            WHERE company_id        = p_company_id
+              AND year              = s12.year
+              AND category = ANY(v_required_cats)   -- the basket, not this year's own flags
+              AND row_status        = 'ok'
+            ORDER BY category, reporting_year DESC
+          ) s3
+        ), 0) AS scope3_total
+      FROM scope12 s12
+      WHERE s12.company_id = p_company_id
+      ORDER BY s12.year, s12.reporting_year DESC
+    ) LOOP
+
+      v_total_location := v_rec.scope1_ghg
+        + COALESCE(v_rec.scope2_loc, 0)
+        + v_rec.scope3_total;
+      v_total_market := v_rec.scope1_ghg
+        + COALESCE(v_rec.scope2_mkt, 0)
+        + v_rec.scope3_total;
+
+      v_company_index_loc := CASE
+        WHEN v_loc_available AND v_base_location > 0
+        THEN (v_total_location / v_base_location) * 100
+        ELSE NULL END;
+
+      v_company_index_mkt := CASE
+        WHEN v_mkt_available AND v_base_market > 0
+        THEN (v_total_market / v_base_market) * 100
+        ELSE NULL END;
+
+      -- Compute interpolated pathway index for this year
+      IF v_show_pathway AND v_lower_base > 0 AND v_upper_base > 0 THEN
+        DECLARE
+          v_lower_idx NUMERIC;
+          v_upper_idx NUMERIC;
+        BEGIN
+          SELECT (cp.emissions_median_mtco2e / v_lower_base) * 100
+          INTO v_lower_idx
+          FROM climate_pathways cp
+          WHERE cp.temperature_c = v_lower_temp AND cp.year = v_rec.year;
+
+          SELECT (cp.emissions_median_mtco2e / v_upper_base) * 100
+          INTO v_upper_idx
+          FROM climate_pathways cp
+          WHERE cp.temperature_c = v_upper_temp AND cp.year = v_rec.year;
+
+          v_pathway_index := v_lower_idx + v_interp_w * (v_upper_idx - v_lower_idx);
+        END;
+      ELSE
+        v_pathway_index := NULL;
+      END IF;
+
+      INSERT INTO company_charts_public (
+        company_id, company_name, sector,
+        year, reporting_year,
+        total_ghg_location, total_ghg_market,
+        scope1_ghg, scope2_location_ghg, scope2_market_ghg, scope3_ghg,
+        company_index_location, company_index_market,
+        pathway_index, pathway_temp,
+        assessment_window_flag, data_status
+      )
+      SELECT
+        p_company_id, c.company_name, c.sector,
+        v_rec.year, v_rec.reporting_year,
+        v_total_location, v_total_market,
+        v_rec.scope1_ghg, v_rec.scope2_loc, v_rec.scope2_mkt, v_rec.scope3_total,
+        v_company_index_loc, v_company_index_mkt,
+        v_pathway_index, ROUND(v_chart_temp::numeric, 2),
+        v_rec.year = ANY(v_best_years),
+        'usable'
+      FROM companies c
+      WHERE c.company_id = p_company_id;
+
+    END LOOP;
+  END;
+
+  -- ================================================================
+  -- UPDATE SECTOR MEDIAN SCORE
+  -- ================================================================
+  UPDATE company_scores_public
+  SET
+    sector_median_score_location = (
+      SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY thermostat_score_location)
+      FROM company_scores_public
+      WHERE sector = v_sector
+        AND score_status = 'scored'
+        AND thermostat_score_location IS NOT NULL
+    ),
+    sector_median_score_market = (
+      SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY thermostat_score_market)
+      FROM company_scores_public
+      WHERE sector = v_sector
+        AND score_status = 'scored'
+        AND thermostat_score_market IS NOT NULL
+    )
+  WHERE sector = v_sector;
+
+END;
+$function$
+

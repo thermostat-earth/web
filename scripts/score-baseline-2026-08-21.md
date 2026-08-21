@@ -55,3 +55,22 @@ and 2023-2024 are two runs of two, and neither reaches three years on one basis.
 rolled back and ITV re-reads 1.4528098473557398489030, unchanged.
 
 So the gate is off when there is no break and on when there is.
+
+---
+
+## Result — checked after step 3 (one basket for every year), 2026-08-21
+
+**Nothing moved.** All four identical again; H&M 1.5095032111311140925670 and ITV
+1.4528098473557398489030 to every decimal place.
+
+**Rule 1 now actually holds.** Tested: with category 11 marked required for ITV in 2021-2023 but
+not 2024, the score comes out at **exactly** the current 1.4528098473557398489030 — because the
+basket is taken from the latest year, category 11 is not in it, and it is therefore excluded from
+every year rather than inflating the earlier ones. Before this change the same test produced totals
+of 712,779 / 840,151 / 833,546 / 318,654.
+
+**The gap condition is NOT implemented.** With category 11 required in every year *including* 2024,
+where ITV has no figure, the year still qualifies and contributes zero — totals 712,779 / 840,151 /
+833,546 / 318,654 and a score of 1.6673. That is a required category with nothing behind it being
+read as zero. Rule 1 says this case should not be scored at all: the category still applies and the
+company has stopped disclosing it, which is a gap rather than a basket change.
