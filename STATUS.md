@@ -53,8 +53,12 @@ like Inditex moving own-store fuel into scope 1, which cannot be added or subtra
 
 ## Backlog — methodology page needs updating (added 2026-08-21)
 
-New public wording will be needed for everything settled this week, and it needs Felix's sign-off
-before it goes anywhere:
+**Now step 5 of `REPORTING-BASIS-PLAN.md` rather than a standalone note** — the basis work is not
+done until the methodology page describes it, because a public score that silently excludes years
+is indefensible without the reason written where anyone can read it. Kept here as a pointer so it
+is visible from the status doc, but the plan is where it is tracked.
+
+New public wording, all of it requiring Felix's sign-off:
 
 - **Reporting basis.** That a company's own restatements and boundary changes mean not every
   published year is comparable, and that a temperature score is only ever drawn across years on one

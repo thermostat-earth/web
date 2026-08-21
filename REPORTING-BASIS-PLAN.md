@@ -111,6 +111,30 @@ break is confirmed or a category's reported status changes. That populates the p
 - The review page and the public score use the **same rule**, so they cannot disagree — the failure
   found on 2026-08-21, where a company card and its review page stated different figures.
 
+### 6. The methodology page is part of the work, not a follow-up
+
+**The basis rule cannot reach thermostat.earth until the methodology page explains it.** A public
+score that silently excludes years, or that stops spanning a company's full published history, is
+not defensible unless the reason is written down where anyone can read it. Someone comparing our
+number to the company's own report will find the difference; the page has to answer them before
+they ask.
+
+Four things need new public wording, all of it requiring Felix's sign-off:
+
+- **Reporting basis** — that a company's own boundary changes mean not every published year is
+  comparable, and a score is only drawn across years sharing one basis. Inditex is the worked
+  example: FY2023 scope 1 moved from 11,512 to 49,686, the 2018 baseline from 19,172 to 76,136,
+  and neither is a change in emissions.
+- **Base years** — that we hold the company's own stated baseline and what it is used for.
+- **Restatements** — that a year can be published more than once with different figures, that every
+  reporting is kept rather than overwritten, and that what is shown is the current position.
+- **Relevance** — that sector expectations are context rather than rules; applicability is settled
+  from the company's own business model and Felix's determination is what binds.
+
+Treated as a step here rather than left in `STATUS.md` as a backlog note, because a note is the
+weakest form of a rule and this week has already shown twice what happens to those. **Definition of
+done for this work includes the methodology page, or it is not done.**
+
 ## Order, and why
 
 1. **Basis column + backfill** — half a day. Nothing changes behaviour yet.
@@ -119,6 +143,8 @@ break is confirmed or a category's reported status changes. That populates the p
 3. **Screen changes** — small.
 4. **Relevance validity range** — a day, touches the review page. Last because today a single
    assessment is not *wrong* for any company we hold, just not general.
+5. **Methodology page** — before any of it is visible on thermostat.earth. Needs Felix's sign-off,
+   so start the wording early rather than discovering it is the blocker at the end.
 
 ## Risks worth naming before starting
 

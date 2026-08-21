@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  Make the methodology page a step in the plan, not a backlog note
 - 2026-08-21  Plan: keeping a score honest across a reporting-basis change
 - 2026-08-21  Backlog: the methodology page needs updating for this week's additions
 - 2026-08-20  STATUS: the scrape worker must never call a sector rule 'required'
