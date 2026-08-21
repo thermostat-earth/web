@@ -130,3 +130,41 @@ All three now confirmed present, and all three behave:
 
 The last two used to be indistinguishable, and before that both scored a company on a fall it had
 not made.
+
+---
+
+## Result — steps 6 and 7 (three-state relevance), 2026-08-21
+
+**A live score moved mid-change, and was put back.** Migration 006 split relevance into
+required / optional / not_required. ITV's category 15 — a voluntary disclosure the reviewer had
+chosen to count — became `optional`, and until 007 only `required` was summed. ITV read
+**1.4489904536864931545290** for the few minutes between the two migrations, against a correct
+1.4528098473557398489030. 007 restored it exactly.
+
+**Lesson: 006 and 007 were one change and should have been one migration.** Splitting a schema
+change from the scoring change that gives it meaning left the live site briefly wrong.
+
+**Verified afterwards, by name and by behaviour.** Features present:
+
+```sh
+~/.felixep/dbtool/db.sh thermostat <<'SQL'
+select (pg_get_functiondef(oid) ilike '%v_window_basis%')                as basis_gating,
+       (pg_get_functiondef(oid) ilike '%category = ANY(v_basket_cats)%') as basket_sums,
+       (pg_get_functiondef(oid) ilike '%s3d.ghg IS NOT NULL%')           as figure_test,
+       (pg_get_functiondef(oid) ilike '%category_not_disclosed%')        as gap_reason,
+       (pg_get_functiondef(oid) ilike '%effective_relevance = ''optional''%') as optional_basket
+from pg_proc where proname='score_company';
+SQL
+```
+
+All five true. And all four behaviours:
+
+| Situation | Result |
+|---|---|
+| Nothing wrong | Four unchanged; ITV 1.4528098473557398489030 |
+| Basis break | `unknown` / **basis_change** |
+| **Required** category stops being disclosed | `unknown` / **category_not_disclosed** |
+| **Optional** category stops being disclosed | **Still scored**, 1.4489904536864931545290 — it leaves the basket, history is re-totalled without it, no penalty |
+
+That last row is the one that matters: volunteering a category can no longer make a company
+unscorable later.

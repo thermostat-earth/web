@@ -1,21 +1,24 @@
--- 002: a temperature score may not span a reporting-basis change.
+-- 007: an optional category counts when it is disclosed in every scored year.
 --
--- Step 2 of REPORTING-BASIS-PLAN.md, and the one that touches the public number.
+-- 006 split relevance into required / optional / not_required. Until this, only
+-- 'required' was summed, so ITV's category 15 — a voluntary disclosure the
+-- reviewer had chosen to count — dropped out and ITV moved from
+-- 1.4528098473557398489030 to 1.4489904536864931545290. That was the migration
+-- half-done, not the intended behaviour.
 --
--- Every row is currently basis 1, so this must change nothing at all. The check is
--- scripts/score-baseline-2026-08-21.md: H&M 1.5095 and ITV 1.4528 are computed to
--- four decimals and shift on any change to which years are included, so if those
--- two are identical afterwards the gating is inert. Chanel and Microsoft are
--- clamped above the fittable range and would read unchanged even if it were not.
+-- Optional now joins the basket if, and only if, it is present with a figure in
+-- EVERY year of the run. So:
+--   - disclosed consistently -> counted, and the trend stays like-for-like
+--   - stops being disclosed  -> leaves the basket, history re-totalled without it,
+--                               NO penalty and NO gap
+--   - never disclosed        -> identical treatment to a company that stopped
 --
--- Three changes, all inside the year-selection block:
---   1. v_window_basis carries each year's basis alongside v_window_years.
---   2. A consecutive run breaks when the basis changes, not only when a year is
---      missing.
---   3. A new unknown_reason, 'basis_change', for a company with plenty of years
---      that cannot form one long enough stretch on a single basis. It would
---      otherwise report 'window_too_short', which reads as though the company had
---      disclosed too little when in fact it disclosed plenty.
+-- Required categories alone decide which years qualify. An optional one can never
+-- disqualify a year, which is the whole point: volunteering a category must not be
+-- able to make a company unscorable later.
+--
+-- Expected: ITV returns to exactly 1.4528098473557398489030, the other three
+-- unchanged.
 
 CREATE OR REPLACE FUNCTION public.score_company(p_company_id text)
  RETURNS void
@@ -31,6 +34,14 @@ DECLARE
   -- The reporting basis of each year in v_window_years, same order. A run may not
   -- cross a change here: the figures either side are not measuring the same thing.
   v_window_basis          INTEGER[];
+  -- Years lost only because a basket category has no figure, so the company can be
+  -- told WHY rather than handed the nearest available reason.
+  v_years_missing_cat     INTEGER[];
+  -- The categories actually summed: every required one, plus any OPTIONAL one the
+  -- company disclosed with a figure in every single year of the scored run.
+  -- Required categories alone decide which years qualify; optional ones never do,
+  -- so a company is never penalised for having volunteered something.
+  v_basket_cats           INTEGER[];
   v_assessment_date       DATE := CURRENT_DATE;
   v_most_recent_year      INTEGER;
   v_required_cats         INTEGER[];
@@ -143,22 +154,59 @@ BEGIN
     ORDER BY s12.year, s12.reporting_year DESC
   ) sub
   WHERE sub.s12_status = 'ok'
-    -- All required categories must be present with row_status = 'ok'
-    -- (using DISTINCT ON to deduplicate restatements per category)
+    -- Every category in the basket must be present for this year WITH A FIGURE.
+    --
+    -- row_status = 'ok' is not enough on its own: it is a generated column that
+    -- also says 'ok' for a documented non-disclosure (reported = false with a
+    -- reason). That is right for the row — it IS a complete record — but a
+    -- complete record of "we did not disclose this" is not a scorable year for a
+    -- category that applies. Without the ghg IS NOT NULL test the year qualifies
+    -- and then contributes zero, so a company can drop its largest category and
+    -- have the drop read as a reduction. On ITV with category 11 in the basket
+    -- that produced 712,779 / 840,151 / 833,546 / 318,654 and a better-looking
+    -- score.
+    --
+    -- Matched on the basket rather than on this year's own required flag, for the
+    -- same reason the totals are: the basket is what the whole run is measured on.
     AND NOT EXISTS (
       SELECT 1 FROM UNNEST(v_required_cats) AS req(cat)
       WHERE NOT EXISTS (
         SELECT 1
         FROM (
-          SELECT DISTINCT ON (category) category, row_status
+          SELECT DISTINCT ON (category) category, row_status, ghg
           FROM scope3_with_required
-          WHERE company_id        = p_company_id
-            AND year              = sub.year
-            AND effective_required = TRUE
+          WHERE company_id  = p_company_id
+            AND year        = sub.year
+            AND category    = ANY(v_required_cats)
           ORDER BY category, reporting_year DESC
         ) s3d
         WHERE s3d.category   = req.cat
           AND s3d.row_status  = 'ok'
+          AND s3d.ghg IS NOT NULL
+      )
+    );
+
+  SELECT ARRAY_AGG(sub.year ORDER BY sub.year) INTO v_years_missing_cat
+  FROM (
+    SELECT DISTINCT ON (s12.year) s12.year, s12.s12_status
+    FROM scope12 s12
+    WHERE s12.company_id = p_company_id
+      AND s12.year <= EXTRACT(YEAR FROM v_assessment_date)
+    ORDER BY s12.year, s12.reporting_year DESC
+  ) sub
+  WHERE sub.s12_status = 'ok'
+    AND NOT (sub.year = ANY(COALESCE(v_window_years, ARRAY[]::INTEGER[])))
+    AND EXISTS (
+      SELECT 1 FROM UNNEST(v_required_cats) AS req(cat)
+      WHERE EXISTS (
+        SELECT 1 FROM (
+          SELECT DISTINCT ON (category) category, row_status, ghg
+          FROM scope3_with_required
+          WHERE company_id = p_company_id AND year = sub.year
+            AND category = ANY(v_required_cats)
+          ORDER BY category, reporting_year DESC
+        ) s3d
+        WHERE s3d.category = req.cat AND s3d.row_status = 'ok' AND s3d.ghg IS NULL
       )
     );
 
@@ -178,10 +226,10 @@ BEGIN
   v_consecutive_years := ARRAY[v_window_years[1]];
 
   FOR i IN 2..ARRAY_LENGTH(v_window_years, 1) LOOP
-    -- Consecutive AND on the same basis. A company that widens its boundary and does
-    -- not restate its history has two stretches of years that cannot be compared;
-    -- scoring across the join would read the change in what is measured as a change
-    -- in what is emitted.
+    -- Consecutive AND on the same basis. A company that widens its boundary and
+    -- does not restate its history has two stretches that cannot be compared;
+    -- scoring across the join reads a change in what is measured as a change in
+    -- what is emitted.
     IF v_window_years[i] = v_window_years[i-1] + 1
       AND v_window_basis[i] = v_window_basis[i-1] THEN
       v_consecutive_years := v_consecutive_years || v_window_years[i];
@@ -205,14 +253,17 @@ BEGIN
   END IF;
 
   IF v_best_years IS NULL THEN
-    IF v_window_years[ARRAY_LENGTH(v_window_years, 1)]
+    -- Order matters: name the cause, not the symptom. A category the company has
+    -- stopped disclosing is WHY the run is short or stale, so saying 'data_too_old'
+    -- would tell them their data is out of date when in fact they stopped
+    -- reporting something that applies to them.
+    IF v_years_missing_cat IS NOT NULL AND ARRAY_LENGTH(v_years_missing_cat, 1) > 0 THEN
+      v_unknown_reason := 'category_not_disclosed';
+    ELSIF (SELECT COUNT(DISTINCT b) FROM UNNEST(v_window_basis) AS b) > 1 THEN
+      v_unknown_reason := 'basis_change';
+    ELSIF v_window_years[ARRAY_LENGTH(v_window_years, 1)]
        < EXTRACT(YEAR FROM v_assessment_date) - 2 THEN
       v_unknown_reason := 'data_too_old';
-    ELSIF (SELECT COUNT(DISTINCT b) FROM UNNEST(v_window_basis) AS b) > 1 THEN
-      -- There are enough years, but they straddle a boundary change and no single
-      -- stretch is long enough on its own. Naming it separately matters: the company
-      -- has disclosed plenty, and 'window_too_short' would read as if it had not.
-      v_unknown_reason := 'basis_change';
     ELSE
       v_unknown_reason := 'window_too_short';
     END IF;
@@ -223,6 +274,33 @@ BEGIN
       score_status = 'unknown', unknown_reason = v_unknown_reason, last_updated = NOW();
     RETURN;
   END IF;
+
+  -- Settle the basket now the run is known.
+  --
+  -- Optional categories join it only if they are present WITH A FIGURE in every
+  -- year of the run. That keeps the trend like-for-like without punishing
+  -- disclosure: a company that volunteers a category and later stops simply has it
+  -- drop out of the basket, and the whole history is re-totalled without it. One
+  -- that never disclosed it is treated identically.
+  SELECT v_required_cats || COALESCE(ARRAY_AGG(opt.category), ARRAY[]::INTEGER[])
+    INTO v_basket_cats
+  FROM (
+    SELECT o.category
+    FROM (
+      SELECT DISTINCT ON (year, category) year, category, effective_relevance, ghg, row_status
+      FROM scope3_with_required
+      WHERE company_id = p_company_id
+        AND year = ANY(v_best_years)
+        AND NOT (category = ANY(v_required_cats))
+      ORDER BY year, category, reporting_year DESC
+    ) o
+    GROUP BY o.category
+    HAVING COUNT(*) FILTER (
+             WHERE o.effective_relevance = 'optional'
+               AND o.row_status = 'ok'
+               AND o.ghg IS NOT NULL
+           ) = ARRAY_LENGTH(v_best_years, 1)
+  ) opt;
 
   v_window_start := v_best_years[1];
   v_window_end   := v_best_years[ARRAY_LENGTH(v_best_years, 1)];
@@ -270,7 +348,7 @@ BEGIN
             FROM scope3_with_required
             WHERE company_id        = p_company_id
               AND year              = v_window_start
-              AND effective_required = TRUE
+              AND category = ANY(v_basket_cats)   -- the basket, not this year's own flags
               AND row_status        = 'ok'
             ORDER BY category, reporting_year DESC
           ) s3
@@ -284,7 +362,7 @@ BEGIN
             FROM scope3_with_required
             WHERE company_id        = p_company_id
               AND year              = v_window_start
-              AND effective_required = TRUE
+              AND category = ANY(v_basket_cats)   -- the basket, not this year's own flags
               AND row_status        = 'ok'
             ORDER BY category, reporting_year DESC
           ) s3
@@ -336,7 +414,7 @@ BEGIN
             FROM scope3_with_required
             WHERE company_id        = p_company_id
               AND year              = v_yr
-              AND effective_required = TRUE
+              AND category = ANY(v_basket_cats)   -- the basket, not this year's own flags
               AND row_status        = 'ok'
             ORDER BY category, reporting_year DESC
           ) s3
@@ -350,7 +428,7 @@ BEGIN
             FROM scope3_with_required
             WHERE company_id        = p_company_id
               AND year              = v_yr
-              AND effective_required = TRUE
+              AND category = ANY(v_basket_cats)   -- the basket, not this year's own flags
               AND row_status        = 'ok'
             ORDER BY category, reporting_year DESC
           ) s3
@@ -772,7 +850,7 @@ BEGIN
             FROM scope3_with_required
             WHERE company_id        = p_company_id
               AND year              = s12.year
-              AND effective_required = TRUE
+              AND category = ANY(v_basket_cats)   -- the basket, not this year's own flags
               AND row_status        = 'ok'
             ORDER BY category, reporting_year DESC
           ) s3
