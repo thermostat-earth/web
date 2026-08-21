@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  Capture what every company scores before touching the scoring function
 - 2026-08-21  Public methodology examples must be invented companies
 - 2026-08-21  Make the methodology page a step in the plan, not a backlog note
 - 2026-08-21  Plan: keeping a score honest across a reporting-basis change
