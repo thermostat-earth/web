@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  A category in the basket must have a figure, or the year isn't scorable
 - 2026-08-21  Total every year on one basket, so the trend is like-for-like
 - 2026-08-21  Score within a single reporting basis
 - 2026-08-21  Add basis_id to the emissions tables, changing nothing yet

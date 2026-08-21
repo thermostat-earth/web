@@ -74,3 +74,23 @@ where ITV has no figure, the year still qualifies and contributes zero — total
 833,546 / 318,654 and a score of 1.6673. That is a required category with nothing behind it being
 read as zero. Rule 1 says this case should not be scored at all: the category still applies and the
 company has stopped disclosing it, which is a gap rather than a basket change.
+
+---
+
+## Result — checked after step 4 (a basket category needs a figure), 2026-08-21
+
+**Nothing moved.** All four identical again, H&M and ITV to every decimal place.
+
+Both halves of Rule 1 now behave:
+
+- **Category no longer applies** — category 11 required for ITV in 2021-2023 only. Scores
+  **1.4528098473557398489030**, exactly today's number, because the basket comes from the latest
+  year and excludes it from every year. Correct: the past is re-expressed on today's definition.
+- **Category still applies, disclosure stopped** — category 11 required in every year including
+  2024, where ITV has no figure. Now **unknown**, where before it scored 1.6673 off a 62% "fall"
+  that was only the year they stopped reporting.
+
+The reason it gives is `data_too_old` rather than something about the gap, and that is technically
+correct — 2024 is disqualified, so the longest run is 2021-2023, which ends outside the two-year
+window. But it will read to Felix as "old data" when the real cause is a missing category. **Worth
+a more specific reason before this matters on a real company.**
