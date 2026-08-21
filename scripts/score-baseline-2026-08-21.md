@@ -94,3 +94,39 @@ The reason it gives is `data_too_old` rather than something about the gap, and t
 correct — 2024 is disqualified, so the longest run is 2021-2023, which ends outside the two-year
 window. But it will read to Felix as "old data" when the real cause is a missing category. **Worth
 a more specific reason before this matters on a real company.**
+
+---
+
+## Result — step 5, and a regression I caused and missed
+
+**I broke the basis gating and my own check could not see it.** Migration 003 was built by editing
+a dump of the function taken *before* 002 was applied, so applying it silently reverted the basis
+gating. The check for 003 was "did any score move" — and basis gating is inert on today's data, so
+removing it moved nothing either. **"Nothing moved" was necessary and nowhere near sufficient.**
+
+Found by asserting on the function text rather than on behaviour:
+
+```sh
+~/.felixep/dbtool/db.sh thermostat <<'SQL'
+select (pg_get_functiondef(oid) ilike '%v_window_basis%')            as has_basis_gating,
+       (pg_get_functiondef(oid) ilike '%category = ANY(v_required_cats)%') as has_basket_sums,
+       (pg_get_functiondef(oid) ilike '%s3d.ghg IS NOT NULL%')       as has_figure_test
+from pg_proc where proname='score_company';
+SQL
+```
+
+**Rule for editing a stored function from now on:** dump it fresh immediately before editing, and
+afterwards assert every earlier change is still present *by name*. Inert changes cannot be verified
+by behaviour.
+
+All three now confirmed present, and all three behave:
+
+| Situation | Result |
+|---|---|
+| Nothing wrong | All four unchanged; H&M 1.5095032111311140925670, ITV 1.4528098473557398489030 |
+| Basis break (ITV 2023-24 moved to basis 2) | `unknown` / **basis_change** |
+| Category applies, disclosure stopped | `unknown` / **category_not_disclosed** |
+| Category stopped applying | Scores exactly today's number |
+
+The last two used to be indistinguishable, and before that both scored a company on a fall it had
+not made.
