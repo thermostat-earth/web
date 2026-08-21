@@ -122,14 +122,19 @@ they ask.
 Four things need new public wording, all of it requiring Felix's sign-off:
 
 - **Reporting basis** — that a company's own boundary changes mean not every published year is
-  comparable, and a score is only drawn across years sharing one basis. Inditex is the worked
-  example: FY2023 scope 1 moved from 11,512 to 49,686, the 2018 baseline from 19,172 to 76,136,
-  and neither is a change in emissions.
+  comparable, and a score is only drawn across years sharing one basis.
 - **Base years** — that we hold the company's own stated baseline and what it is used for.
 - **Restatements** — that a year can be published more than once with different figures, that every
   reporting is kept rather than overwritten, and that what is shown is the current position.
 - **Relevance** — that sector expectations are context rather than rules; applicability is settled
   from the company's own business model and Felix's determination is what binds.
+
+⚠️ **Use an invented company in the public wording, never a real one** (Felix, 2026-08-21). Inditex
+is the right example for us — it is what made the problem visible and it is what the internal notes
+should keep citing. But on a public methodology page, naming a real company to illustrate "how a
+score can be misleading" reads as an accusation about that company, and it isn't one: Inditex did
+nothing wrong, it followed a reporting standard that changed. A made-up retailer with round numbers
+explains the mechanism just as well and picks a fight with nobody.
 
 Treated as a step here rather than left in `STATUS.md` as a backlog note, because a note is the
 weakest form of a rule and this week has already shown twice what happens to those. **Definition of

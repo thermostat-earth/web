@@ -58,7 +58,11 @@ done until the methodology page describes it, because a public score that silent
 is indefensible without the reason written where anyone can read it. Kept here as a pointer so it
 is visible from the status doc, but the plan is where it is tracked.
 
-New public wording, all of it requiring Felix's sign-off:
+New public wording, all of it requiring Felix's sign-off. **Illustrate it with an invented company,
+never a real one** — naming a real company to show how a score can mislead reads as an accusation,
+and it isn't one.
+
+The list:
 
 - **Reporting basis.** That a company's own restatements and boundary changes mean not every
   published year is comparable, and that a temperature score is only ever drawn across years on one
