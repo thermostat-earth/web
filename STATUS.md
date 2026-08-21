@@ -40,6 +40,23 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 - Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
+## Backlog — methodology page needs updating (added 2026-08-21)
+
+New public wording will be needed for everything settled this week, and it needs Felix's sign-off
+before it goes anywhere:
+
+- **Reporting basis.** That a company's own restatements and boundary changes mean not every
+  published year is comparable, and that a temperature score is only ever drawn across years on one
+  basis. Inditex is the worked example: CSRD moved its FY2023 scope 1 from 11,512 to 49,686 and its
+  2018 baseline from 19,172 to 76,136.
+- **Base years.** That we hold a company's own stated baseline, and what it is used for.
+- **Restatements.** That a year can be published more than once with different figures, that we keep
+  every reporting rather than overwriting, and that the current position is what is shown.
+- **Relevance.** That sector expectations are context, not rules — applicability is settled per
+  company from its own business model, and Felix's determination is what binds.
+
+---
+
 ## Next — Track A to soft launch
 1. **Methodology page updates** (new public copy → Felix sign-off): company selection (~50–60% sector revenue), non-disclosers shown as "Unknown", parent/child group scoring, sector-average-needs-2. (Sector-average one is already live.)
 2. Responsive pass on the other pages (scores, company, impacts) — homepage done.
