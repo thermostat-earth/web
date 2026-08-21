@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  STATUS: the basis scoring engine is built, the input side is not
 - 2026-08-21  Relevance is three states, and optional counts when consistently disclosed
 - 2026-08-21  Restore the basis gating I reverted, and name the real reason
 - 2026-08-21  A category in the basket must have a figure, or the year isn't scorable

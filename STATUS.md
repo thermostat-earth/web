@@ -1,6 +1,6 @@
 # ThermoStat — build status
 
-_Last updated: 2026-08-20_
+_Last updated: 2026-08-21_
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
@@ -50,7 +50,50 @@ That is a limit of the data rather than a bug, and the display is honest about i
 sort of thing someone will ask, and it belongs in the methodology page alongside the other
 additions — so it is listed with them.
 
-## Reporting basis — plan written, not built (2026-08-21)
+## Reporting basis — scoring engine BUILT, input side NOT (2026-08-21)
+
+Plan and reasoning: `REPORTING-BASIS-PLAN.md`. Before/after numbers and every test:
+`scripts/score-baseline-2026-08-21.md`. Migrations 001-007 in `migrations/`.
+
+**Built and verified today** — all four companies score exactly what they scored this morning,
+checked to every decimal place, and each behaviour proved by rolling a change in and back:
+
+| | |
+|---|---|
+| `basis_id` + `basis_note` on `scope12` and `scope3` | 001 |
+| A scored run may not cross a basis change | 002, restored in 005 |
+| Every year totalled on ONE basket, taken from the latest scored year | 003 |
+| A basket category with no figure disqualifies the year | 004 |
+| Reasons: `basis_change`, `category_not_disclosed` | 002, 005 |
+| Relevance is three states — required / optional / not_required | 006 |
+| Optional counts only where disclosed in every scored year | 007 |
+
+**NOT built. The engine can enforce a basis break; nothing can create one.**
+
+- **No detection.** Nothing compares a year's two reportings, nothing reads a "change of
+  methodology" statement, and there is no confirm/reject step. A break can only be made by hand-
+  written SQL. `basis_id` is 1 on every row in the database.
+- **No staging.** The ops app knows nothing of `basis_id` or the three relevance states — grep
+  returns nothing. So a scrape worker reading a methodology-change note has nowhere to put it.
+- **Nothing on screen.** The review page shows none of this.
+- **Relevance has no validity range.** Three states exist but a judgement still applies to all
+  history, so "category 14 applies from 2024" cannot be expressed.
+
+**Next: step 2 of the plan** (detect and confirm a break), then step 5 (show it). Felix's call on
+2026-08-21, and right: building the scraper first would mean it reads a methodology change and has
+nowhere to put it.
+
+### Two mistakes worth not repeating
+
+- **Migration 003 silently reverted 002**, because it was built by editing a dump of
+  `score_company` taken before 002 was applied. The check was "did any score move", and basis
+  gating is inert on today's data — so removing it moved nothing either. **Dump the function fresh
+  immediately before editing, and afterwards assert every earlier change is present BY NAME.** The
+  query is in the baseline doc.
+- **006 and 007 should have been one migration.** Splitting the schema change from the scoring
+  change that gives it meaning left ITV's live score wrong (1.4490 instead of 1.4528) for a few
+  minutes. Since then, every change is dry-run inside a transaction and rolled back before being
+  applied for real.
 
 `REPORTING-BASIS-PLAN.md` — how a temperature score stays honest when a company changes what is
 inside its boundary. Awaiting Felix's go.
