@@ -40,6 +40,16 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 - Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
+## Backlog — everything hotter than 4°C looks the same (added 2026-08-21)
+
+The pathway dataset runs 1.4°C to 4.0°C, so a company worse than the worst pathway is clamped to
+4.0 with `score_above_max_*` set, and the site shows "> 4.0". Chanel and Microsoft are both there
+today. A company on a 4.1°C trajectory and one on 8°C are indistinguishable.
+
+That is a limit of the data rather than a bug, and the display is honest about it. But it is the
+sort of thing someone will ask, and it belongs in the methodology page alongside the other
+additions — so it is listed with them.
+
 ## Reporting basis — plan written, not built (2026-08-21)
 
 `REPORTING-BASIS-PLAN.md` — how a temperature score stays honest when a company changes what is

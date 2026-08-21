@@ -9,21 +9,27 @@ Taken from `company_scores_public`.
 
 | Company | Location | Market | Status | Years scored | Latest data |
 |---|---|---|---|---|---|
-| Chanel (`FASH_CHAN`) | 4.0 | 4.0 | scored | 2021–2024 | 2024 |
+| Chanel (`FASH_CHAN`) | **> 4.0** | **> 4.0** | scored | 2021–2024 | 2024 |
 | H&M Group (`FASH_HM`) | 1.5095 | 1.5206 | scored | 2022–2024 | 2024 |
 | ITV (`MEDIA_ITV`) | 1.4528 | 1.4589 | scored | 2021–2024 | 2024 |
-| Microsoft (`TECH_MSFT`) | 4.0 | 4.0 | scored | 2020–2024 | 2024 |
+| Microsoft (`TECH_MSFT`) | **> 4.0** | **> 4.0** | scored | 2020–2024 | 2024 |
+
+Chanel and Microsoft are stored as `4.0` with `score_above_max_* = true`. That is **not** a score of
+4°C — the pathway data only runs 1.4°C to 4.0°C, so 4.0 is the edge of what anything can be fitted
+against and both companies are worse than the worst pathway we hold. The site already renders this
+correctly as "> 4.0" (`formatScore` in `src/lib/temperature.ts`) and pushes those markers clear
+above the hot end of the thermometer. An earlier version of this table recorded them as "4.0, the
+top of the scale", which invites exactly the wrong reading.
 
 ## What this predicts
 
 None of the four has a known basis break, so **every one of these numbers must be identical after
 the change.** Any movement is a bug in the new gating, not a finding.
 
-Chanel and Microsoft both sit at exactly 4.0, which is the top of the scale rather than a computed
-fit — worth remembering when reading a "no change" result, because a clamped value would not move
-even if the underlying calculation did. H&M and ITV are the ones that actually prove the gating is
-inert: their scores are computed to four decimal places and would shift on any change to which
-years are included.
+**Only two of the four can actually detect a regression.** Chanel and Microsoft are clamped at the
+top of the fittable range, so they would read "unchanged" even if the calculation beneath them broke
+completely. H&M at 1.5095 and ITV at 1.4528 are computed to four decimals and shift on any change to
+which years are included. **If those two don't move, the change is inert. If they move, it's a bug.**
 
 ## How to re-check
 
