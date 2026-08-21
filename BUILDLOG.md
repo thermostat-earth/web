@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  Plan: keeping a score honest across a reporting-basis change
 - 2026-08-21  Backlog: the methodology page needs updating for this week's additions
 - 2026-08-20  STATUS: the scrape worker must never call a sector rule 'required'
 - 2026-08-19  STATUS: sources are checked links; run check-links.mjs after every scrape

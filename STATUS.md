@@ -40,6 +40,17 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 - Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
+## Reporting basis — plan written, not built (2026-08-21)
+
+`REPORTING-BASIS-PLAN.md` — how a temperature score stays honest when a company changes what is
+inside its boundary. Awaiting Felix's go.
+
+Short version: most of it already works. Restatements are already separate rows, a category that
+stops being reported is already a recorded fact, per-year applicability already exists, and the
+scored basket is already fixed to the most recent year's required categories — so a category
+appearing or disappearing needs no new machinery. The only real gap is a change *inside* a figure,
+like Inditex moving own-store fuel into scope 1, which cannot be added or subtracted from anything.
+
 ## Backlog — methodology page needs updating (added 2026-08-21)
 
 New public wording will be needed for everything settled this week, and it needs Felix's sign-off
