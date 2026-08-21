@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-21  Add basis_id to the emissions tables, changing nothing yet
 - 2026-08-21  Correct the baseline: Chanel and Microsoft are '> 4.0', not 4.0
 - 2026-08-21  Capture what every company scores before touching the scoring function
 - 2026-08-21  Public methodology examples must be invented companies
