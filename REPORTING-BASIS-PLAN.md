@@ -1,6 +1,12 @@
 # Plan — keeping a score honest when a company changes its reporting basis
 
-_Written 2026-08-21. Not built. Felix asked for the plan before any work starts._
+> **This document explains why. It does not say what is next, and it is not a status report.**
+> The work is in **Product Development** on ops.felixep.com, under the *ThermoStat reporting
+> basis* epic, one item per step below with a "done when" against each. That is the only place
+> to look for what is built and what is not.
+>
+> _Written 2026-08-21. Everything describing the state of the system is as at that date — parts
+> of it have been built since. Do not read a status claim here as current; read the tool._
 
 ## The problem, with the real numbers
 
@@ -16,7 +22,7 @@ happened.
 Today nothing in the system would stop that. `score_company` has consecutive-year logic and
 restatement handling, but the word "basis" appears nowhere in it, and no table has a column for it.
 
-## What already works, and must not be rebuilt
+## What already worked as at 2026-08-21, and must not be rebuilt
 
 Checked against the live database on 2026-08-21, not assumed:
 
@@ -38,7 +44,7 @@ Checked against the live database on 2026-08-21, not assumed:
 **The consequence: a category appearing or disappearing needs no new machinery at all.** The basket
 rule handles it. That is most of what looked like a big job.
 
-## What is missing
+## What was missing as at 2026-08-21
 
 Only one thing, and it is narrow: **a change that happens *inside* a figure.**
 
@@ -140,7 +146,12 @@ Treated as a step here rather than left in `STATUS.md` as a backlog note, becaus
 weakest form of a rule and this week has already shown twice what happens to those. **Definition of
 done for this work includes the methodology page, or it is not done.**
 
-## Order, and why
+## Why this order
+
+The live sequence and priorities are in the tool, and they have already changed once since this
+was written. What follows is the reasoning behind the original order, which is the part worth
+keeping — the numbers are an argument, not a schedule.
+
 
 1. **Basis column + backfill** — half a day. Nothing changes behaviour yet.
 2. **Scoring gates on basis** — half a day, and the careful one: this function produces the public
