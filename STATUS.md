@@ -40,16 +40,6 @@ Full design in memory `thermostat-ingestion-pipeline-design`. Funnel: AI suggest
 - Then: sector-expectations tab with evidence counts, rule-change review window, **VPS scrape + research worker (the next real blocker)**, re-review of the existing 4, and the apply script that commits into ThermoStat.
 - **Parent/child:** brands (e.g. Dior under LVMH) get their own labelled card showing the parent's GROUP score; no separate scraping; coverage counted at parent level only.
 
-## Backlog — everything hotter than 4°C looks the same (added 2026-08-21)
-
-The pathway dataset runs 1.4°C to 4.0°C, so a company worse than the worst pathway is clamped to
-4.0 with `score_above_max_*` set, and the site shows "> 4.0". Chanel and Microsoft are both there
-today. A company on a 4.1°C trajectory and one on 8°C are indistinguishable.
-
-That is a limit of the data rather than a bug, and the display is honest about it. But it is the
-sort of thing someone will ask, and it belongs in the methodology page alongside the other
-additions — so it is listed with them.
-
 ## Reporting basis — scoring engine BUILT, input side NOT (2026-08-21)
 
 Plan and reasoning: `REPORTING-BASIS-PLAN.md`. Before/after numbers and every test:
@@ -104,55 +94,15 @@ scored basket is already fixed to the most recent year's required categories —
 appearing or disappearing needs no new machinery. The only real gap is a change *inside* a figure,
 like Inditex moving own-store fuel into scope 1, which cannot be added or subtracted from anything.
 
-## Backlog — methodology page needs updating (added 2026-08-21)
+## What is next
 
-**Now step 5 of `REPORTING-BASIS-PLAN.md` rather than a standalone note** — the basis work is not
-done until the methodology page describes it, because a public score that silently excludes years
-is indefensible without the reason written where anyone can read it. Kept here as a pointer so it
-is visible from the status doc, but the plan is where it is tracked.
-
-New public wording, all of it requiring Felix's sign-off. **Illustrate it with an invented company,
-never a real one** — naming a real company to show how a score can mislead reads as an accusation,
-and it isn't one.
-
-The list:
-
-- **Reporting basis.** That a company's own restatements and boundary changes mean not every
-  published year is comparable, and that a temperature score is only ever drawn across years on one
-  basis. Inditex is the worked example: CSRD moved its FY2023 scope 1 from 11,512 to 49,686 and its
-  2018 baseline from 19,172 to 76,136.
-- **Base years.** That we hold a company's own stated baseline, and what it is used for.
-- **Restatements.** That a year can be published more than once with different figures, that we keep
-  every reporting rather than overwriting, and that the current position is what is shown.
-- **Relevance.** That sector expectations are context, not rules — applicability is settled per
-  company from its own business model, and Felix's determination is what binds.
-
----
-
-## Next — Track A to soft launch
-1. **Methodology page updates** (new public copy → Felix sign-off): company selection (~50–60% sector revenue), non-disclosers shown as "Unknown", parent/child group scoring, sector-average-needs-2. (Sector-average one is already live.)
-2. Responsive pass on the other pages (scores, company, impacts) — homepage done.
-3. **Legal review** + disclaimers / Terms / corrections.
-4. Finish company QA: clear remaining internal **NEEDS REVIEW** flags (Felix, as reviewer); ITV duplicate FY2024 review row (reconcile during the FY2025 refresh).
-5. **FY2025 data refresh** for the 4 companies (all currently through FY2024) — run via the new ingestion system once built.
-6. **Soft launch:** point thermostat.earth (framed "early build, more weekly").
-
-> **Launch blocker found 2026-08-03 — and it happened again on 2026-08-18.** The Supabase project
-> pauses after about a week idle and takes the public site down with it. On 18 August the database
-> hostname stopped resolving entirely (NXDOMAIN from two networks) and **thermostat-eta.vercel.app
-> returned HTTP 500 on every page**. Nobody noticed; it was found by accident while answering an
-> unrelated question. Felix restored it from the Supabase dashboard the same evening and everything
-> came back intact — all 9 tables, 4 companies still `scored`, `last_updated` stamps still reading
-> March–July, which is the proof it was a genuine restore and not a blank re-init.
+> **It is not here.** ThermoStat's epics, features and items live in **Product Development**
+> on ops.felixep.com, and that is the only source of truth for what is shipped and what is not.
+> This file records what *exists* — including the reporting-basis section above, which is a
+> statement of what is built and what is not, not a to-do list.
 >
-> Nightly scraping will not prevent this, because that writes to the ops database, not ThermoStat's.
->
-> - ✅ **The uptime check now exists.** `felixep-infra/bot/site-monitor.mjs` runs every 15 minutes and
->   Telegrams Felix when a site breaks. It checks `/scores` for a **company name**, not just a 200,
->   so it fails if the database disappears even while the site still renders.
-> - ⬜ **Still open: the pause itself.** Before thermostat.earth is pointed at this, it needs a paid
->   plan or a keep-alive. The monitor tells you it broke; it doesn't stop it breaking.
-
+> Everything that used to be listed here (the 4°C clamp note, the methodology page work, the
+> Track A soft-launch steps) is in the tool, broken into items with a "done when" against each.
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
