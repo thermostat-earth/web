@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  H&M's 2022 figures come from the Sustainability Disclosure 2022
 - 2026-08-27  H&M's transition plan relocated, and its figures do not match what we attribute to it
 - 2026-08-27  Record whether a source document still resolves
 - 2026-08-27  Four restatement reasons found on a second read of the same page
