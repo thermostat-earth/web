@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  Record whether a source document still resolves
 - 2026-08-27  Four restatement reasons found on a second read of the same page
 - 2026-08-27  The review view carries the columns the page asks for, and keeps its grant
 - 2026-08-27  Scoring picks the most recently published reading, not the highest reporting year
