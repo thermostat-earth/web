@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  Detect restatements: list candidates, decide nothing
 - 2026-08-25  Plan explains why; the tool says what is next
 - 2026-08-25  STATUS: the backlog moves to the Product Development tool
 - 2026-08-21  STATUS: the basis scoring engine is built, the input side is not
