@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  Name the years a report skipped, so a capture gap cannot pass as a company's choice
 - 2026-08-27  Put the evidence next to the restatement
 - 2026-08-27  Detect restatements: list candidates, decide nothing
 - 2026-08-25  Plan explains why; the tool says what is next
