@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  H&M 2019 baseline scope 3, reconciled against the report's own totals
 - 2026-08-27  Backfill H&M from its 2024 report, and stop the gap check flagging baselines
 - 2026-08-27  Record the baseline each report declares, and why it moved
 - 2026-08-27  Keep the standards evidence behind the restatement rule
