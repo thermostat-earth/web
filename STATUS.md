@@ -94,6 +94,37 @@ scored basket is already fixed to the most recent year's required categories —
 appearing or disappearing needs no new machinery. The only real gap is a change *inside* a figure,
 like Inditex moving own-store fuel into scope 1, which cannot be added or subtracted from anything.
 
+
+## Reporting basis — the review workflow now exists (2026-08-27)
+
+Detection, evidence and judgement are built and live. What was a plan on Friday is a working
+review by Wednesday evening, with one blocking bug outstanding.
+
+| | |
+|---|---|
+| `restatements_detected` | every year reported twice with a different figure, ordered by when each document was PUBLISHED (migrations 008, 020) |
+| `restatements_for_review` | each candidate with the company's own stated reason and a link that opens the PDF at the page (009, 019) |
+| `documents` | a document is a thing in its own right — type, series, publication date, URL, liveness (015, 027) |
+| `company_base_years` | the baseline each report declares, and why it moved (011) |
+| `capture_gaps` | reports that skip a year inside the block they cover (010, 013) |
+| `evidence_health` | one row per company: what is verified, what is not (030) |
+| `pub_order` | scoring resolves each year to the most recently PUBLISHED reading, not the highest reporting_year (021-023) |
+
+**Judging happens in the ops app**, not here — `basis_judgements` and `basis_ai_signoff` live in the
+ops database, because the ops app reads ThermoStat read-only. Applying a confirmed break to the
+scored data is a separate step and is **not built**.
+
+**Only what is contestable is surfaced.** The assistant proposes a verdict against every
+restatement; the page shows those with no stated reason, no clear answer, or a basis-change verdict,
+and the rest are settled with one sign-off that lapses when a new restatement appears.
+
+⚠️ **230 figures across four companies have never been checked against the document they cite.**
+`unverified_figures` measures it. That is not new — it is the state that existed unmeasured.
+
+⚠️ **Three NULL-equality bugs in one day**, all from `category` being null for scope 1: it dropped
+every scope 1 candidate out of detection, allowed a scope 1 restatement to be judged twice, and
+made the upsert unusable through PostgREST. Fixed for good by storing `category_key`.
+
 ## What is next
 
 > **It is not here.** ThermoStat's epics, features and items live in **Product Development**
