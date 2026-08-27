@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  Backfill H&M from its 2024 report, and stop the gap check flagging baselines
 - 2026-08-27  Record the baseline each report declares, and why it moved
 - 2026-08-27  Keep the standards evidence behind the restatement rule
 - 2026-08-27  Name the years a report skipped, so a capture gap cannot pass as a company's choice
