@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  The review view carries the columns the page asks for, and keeps its grant
 - 2026-08-27  Scoring picks the most recently published reading, not the highest reporting year
 - 2026-08-27  Detect restatements by document publication, not reporting year
 - 2026-08-27  A source link opens at the page the figure is on

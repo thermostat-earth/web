@@ -1,10 +1,14 @@
 -- 019-review-uses-deep-links.sql
+-- Updated 2026-08-27: also passes through `documents` and `any_date_assumed`, added to
+-- restatements_detected by migration 020. Re-running 019 after 020 had been silently restoring
+-- the older column list, so the review page asked for a column that did not exist.
 -- The review view hands out links that open at the page, not at the front of a 10MB PDF.
 -- Identical to migration 009 except that both source URLs go through source_link().
 
 begin;
 
-create or replace view public.restatements_for_review as
+drop view if exists public.restatements_for_review;
+create view public.restatements_for_review as
 select
   r.company_id,
   c.company_name,
@@ -13,6 +17,8 @@ select
   r.measure,
   r.category,
   r.readings,
+  r.documents,
+  r.any_date_assumed,
 
   r.first_reported_in,
   r.first_ghg,
