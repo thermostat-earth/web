@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-08-27  Publication dates for the backfill, each with how it was established
 - 2026-08-27  A document is a thing in its own right
 - 2026-08-27  H&M 2019 baseline scope 3, reconciled against the report's own totals
 - 2026-08-27  Backfill H&M from its 2024 report, and stop the gap check flagging baselines
