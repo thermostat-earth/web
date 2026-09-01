@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-01  Restatement methodology: steps 1 and 2 settled, step 3 open
 - 2026-09-01  Decision record 0001: a restatement gets three verdicts, not two
 - 2026-08-27  STATUS: the basis review workflow exists
 - 2026-08-27  Verification harness: say what is not yet known to be true
