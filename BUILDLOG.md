@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-01  Handover: where today stopped and what tomorrow starts on
 - 2026-09-01  Two triggers re-open a business-model determination
 - 2026-09-01  The order resolves once relevance carries a validity range
 - 2026-09-01  Order of review, step 4, and the page 66 question answered from the page
