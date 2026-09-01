@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-01  STATUS: the restatement methodology, and two things that do not work
 - 2026-09-01  The three migrations applied to the ThermoStat database today
 - 2026-09-01  The end-to-end map is not the plan for tomorrow
 - 2026-09-01  Map the end-to-end review and name the three places it breaks

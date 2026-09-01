@@ -1,6 +1,25 @@
 # ThermoStat — build status
 
-_Last updated: 2026-08-21_
+_Last updated: 2026-09-01 (see the date note in `HANDOVER-2026-08-28.md` — that session's
+documents are stamped 2026-08-28)._
+
+## The restatement methodology
+
+`RESTATEMENT-METHODOLOGY.md` holds the internal rule for judging a restated year. **Steps 1, 2 and
+4 are settled; step 3 is open.** It opens with what the whole thing is for — we are not verifying
+emissions, we are making sure a fall in the line means a fall in emissions.
+
+The database gained three functions behind it: `year_totals_by_publication`, `category_move_check()`
+and `move_breakdown()` (migrations 030–032), plus source page numbers on
+`restatements_for_review`. All applied and re-queried.
+
+⚠️ **Judgements still do not reach scoring.** `basis_judgements` lives in the ops database and
+nothing writes `basis_id` on the ThermoStat side — every row in `scope3` and `scope12` is still
+basis 1. The scoring function honours basis correctly and has never had a break to act on.
+
+⚠️ **Nothing captures new companies.** 17 of 21 pipeline companies have sat unscraped since 18 July
+and no scheduled job exists to do it. Inditex — the company this whole problem was found through —
+has never been captured, which is why the worked examples all use H&M.
 
 ## Where it runs
 - **Dev/preview site:** thermostat-eta.vercel.app (`main` → Vercel; Felix's permanent preview). Domain thermostat.earth not pointed yet (soft-launch step).
