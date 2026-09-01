@@ -56,8 +56,24 @@ actually did that year. Restatements are judged after it, because step 2's conse
 optional, fail if required — cannot be evaluated without knowing which categories were required in
 the year being judged.
 
-Relevance and restatements are then two problems on the same footing rather than one before the
-other; which of those two is settled first is still open.
+**Which comes first resolves once relevance carries a validity range**, which is already the design
+in `REPORTING-BASIS-PLAN.md` section 4 and is not built yet. A determination is made **once**, dated
+from a year, and holds forward until something happens that could invalidate it. It is not remade
+annually — relevance changes when the business changes, not when the calendar does.
+
+That makes the order a sequence rather than a loop:
+
+1. One business-model and value-chain determination, dated from the earliest year in the run.
+2. It holds forward, populating the per-year applicability the database already supports.
+3. A confirmed boundary-changing restatement is **the event that ends one range and opens the
+   next** — it is the trigger to revisit the determination, not a competitor to it.
+
+So restatements inform the review without depending on it. Felix, 2026-08-28: the review must not
+mean answering the same questions for every year when nothing changed.
+
+For H&M that means one determination covering 2019 onward, and the Sellpy restatement raising
+exactly one question — did the group change in 2022 such that the determination no longer holds —
+rather than a per-year grind across fifteen categories and four years.
 
 ### 3. Do we accept the reason?
 
