@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-01  Map the end-to-end review and name the three places it breaks
 - 2026-09-01  Correct the handover: the business model review exists and was tested on Inditex
 - 2026-09-01  Handover: where today stopped and what tomorrow starts on
 - 2026-09-01  Two triggers re-open a business-model determination
