@@ -75,6 +75,17 @@ For H&M that means one determination covering 2019 onward, and the Sellpy restat
 exactly one question — did the group change in 2022 such that the determination no longer holds —
 rather than a per-year grind across fifteen categories and four years.
 
+**What re-opens a determination** (Felix, 2026-08-28). Holding forward is only safe if something
+watches for the business changing. Two triggers, and both are needed:
+
+- **External checks.** Acquisitions, disposals, restructures — things that change what the company
+  is, which will not always appear in an emissions note. Watched independently of the reports.
+- **Methodology statements in the emissions sections of reports.** A company saying it has changed
+  what it counts is the company telling us the determination may be stale. Read from the report at
+  capture, not inferred from the numbers.
+
+Either trigger re-opens the determination from the year it applies. Neither is built.
+
 ### 3. Do we accept the reason?
 
 **Being worked through scenario by scenario. Not settled.**
