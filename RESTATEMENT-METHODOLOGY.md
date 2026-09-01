@@ -48,6 +48,17 @@ GHG Protocol together with the business-model and value-chain review of that com
 table is an expectation used as context, never the decision. Where no determination has been made
 for a company, step 2's consequence cannot be settled — the determination has to be made first.
 
+### Where this sits in the review
+
+Settled 2026-08-28. The business-model and value-chain review comes **first**, and it is done
+**per year**: what the GHG Protocol requires of this company, for that year, given what the company
+actually did that year. Restatements are judged after it, because step 2's consequence — exclude if
+optional, fail if required — cannot be evaluated without knowing which categories were required in
+the year being judged.
+
+Relevance and restatements are then two problems on the same footing rather than one before the
+other; which of those two is settled first is still open.
+
 ### 3. Do we accept the reason?
 
 **Being worked through scenario by scenario. Not settled.**
@@ -65,6 +76,15 @@ The scenarios still to be decided, one at a time:
 - A reason given that does not reach the year or category it is attached to
 - A reason too vague to place in any of the above
 
+### 4. Was it applied to every year in the run?
+
+Settled 2026-08-28. **Work backwards from the most recent year and check each earlier year is
+consistent with it.** The newest publication is the company's current position, so it is the
+reference; a run holds only as far back as the years that share it.
+
+This matches how the score already behaves — the scored basket is taken from the most recent year
+and every earlier year must contain it — so the two rules point the same way rather than fighting.
+
 ## The worked example: H&M
 
 Eight restatements across 2022 and 2023, from the 2024 Annual and Sustainability Report.
@@ -80,10 +100,21 @@ target footnote all say nothing about it.
 Across all four companies we hold, that is the **only** restatement of seventeen with no stated
 reason. Strictness here is affordable.
 
-⚠️ Two of H&M's seven explanations cite page 66, which states in its own words that it covers
-*"specifically 2023 figures and baseline 2019 figures"* — and they are attached to **2022** rows.
-Under step 2 as written, an explanation that does not reach the year it is attached to is not an
-explanation. That would take H&M from one failure to three. **Not yet decided.**
+**The page 66 question, resolved 2026-08-28 by reading the page.** The section does open by saying
+it covers *"specifically 2023 figures and baseline 2019 figures"*, and it quantifies only those two.
+But it closes with:
+
+> "For our full scope 3 emissions, including the use-phase all these changes corresponds to a
+> decrease of 1 percent or 119,159 tonnes CO2e for 2023 and a 2 percent or 275,732 tonnes CO2e
+> increase for 2019 […] **All these changes have been applied to historical results.**"
+
+That is a statement, not an implication: the changes were applied across the history, which reaches
+2022. So the explanation does cover the years it is attached to, and **H&M stays at one failure
+rather than three.**
+
+The rule this settles: an explanation reaches a year if the company **says** it was applied to that
+year, whether or not the effect on that year is quantified. Quantifying every year is better
+practice; not quantifying it is not a failure to explain.
 
 **Step 2 consequence** — cannot be settled yet. Category 11 for H&M has no business-model
 determination; it is falling through to the Fashion sector expectation, which is context and not a
