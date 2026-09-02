@@ -1,6 +1,7 @@
 # Restatement methodology
 
-> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one to four are settled; two remain.**
+> **Status: steps 1, 2 and 4 are settled, and all six of step 3's scenarios. One gap: no verdict
+> exists for "not explained", so step 2's consequence cannot be recorded.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -356,6 +357,52 @@ scored, so the run shortens rather than quietly changing shape.
 **So scenario four needs nothing built.** It is the same rule, and the consequence was already
 implemented before the rule was written down. Worth recording precisely because the temptation is to
 build it again.
+
+#### Scenarios five and six: a reason that does not reach, and a reason too vague — settled 2026-09-02
+
+Taken together, because they are one question rather than two: **is this an explanation of this
+change, to this category, in this year?** Neither is a kind of change at all. They are ways an
+explanation fails to do its job, so neither needs a rule of its own — both land back on step 2's
+answer, *not explained*, with step 2's consequence: excluded from the boundary in every year if the
+category is optional, the year fails if it is required.
+
+**A reason that does not reach the year or category.** Already half-settled by the page 66 finding:
+an explanation reaches a year if the company *says* it was applied to that year, quantified or not.
+The inverse is this scenario — a methodology note that names 2023 and 2019, attached to a movement
+in 2022, with nothing claiming it was applied to 2022. That is not an explanation of 2022.
+
+**A reason too vague to place.** H&M's category 4 is the live example, and it is deliberately kept
+as a pass: *"some minor changes were made within transports, franchise and employee commuting
+emission calculations"*, with the detail pushed to a webpage. It names the categories, names the
+kind of change, and moves the figure about 1 percent. Thin, but it reaches. Compare a bare
+"figures have been updated" with no category, no kind and no year — that reaches nothing.
+
+**The test, and it is deliberately not a word count.** An explanation must let a reader place the
+change in one of scenarios one to four. If it does not say what kind of change it was, it cannot be
+judged, and an unjudgeable explanation is the same as none.
+
+⚠️ **We have the rule and no way to record its outcome.** The reviewer's verdicts are basis change,
+better calculation and category move. There is **no verdict meaning "there is no acceptable
+explanation"** — so step 2's consequence, the one that excludes a category or fails a year, cannot
+be recorded at all today. H&M's category 11 has sat unjudged since 27 August for exactly this
+reason: none of the three available answers is true. **This is the gap to close next**, and it is
+the only place in steps 1 to 4 where a settled rule has no mechanism behind it.
+
+### How a judgement gets made
+
+Settled 2026-09-02. Felix: *"Just need a very clear quote for the reason, a recommendation from the
+AI review, and then confirmation by the person reviewing. Only needs input where it's not clear, as
+always."*
+
+1. **The company's exact words**, in their own field, never mixed with our note about them.
+2. **A recommendation** with its reasoning, visibly a recommendation and not a decision.
+3. **Confirmation by the reviewer** — one click where the recommendation holds.
+4. **Only unclear rows reach him.** A row whose recommendation is `unclear`, or that has no
+   explanation, or whose verdict would change what gets scored, is surfaced for a decision. The rest
+   are grouped as settled by the company's own words, to be confirmed in bulk or overruled singly.
+
+Built, apart from one thing: **nothing generates the recommendations automatically.** They are a
+slot on each row, filled by hand so far.
 
 ### 4. Was it applied to every year in the run?
 
