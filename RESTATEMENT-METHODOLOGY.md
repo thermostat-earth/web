@@ -1,6 +1,6 @@
 # Restatement methodology
 
-> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one and two are settled; four remain.**
+> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one to three are settled; three remain.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -249,6 +249,34 @@ a change in emissions.
    does not trigger recalculation as long as the emissions are still reported in scope 2 or 3. For
    us that is a live hole: we score a basket, so an activity moved into a category outside the
    basket leaves the score with nothing restated to notice it.
+#### Scenario three: reclassified between categories — settled 2026-09-02
+
+**The standard has a rule for this and it is the same rule again.** A reclassification is a change
+in *"the categories or activities included in the scope 3 inventory"*, which the Scope 3 Standard
+lists as a required trigger for recalculation (section 9.3, table 9.5). So: applied to every year,
+accept. Not applied to every year, drop the category if optional and reject the window if required.
+
+Three scenarios, one test. That is worth saying plainly, because it means step 3 is not six
+different rules — it is one rule and a list of things that do not qualify.
+
+**What is different here is ours, not the standard's.** A reclassification leaves the company's
+year total unchanged by definition, so the arithmetic check behind the `category_move` verdict
+passes automatically. But **we do not score a total, we score a basket** — the categories taken from
+the most recent year. An activity moved out of a scored category into one outside the basket leaves
+the score with the year total intact and nothing anywhere to notice it.
+
+So the move check needs a second test beside the year total: whether the destination category is in
+the scored basket. **Not built.** Today a reclassification into an unscored category would be
+recorded as `category_move`, the year total would confirm it, and the emissions would quietly stop
+counting.
+
+**H&M's Sellpy case is this shape running the safe way.** Sellpy's emissions moved from category 15
+into the group's scope 1 and 2 — into the score rather than out of it, since scope 1 and 2 are
+always counted. Worth noting that we cannot actually run the total-unchanged test on it: H&M gave no
+separate category 15 figure in the 2022 or 2023 reports, recording it as aggregated rather than
+split, so the only category 15 figures we hold come from the 2024 report onward. There is no
+before-figure to compare against.
+
 
 
 #### Scenario one: the evidence, gathered 2026-09-02
