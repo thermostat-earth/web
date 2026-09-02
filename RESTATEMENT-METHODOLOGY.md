@@ -202,6 +202,38 @@ So category 1 moved in FY22 alone, and categories 3 to 13 did not move at all �
 with Microsoft's footnote, where the LCA change is attributed to categories 1 and 2 only. The thing
 that looked like a company applying a change to one year out of four was a table nobody had
 finished reading, and reading it took twenty minutes.
+#### Scenario one: the evidence, gathered 2026-09-02
+
+Facts from the seventeen restatements we hold, checked against the database today. **No verdict —
+scenario one is still open and the question below is Felix's.**
+
+**Which restatements scenario one would cover.** Seven of seventeen read as better measurement of
+the same things: H&M 2022 and 2023 category 4 (about 1%, calculation changes), H&M 2022 and 2023
+category 12 (−28.3% and −30.3%, better waste statistics), and all five Microsoft rows (−10.7% to
++10.5%, one LCA methodology update applied to every prior year).
+
+**That kills the "split by size" option.** A threshold generous enough to keep Microsoft's −10.7%
+and H&M's −30.3% on the accept side would have to sit above 30%, at which point it no longer
+separates them from the +38.5% case it exists to catch. The two clean examples of better
+measurement in our data are among the largest movements in it. Size does not track the distinction.
+
+**The H&M question's consequence is smaller than the handover assumed.** The handover says calling
+expanded traceability a boundary change "would break H&M's run at 2022". Checked against the rows:
+it would not, on its own. H&M's category 1 history is 2019, 2022, 2023 and 2024, and **the winning
+figure for every one of those years comes from the 2024 report** — 2019 exists in our data in no
+other publication. All four years are on the post-traceability basis already, so under step 4 the
+run is consistent whichever way the question is answered.
+
+⚠️ **But only if the basis attaches to the publication, not the calendar year.** Stage 7 — the piece
+that writes `basis_id` and is not built — could reasonably stamp "boundary change at 2022, new basis
+from 2022", which would split 2019 from 2022 and break the run for a change that was applied to
+both. `score_company` compares the basis of each year's *winning row*, so the correct rule is that
+the basis belongs to the publication a figure was taken from. **This is a design constraint on stage
+7, recorded here before it is built.**
+
+What the question does still decide for H&M is whether the 2022 restatement fires the re-open
+trigger on the business-model determination.
+
 #### Scenario two: the boundary moved — settled 2026-09-02
 
 **Proposal: the same test as scenario one, and nothing new.** Applied to every year in the run,
@@ -295,38 +327,6 @@ before-figure to compare against.
 
 
 
-#### Scenario one: the evidence, gathered 2026-09-02
-
-Facts from the seventeen restatements we hold, checked against the database today. **No verdict —
-scenario one is still open and the question below is Felix's.**
-
-**Which restatements scenario one would cover.** Seven of seventeen read as better measurement of
-the same things: H&M 2022 and 2023 category 4 (about 1%, calculation changes), H&M 2022 and 2023
-category 12 (−28.3% and −30.3%, better waste statistics), and all five Microsoft rows (−10.7% to
-+10.5%, one LCA methodology update applied to every prior year).
-
-**That kills the "split by size" option.** A threshold generous enough to keep Microsoft's −10.7%
-and H&M's −30.3% on the accept side would have to sit above 30%, at which point it no longer
-separates them from the +38.5% case it exists to catch. The two clean examples of better
-measurement in our data are among the largest movements in it. Size does not track the distinction.
-
-**The H&M question's consequence is smaller than the handover assumed.** The handover says calling
-expanded traceability a boundary change "would break H&M's run at 2022". Checked against the rows:
-it would not, on its own. H&M's category 1 history is 2019, 2022, 2023 and 2024, and **the winning
-figure for every one of those years comes from the 2024 report** — 2019 exists in our data in no
-other publication. All four years are on the post-traceability basis already, so under step 4 the
-run is consistent whichever way the question is answered.
-
-⚠️ **But only if the basis attaches to the publication, not the calendar year.** Stage 7 — the piece
-that writes `basis_id` and is not built — could reasonably stamp "boundary change at 2022, new basis
-from 2022", which would split 2019 from 2022 and break the run for a change that was applied to
-both. `score_company` compares the basis of each year's *winning row*, so the correct rule is that
-the basis belongs to the publication a figure was taken from. **This is a design constraint on stage
-7, recorded here before it is built.**
-
-What the question does still decide for H&M is whether the 2022 restatement fires the re-open
-trigger on the business-model determination.
-
 #### Scenario four: a change in what the company chooses to disclose — settled 2026-09-02
 
 **The standard has already answered this too.** Adding a category to the inventory is the other half
@@ -397,6 +397,20 @@ The rule this settles: an explanation reaches a year if the company **says** it 
 year, whether or not the effect on that year is quantified. Quantifying every year is better
 practice; not quantifying it is not a failure to explain.
 
-**Step 2 consequence** — cannot be settled yet. Category 11 for H&M has no business-model
-determination; it is falling through to the Fashion sector expectation, which is context and not a
-rule. That determination has to be made before the consequence is known.
+**Step 2 consequence — settled 2026-09-02, by the standard rather than by a determination.** This
+section previously said the consequence could not be known until a business-model review existed for
+H&M. That was wrong, and it was wrong because nobody had read the relevant table. The Scope 3
+Standard splits category 11 into direct use-phase emissions, which are required, and indirect, which
+are optional — and table 5.8's first example of indirect is *"apparel (requires washing and drying)"*.
+H&M sells apparel. Category 11 is optional for them by name, in the standard.
+
+So the consequence is the optional branch: category 11 is excluded from the scoring boundary in
+every year of the run and the history re-totalled without it. **H&M does not fail.** They lose the
+credit for a disclosure they chose to make, which is exactly what step 2 says should happen.
+
+In practice it costs them nothing at all: `effective_required` is already false for category 11, so
+H&M's score of 1.5095 was never calculated on a basket containing it.
+
+**The general lesson, and it is the same one as the unread reports.** A question that looks like it
+needs a judgement we have not made is often answered outright in the standard. Read it before
+recording something as blocked.
