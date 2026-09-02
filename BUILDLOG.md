@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Apply a confirmed break to the readings, proven in both directions
 - 2026-09-02  The not-explained verdict exists now, and the doc says what it still cannot do
 - 2026-09-02  Mark the handover superseded where today closed it
 - 2026-09-02  Adding a category is only a disclosure change if the business is the same business
