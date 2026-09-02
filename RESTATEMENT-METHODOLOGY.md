@@ -1,6 +1,6 @@
 # Restatement methodology
 
-> **Status: steps 1 and 2 are settled. Step 3 is being worked through scenario by scenario.**
+> **Status: steps 1, 2 and 4 are settled. Step 3 scenario one is settled; five scenarios remain.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -123,7 +123,7 @@ Either trigger re-opens the determination from the year it applies. Neither is b
 
 ### 3. Do we accept the reason?
 
-**Being worked through scenario by scenario. Not settled.**
+**Scenario one is settled (2026-09-02). The other five are still open.**
 
 The framing agreed so far: we are not judging whether the reason is *true*. We take the company at
 their word about what they did. We are judging **which kind of change it was**, because the kinds
@@ -137,6 +137,54 @@ The scenarios still to be decided, one at a time:
 - A change in what the company chooses to disclose
 - A reason given that does not reach the year or category it is attached to
 - A reason too vague to place in any of the above
+
+#### Scenario one, settled 2026-09-02: a methodology change
+
+Felix's rule, and it replaces the question it was asked to answer:
+
+> As long as all years are updated, we add it into the scoring. If years are missing, we remove the
+> category from the scoring window if it is optional, or reject the window if it is a required
+> category.
+
+**Why this is better than arguing about the kind of change.** The test stops being "was this better
+measurement or a wider boundary", which is a judgement two reasonable people can split on, and
+becomes "was it applied to every year", which is a fact about the rows in front of us. It also
+generalises: a company that acquires a business and restates its whole history is comparable, and
+one that restates only the recent years is not, whatever label the change carries.
+
+So the H&M traceability question no longer decides anything about the score. H&M applied it to 2019,
+2022, 2023 and 2024, so category 1 goes in. **The label still matters for one thing**: a boundary
+change means the company changed what it *is*, which is one of the two triggers that re-opens the
+business-model determination. It moves from being a scoring decision to being a trigger.
+
+**"All years updated" is satisfied by the company saying so** (Felix, 2026-09-02). Not only by our
+seeing every year's figure move. This is the page 66 rule from step 2 carried forward deliberately —
+without it the same sentence in the same report would be accepted as evidence at step 2 and rejected
+at step 3.
+
+**A third outcome: not decidable yet.** Accept and reject are not the only answers, because "years
+are missing" has two possible causes and they deserve opposite treatments:
+
+| Cause | What it means | What we do |
+|---|---|---|
+| The company did not apply it to every year | The years do not mean the same thing | Reject, per the rule above |
+| **We have not read the whole publication** | We do not know yet | **Neither. Go and read it** |
+
+Felix, 2026-09-02: *"need to make sure every possible literature has been read before claiming the
+explanation is not published."* A company must not lose a scoring window because of a gap in our
+reading. This applies to step 2 as much as step 3 — calling a restatement unexplained is a claim
+about the whole document set, not about the pages we happened to open.
+
+**The case that forced this.** Microsoft's 2025 report states the LCA update was applied to all
+prior years. We hold **5 figures** from that publication where every other Microsoft publication
+gave 15. Category 2 appears restated across 2020–2023, category 1 for 2022 alone. Read naively,
+Microsoft's category 1 fails and the whole window is rejected — on the strength of our own partial
+reading. `capture_gaps` does not catch it, because it looks for missing *years* in scope 1 and 2,
+not missing *categories* in scope 3.
+
+**Still needs the business-model review.** The optional-versus-required half of the rule cannot fire
+on any company today, because no real determination exists for any of them. Same dependency step 2
+already carries.
 
 #### Scenario one: the evidence, gathered 2026-09-02
 
