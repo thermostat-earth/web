@@ -186,6 +186,23 @@ not missing *categories* in scope 3.
 on any company today, because no real determination exists for any of them. Same dependency step 2
 already carries.
 
+**And "part-read" is not a state to work around** (Felix, 2026-09-02: *"should part read even be a
+thing?"*). The first version of the block only stopped the restatements with no reason given, which
+left a judgement call open about which verdicts were safe on partial evidence. The answer is to
+remove the question rather than answer it: while any of a company's reports is only part-read,
+nothing about that company can be judged at all. Simpler and stricter at once.
+
+**Microsoft, resolved by reading it.** Table 1A on page 3 of the 2025 fact sheet gives all eleven
+categories Microsoft reports, for FY20 to FY24. We had five figures from it. The other fifty were
+captured on 2026-09-02 and reconcile to the document's own stated scope 3 subtotal for every year —
+FY22 and FY23 exactly, FY20 and FY21 within the rounding the document declares.
+
+**It produced no new restatements.** Every other figure in that table matches what we already held.
+So category 1 moved in FY22 alone, and categories 3 to 13 did not move at all — which is consistent
+with Microsoft's footnote, where the LCA change is attributed to categories 1 and 2 only. The thing
+that looked like a company applying a change to one year out of four was a table nobody had
+finished reading, and reading it took twenty minutes.
+
 #### Scenario one: the evidence, gathered 2026-09-02
 
 Facts from the seventeen restatements we hold, checked against the database today. **No verdict —
