@@ -77,6 +77,55 @@ oblige them to repair the series.
 
 ---
 
+## GHG Protocol chapter 5 — what actually triggers a recalculation
+
+_Read 2026-09-02 from the chapter itself (`pdf.wri.org/ghg_protocol_2004_chp005.pdf`), after Felix
+asked what the standard says rather than what we thought. Quotes are exact._
+
+**Structural changes are recalculated because nothing was emitted or avoided.**
+
+> Structural changes trigger recalculation because they merely transfer emissions from one company
+> to another without any change of emissions released to the atmosphere.
+
+**Organic growth and decline are not, for the same reason inverted.**
+
+> Base year emissions and any historic data are not recalculated for organic growth or decline.
+> Organic growth/decline refers to increases or decreases in production output, changes in product
+> mix, and closures and openings of operating units that are owned or controlled by the company.
+> The rationale for this is that organic growth or decline results in a change of emissions to the
+> atmosphere and therefore needs to be counted as an increase or decrease in the company's
+> emissions profile over time.
+
+**This is our own test, in the standard's words.** ThermoStat exists so that a fall in the line
+means a fall in emissions. The Protocol draws the same line in the same place: restate when the
+atmosphere saw no change, do not restate when it did. That is a stronger footing than a rule we
+reasoned out ourselves, and it means the scoring rule can cite the standard rather than argue with
+it.
+
+**Two exceptions that stop "applied to every year" being a clean test.**
+
+> Base year emissions are not recalculated if the company makes an acquisition of (or insources)
+> operations that did not exist in its base year. There may only be a recalculation of historic
+> data back to the year in which the acquired company came into existence.
+
+So a restatement that stops part of the way back can be exactly right, not incomplete.
+
+> Structural changes due to "outsourcing" or "insourcing" do not trigger base year emissions
+> recalculation if the company is reporting its indirect emissions from relevant outsourced or
+> insourced activities. [...] However, outsourcing/insourcing that shifts significant emissions
+> between scope 1 and scope 3 when scope 3 is not reported does trigger a base year emissions
+> recalculation.
+
+So a company can move an activity out of scope 1 and legitimately not restate anything, provided it
+still reports the emissions in scope 2 or 3. That matters to us because we score a basket: if the
+activity lands in a category outside the basket, the emissions leave the score without any
+restatement to notice.
+
+**Timing.** A structural change part-way through a year is recalculated for the whole of that year,
+and may be deferred to the following year only where the data does not exist yet.
+
+---
+
 ## Sources
 
 - GHG Protocol, *A Corporate Accounting and Reporting Standard* (revised edition), chapter 1 —
