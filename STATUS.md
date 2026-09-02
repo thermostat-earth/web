@@ -1,21 +1,38 @@
 # ThermoStat — build status
 
-_Last updated: 2026-09-01 (see the date note in `HANDOVER-2026-08-28.md` — that session's
+_Last updated: 2026-09-02 (see the date note in `HANDOVER-2026-08-28.md` — that session's
 documents are stamped 2026-08-28)._
 
 ## The restatement methodology
 
 `RESTATEMENT-METHODOLOGY.md` holds the internal rule for judging a restated year. **Steps 1, 2 and
-4 are settled; step 3 is open.** It opens with what the whole thing is for — we are not verifying
-emissions, we are making sure a fall in the line means a fall in emissions.
+4 are settled, and all six of step 3's scenarios (2026-09-02).** It opens with what the whole thing
+is for — we are not verifying emissions, we are making sure a fall in the line means a fall in
+emissions.
+
+All six scenarios collapse to one test: **was the change applied to every year in the run.** Applied
+throughout, accept; not applied, drop the category if optional and reject the window if required.
+Most of it was settled by reading the GHG Protocol rather than by argument — chapter 5 of the
+Corporate Standard and section 9.3 of the Scope 3 Standard, quoted in `STANDARDS-AND-RESTATEMENTS.md`.
 
 The database gained three functions behind it: `year_totals_by_publication`, `category_move_check()`
 and `move_breakdown()` (migrations 030–032), plus source page numbers on
 `restatements_for_review`. All applied and re-queried.
 
-⚠️ **Judgements still do not reach scoring.** `basis_judgements` lives in the ops database and
-nothing writes `basis_id` on the ThermoStat side — every row in `scope3` and `scope12` is still
-basis 1. The scoring function honours basis correctly and has never had a break to act on.
+**Judgements now reach scoring (2026-09-02).** A confirmed break is a row in
+`reporting_basis_breaks`, and `score_company` derives every year's basis from it via `basis_of()`.
+There is no separate apply step that can be skipped, because there is nothing stored that could go
+stale. H&M carries the only break we hold: Sellpy, from the 2024 report. Their score is unchanged at
+1.5095 — correct, because they restated every year they republished.
+
+Two things fixed on the way there, both of which had never shown because the gate had never fired:
+the scoring read each year's basis from its scope 1 and 2 row alone, ignoring scope 3 entirely; and
+the reviewer had no verdict meaning "no acceptable explanation", so step 2's consequence could not
+be recorded at all.
+
+⚠️ **The write path is still manual.** The ops app records a confirmed break; a script on the VPS
+(`felixep-infra/thermostat/apply-basis-breaks.mjs`) carries it into ThermoStat. Giving the review
+app a narrow way to declare a break itself is the next piece.
 
 ⚠️ **Nothing captures new companies.** 17 of 21 pipeline companies have sat unscraped since 18 July
 and no scheduled job exists to do it. Inditex — the company this whole problem was found through —
