@@ -202,6 +202,34 @@ So category 1 moved in FY22 alone, and categories 3 to 13 did not move at all �
 with Microsoft's footnote, where the LCA change is attributed to categories 1 and 2 only. The thing
 that looked like a company applying a change to one year out of four was a table nobody had
 finished reading, and reading it took twenty minutes.
+#### Scenario two: the boundary moved — proposed 2026-09-02, NOT settled
+
+**Proposal: the same test as scenario one, and nothing new.** Applied to every year in the run,
+accept. Not applied to every year, drop the category if it is optional and reject the window if it
+is required. A boundary change differs from better measurement in exactly one respect, and it is not
+a scoring difference: it is one of the two triggers that re-opens the business-model determination.
+
+**Why the evidence points that way.** Both boundary cases we hold show only the earliest affected
+year moving:
+
+| Company | Year | Move | What they said |
+|---|---|---|---|
+| Chanel | 2021 scope 1 | +18.3% | boundary expanded to include Integrated Suppliers, plus factor updates |
+| H&M | 2022 scope 1 | +29.9% | Sellpy moved from category 15 into the group's scope 1 and 2 boundary |
+
+Chanel's 2022 is identical in the 2022 and 2023 reports. H&M's 2023 is identical in the 2023 and
+2024 reports. **A later year not moving is ambiguous** — either the change was applied throughout
+and the later year already contained it, or it was applied to one year and no other. Movement alone
+cannot separate those two, which is why the test has to be whether the newest publication states
+every year on one basis, not whether every year's number changed.
+
+**The question this leaves for Felix, and it is the only one.** A company that buys or sells a
+business and restates its whole history to match passes this test. The years stay comparable with
+each other, which is what we said we cared about. But the line then shows nothing at all where a
+real change in what the company emits took place — an acquisition disappears into the history, and
+so does a disposal. Accepting it measures the trend of a consistent entity; refusing it measures the
+company as it actually is. Not yet answered.
+
 
 #### Scenario one: the evidence, gathered 2026-09-02
 

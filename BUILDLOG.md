@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Scenario two proposed: the same test as scenario one, with one question left open
 - 2026-09-02  Read ITV's 2021 report: two years of history we did not have
 - 2026-09-02  A report nobody has taken a figure from is the most part-read report there is
 - 2026-09-02  Part-read is not a state to work around, and Microsoft's case is closed by reading it
