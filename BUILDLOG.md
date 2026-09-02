@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  A basis break is a declared fact the scoring reads, not a stamp to remember
 - 2026-09-02  A year's basis includes its scope 3 readings, not only scope 1 and 2
 - 2026-09-02  Apply a confirmed break to the readings, proven in both directions
 - 2026-09-02  The not-explained verdict exists now, and the doc says what it still cannot do
