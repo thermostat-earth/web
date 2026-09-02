@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  A restatement carries the company's words and our note in separate fields
 - 2026-09-02  Scenario one: the evidence, and three ITV restatements wrongly counted as explained
 - 2026-09-01  STATUS: the restatement methodology, and two things that do not work
 - 2026-09-01  The three migrations applied to the ThermoStat database today
