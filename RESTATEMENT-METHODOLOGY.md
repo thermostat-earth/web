@@ -62,9 +62,21 @@ with no stated reason"* is wrong: it is **four of seventeen**, and the largest o
 category 11, more than doubling — is not H&M's.
 
 This does not change the rule. It changes who it has been applied to, and it means the affordability
-of strictness has never actually been tested. **Not fixed yet** — the fix is a design decision about
-whether a restatement carries the company's words and our note in separate fields, which is Felix's
-call because it changes ITV's outcome.
+of strictness has never actually been tested.
+
+**Fixed the same day**, on Felix's answer: migration `033-company-words-and-our-note.sql` gives a
+restatement two fields. `restatement_reason` is the company's own words and nothing else, so empty
+means unexplained; `restatement_note` is ours. ITV's three notes moved across, H&M's page 66 rows
+had the company's sentence separated from our commentary around it, and the redundant "Restated from
+5072000." bookkeeping was stripped where the number matched the prior figure we already hold.
+
+**Tier 1, not tier 4.** A check constraint on both tables refuses to store a reviewer's phrasing —
+"reason not stated", "no reason given" and the like — in the company's field. The rule is not that
+we remember which field is which; it is that the database will not accept the wrong one. Verified by
+trying it: the update is rejected.
+
+`evidence_health` now reads ITV 3 of 3 unexplained and H&M 1 of 8, and all three ITV restatements
+appear under "Needs your decision" on the pipeline page instead of being filed as settled.
 
 ⚠️ **Required is not a sector rule.** Whether a category is required for a company comes from the
 GHG Protocol together with the business-model and value-chain review of that company. The sector
