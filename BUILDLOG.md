@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Handover: the write path was finished tonight, and what is actually next
 - 2026-09-02  Handover: where today stopped and what tomorrow starts on
 - 2026-09-02  STATUS: the methodology is settled and judgements now reach scoring
 - 2026-09-02  A basis break is a declared fact the scoring reads, not a stamp to remember
