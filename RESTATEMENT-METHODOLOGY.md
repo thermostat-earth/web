@@ -1,6 +1,6 @@
 # Restatement methodology
 
-> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one to three are settled; three remain.**
+> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one to four are settled; two remain.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -326,6 +326,36 @@ the basis belongs to the publication a figure was taken from. **This is a design
 
 What the question does still decide for H&M is whether the 2022 restatement fires the re-open
 trigger on the business-model determination.
+
+#### Scenario four: a change in what the company chooses to disclose — settled 2026-09-02
+
+**The standard has already answered this too.** Adding a category to the inventory is the other half
+of the Scope 3 Standard's table 9.5: for a company with a single base year and target for total
+scope 3, *adding entire categories* requires the base year to be recalculated where the cumulative
+effect is significant. Same trigger as scenario three, same test as one and two.
+
+**H&M is the worked example, and it is the good case.** Their 2022 and 2023 reports each gave four
+scope 3 categories with a figure; the 2024 report gives ten, splitting out things previously
+aggregated — category 15 among them, recorded until then as *aggregated, not split*. The 2024 report
+restates 2022 and 2023 onto that fuller basis, so the run holds. Their 2022 scope 3 total across the
+categories both reports give moves 7,393,998 → 9,737,147 tCO₂e, but almost none of that is new
+disclosure — it is the category 1 restatement. The disclosure change itself is comparable because
+they applied it backwards.
+
+**Most of this is already enforced in the scoring, not in the review.** Migration 007: an optional
+category joins the scored basket only if it carries a figure in *every* year of the run.
+
+- Disclosed consistently → counted, trend stays like-for-like.
+- Starts mid-run → does not join the basket, so a company gains nothing by disclosing late and
+  loses nothing either.
+- Stops being disclosed → leaves the basket, history re-totalled without it, no penalty and no gap.
+
+A required category behaves differently and should: a year without a figure for one cannot be
+scored, so the run shortens rather than quietly changing shape.
+
+**So scenario four needs nothing built.** It is the same rule, and the consequence was already
+implemented before the rule was written down. Worth recording precisely because the temptation is to
+build it again.
 
 ### 4. Was it applied to every year in the run?
 

@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Scenario four settled: the same test, and the consequence was already built
 - 2026-09-02  A category move is decided on the company's statement, not on the sums
 - 2026-09-02  Scenario three settled: three scenarios, one test, and the basket hole named
 - 2026-09-02  The Scope 3 Standard's fourth trigger: changing what sits in a category
