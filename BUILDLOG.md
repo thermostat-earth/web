@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Adding a category is only a disclosure change if the business is the same business
 - 2026-09-02  Scenarios five and six settled, and the missing not-explained verdict named
 - 2026-09-02  H&M category 11: the standard settles it, so the doc stops saying it cannot be settled
 - 2026-09-02  Scenario four settled: the same test, and the consequence was already built

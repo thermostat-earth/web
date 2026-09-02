@@ -335,6 +335,27 @@ of the Scope 3 Standard's table 9.5: for a company with a single base year and t
 scope 3, *adding entire categories* requires the base year to be recalculated where the cumulative
 effect is significant. Same trigger as scenario three, same test as one and two.
 
+⚠️ **Only where the business is the same business** (Felix, 2026-09-02). A company can add a
+category because its business model or value chain changed — a new activity it did not carry out
+before. Those emissions are new to the atmosphere, the earlier years genuinely had none, and **no
+restatement is required or wanted**. Restating would erase a real increase.
+
+The standard says the same twice over: organic growth covers *"closures and openings of operating
+units that are owned or controlled by the company"* and is never recalculated, and base year
+emissions are not recalculated for operations *"that did not exist in its base year"*.
+
+So scenario four splits on one question, and it is the business-model and value-chain review that
+answers it, not the numbers:
+
+| The activity | What the added category means | What we do |
+|---|---|---|
+| Existed all along, was not counted or not split out | A disclosure change | Restate every year, or the category does not join the basket |
+| Is new to the company | Organic growth | No restatement. The increase is real and must show |
+
+**This is the second place the business-model review turns out to be load-bearing**, alongside step
+2's required-versus-optional. It is still not built for any company, which makes it the largest
+single dependency in the methodology rather than a detail.
+
 **H&M is the worked example, and it is the good case.** Their 2022 and 2023 reports each gave four
 scope 3 categories with a figure; the 2024 report gives ten, splitting out things previously
 aggregated — category 15 among them, recorded until then as *aggregated, not split*. The 2024 report
