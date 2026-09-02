@@ -265,10 +265,26 @@ passes automatically. But **we do not score a total, we score a basket** — the
 the most recent year. An activity moved out of a scored category into one outside the basket leaves
 the score with the year total intact and nothing anywhere to notice it.
 
-So the move check needs a second test beside the year total: whether the destination category is in
-the scored basket. **Not built.** Today a reclassification into an unscored category would be
-recorded as `category_move`, the year total would confirm it, and the emissions would quietly stop
-counting.
+**How a move is decided, settled 2026-09-02.** Felix: *"all we can do for this is take the category
+affected, and test the statement they give for it. Then it's a pass or fail based on what they say.
+An arithmetic check would be nice as a secondary check but I don't think it can be used for
+pass/fail."*
+
+The arithmetic cannot decide it because a company restates several things in one report. H&M's 2024
+report moved Sellpy into scope 1 and 2 **and** grew category 1 by 1.95m tCO₂e for unrelated reasons,
+in the same publication — so the year total moves whether or not the reclassification was real, and
+a total that holds could be two changes cancelling out. The gate that used to refuse a move verdict
+on a moved total was refusing correct verdicts and catching nothing.
+
+What decides it: **the company's statement for the affected category.** A move is a claim about
+where emissions went, so with no statement there is no claim to accept, and the verdict is refused.
+The arithmetic is still run and shown, and is now stored beside the verdict, so a decision can be
+read back later with the numbers that were on the screen when it was made.
+
+The basket concern stands and is not solved by this: a move into a category outside the scored
+basket removes emissions from the score. It is now a question the reviewer must answer from the
+company's words — *only choose this if what it moved into is still counted* — rather than something
+the arithmetic can catch.
 
 **H&M's Sellpy case is this shape running the safe way.** Sellpy's emissions moved from category 15
 into the group's scope 1 and 2 — into the score rather than out of it, since scope 1 and 2 are
