@@ -1,6 +1,6 @@
 # Restatement methodology
 
-> **Status: steps 1, 2 and 4 are settled. Step 3 scenario one is settled; five scenarios remain.**
+> **Status: steps 1, 2 and 4 are settled. Step 3 scenarios one and two are settled; four remain.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -202,7 +202,7 @@ So category 1 moved in FY22 alone, and categories 3 to 13 did not move at all �
 with Microsoft's footnote, where the LCA change is attributed to categories 1 and 2 only. The thing
 that looked like a company applying a change to one year out of four was a table nobody had
 finished reading, and reading it took twenty minutes.
-#### Scenario two: the boundary moved — proposed 2026-09-02, NOT settled
+#### Scenario two: the boundary moved — settled 2026-09-02
 
 **Proposal: the same test as scenario one, and nothing new.** Applied to every year in the run,
 accept. Not applied to every year, drop the category if it is optional and reject the window if it
@@ -223,12 +223,32 @@ and the later year already contained it, or it was applied to one year and no ot
 cannot separate those two, which is why the test has to be whether the newest publication states
 every year on one basis, not whether every year's number changed.
 
-**The question this leaves for Felix, and it is the only one.** A company that buys or sells a
-business and restates its whole history to match passes this test. The years stay comparable with
-each other, which is what we said we cared about. But the line then shows nothing at all where a
-real change in what the company emits took place — an acquisition disappears into the history, and
-so does a disposal. Accepting it measures the trend of a consistent entity; refusing it measures the
-company as it actually is. Not yet answered.
+**Settled 2026-09-02, against the standard rather than by argument.** Felix: *"we just maintain
+alignment with the entity boundary. If it changes, as long as it has all the required categories and
+activities, that's fine."* That is the GHG Protocol's own position — see
+`STANDARDS-AND-RESTATEMENTS.md`, chapter 5. The Protocol restates for structural change because it
+*"merely transfer[s] emissions from one company to another without any change of emissions released
+to the atmosphere"*, and refuses to restate for organic growth because that *"results in a change of
+emissions to the atmosphere"*. Same test as ours, in the standard's words.
+
+So the question of what ThermoStat measures does not need answering by us. It is answered: the
+entity as currently constituted, with history aligned to it, because a transfer of ownership is not
+a change in emissions.
+
+**Three qualifications the standard adds, none of which were in the question:**
+
+1. **Organic growth must not be restated.** Opening or closing units the company owns or controls is
+   organic. If a company restates history for that, the restatement itself is the problem — it hides
+   a real change in emissions. This is the one case where a fully-applied restatement should still
+   break the run.
+2. **A restatement that stops part of the way back can be correct.** No recalculation is required
+   for an acquisition of operations that did not exist in the earliest year, only back to the year
+   the acquired company came into existence. So "not applied to every year" is not automatically a
+   failure, and the check must allow that answer.
+3. **A boundary change can legitimately produce no restatement at all.** Outsourcing or insourcing
+   does not trigger recalculation as long as the emissions are still reported in scope 2 or 3. For
+   us that is a live hole: we score a basket, so an activity moved into a category outside the
+   basket leaves the score with nothing restated to notice it.
 
 
 #### Scenario one: the evidence, gathered 2026-09-02

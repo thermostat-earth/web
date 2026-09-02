@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Scenario two settled: the standard draws the same line we do, plus three qualifications
 - 2026-09-02  What GHG Protocol chapter 5 actually says about recalculation, quoted
 - 2026-09-02  Scenario two proposed: the same test as scenario one, with one question left open
 - 2026-09-02  Read ITV's 2021 report: two years of history we did not have
