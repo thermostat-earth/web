@@ -43,6 +43,29 @@ that explain themselves and creates pressure toward better practice. A company t
 figure by 28% without a word loses the credit for that disclosure — it is not accused of anything,
 it simply stops counting until it is explained.
 
+⚠️ **"Explained" is currently decided by whether the field is empty, and that is wrong.** Found
+2026-09-02. `BasisPanel.tsx` treats any text in `company_stated_reason` as an explanation
+(`if (!r.company_stated_reason) return true`), and `evidence_health` counts only empty strings as
+unexplained. But the field holds two different things: sometimes the company's own words, sometimes
+our note *about* the company's words. Three ITV restatements carry notes that say, in terms, that
+the company gave no reason:
+
+| Year | Figure | Move | Recorded "reason" |
+|---|---|---|---|
+| 2022 | scope 1 | −1.6% | "Reason not explicitly stated in report." |
+| 2022 | category 3 | −0.9% | "Reason not explicitly stated in 2023 AR." |
+| 2022 | category 11 | **+90.9%** | "Reason not explicitly stated in 2023 AR." |
+
+All three are counted as explained and routed away from Felix as settled "by the company's own
+words". So the worked example's claim that H&M category 11 is *"the only restatement of seventeen
+with no stated reason"* is wrong: it is **four of seventeen**, and the largest of them — ITV
+category 11, more than doubling — is not H&M's.
+
+This does not change the rule. It changes who it has been applied to, and it means the affordability
+of strictness has never actually been tested. **Not fixed yet** — the fix is a design decision about
+whether a restatement carries the company's words and our note in separate fields, which is Felix's
+call because it changes ITV's outcome.
+
 ⚠️ **Required is not a sector rule.** Whether a category is required for a company comes from the
 GHG Protocol together with the business-model and value-chain review of that company. The sector
 table is an expectation used as context, never the decision. Where no determination has been made
@@ -102,6 +125,38 @@ The scenarios still to be decided, one at a time:
 - A change in what the company chooses to disclose
 - A reason given that does not reach the year or category it is attached to
 - A reason too vague to place in any of the above
+
+#### Scenario one: the evidence, gathered 2026-09-02
+
+Facts from the seventeen restatements we hold, checked against the database today. **No verdict —
+scenario one is still open and the question below is Felix's.**
+
+**Which restatements scenario one would cover.** Seven of seventeen read as better measurement of
+the same things: H&M 2022 and 2023 category 4 (about 1%, calculation changes), H&M 2022 and 2023
+category 12 (−28.3% and −30.3%, better waste statistics), and all five Microsoft rows (−10.7% to
++10.5%, one LCA methodology update applied to every prior year).
+
+**That kills the "split by size" option.** A threshold generous enough to keep Microsoft's −10.7%
+and H&M's −30.3% on the accept side would have to sit above 30%, at which point it no longer
+separates them from the +38.5% case it exists to catch. The two clean examples of better
+measurement in our data are among the largest movements in it. Size does not track the distinction.
+
+**The H&M question's consequence is smaller than the handover assumed.** The handover says calling
+expanded traceability a boundary change "would break H&M's run at 2022". Checked against the rows:
+it would not, on its own. H&M's category 1 history is 2019, 2022, 2023 and 2024, and **the winning
+figure for every one of those years comes from the 2024 report** — 2019 exists in our data in no
+other publication. All four years are on the post-traceability basis already, so under step 4 the
+run is consistent whichever way the question is answered.
+
+⚠️ **But only if the basis attaches to the publication, not the calendar year.** Stage 7 — the piece
+that writes `basis_id` and is not built — could reasonably stamp "boundary change at 2022, new basis
+from 2022", which would split 2019 from 2022 and break the run for a change that was applied to
+both. `score_company` compares the basis of each year's *winning row*, so the correct rule is that
+the basis belongs to the publication a figure was taken from. **This is a design constraint on stage
+7, recorded here before it is built.**
+
+What the question does still decide for H&M is whether the 2022 restatement fires the re-open
+trigger on the business-model determination.
 
 ### 4. Was it applied to every year in the run?
 
