@@ -30,9 +30,21 @@ the scoring read each year's basis from its scope 1 and 2 row alone, ignoring sc
 the reviewer had no verdict meaning "no acceptable explanation", so step 2's consequence could not
 be recorded at all.
 
-⚠️ **The write path is still manual.** The ops app records a confirmed break; a script on the VPS
-(`felixep-infra/thermostat/apply-basis-breaks.mjs`) carries it into ThermoStat. Giving the review
-app a narrow way to declare a break itself is the next piece.
+**The write path runs on the server.** `thermostat-apply-breaks.timer` every fifteen minutes carries
+a confirmed break from the ops database into ThermoStat and rescores;
+`thermostat-breaks-monitor.timer` hourly asks whether any confirmed decision is still not reaching
+the score, and Telegrams Felix if one is stuck. Unit files in `felixep-infra/thermostat/systemd/`.
+
+No new credential exists anywhere for this. Felix, 2026-09-02: *"I don't understand why a key is
+needed at all!!!!"* — the two databases are separate Supabase projects, in Ireland and Germany, so a
+call between them needs one; but the VPS already holds both, so keeping the writer there means
+nothing new is exposed. That is also the most secure of the options that were on the table.
+
+⚠️ **The scrape worker has never existed.** Checked 2026-09-02 against the code and the database
+rather than the docs: one commit in the repo's history has ever touched `scrape_status`, and it
+added the board that displays it. `scraped_at` is null for all 42 pipeline companies. The blocker
+sits earlier than the scraper — **not one of Felix's queued companies has a `source_url`**, so
+nothing knows which document to fetch.
 
 ⚠️ **Nothing captures new companies.** 17 of 21 pipeline companies have sat unscraped since 18 July
 and no scheduled job exists to do it. Inditex — the company this whole problem was found through —
@@ -170,6 +182,21 @@ made the upsert unusable through PostgREST. Fixed for good by storing `category_
 >
 > Everything that used to be listed here (the 4°C clamp note, the methodology page work, the
 > Track A soft-launch steps) is in the tool, broken into items with a "done when" against each.
+
+## What 2026-09-02 taught, kept because it recurred three times in one day
+
+Three separate defects turned out to be the same thing: **code that was correct and had never run.**
+
+1. The reporting-basis gate had never fired. Every row was basis 1 from the day the column was
+   added, and the migration that introduced it was written to be inert and verified inert.
+2. `score_company` built each year's basis from its scope 1 and 2 row alone, ignoring scope 3 —
+   where scenarios two, three and four of the methodology all live. It had never shown because of 1.
+3. A test that "passed" because the break it applied touched no scope 1 and 2 row at all, so there
+   was nothing for the check to check.
+
+**A check with nothing to check passes, and looks exactly like one that works.** The practical rule
+that came out of it: prove an alarm by making it fire, not by watching it stay quiet. The stuck-break
+monitor was tested that way — held a break unapplied on purpose, saw it alert, then cleared it.
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.

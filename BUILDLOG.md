@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  STATUS: the write path is automatic, the scraper never existed, and what today taught
 - 2026-09-02  Handover: tomorrow starts on H&M's business-model determination
 - 2026-09-02  Handover: the write path was finished tonight, and what is actually next
 - 2026-09-02  Handover: where today stopped and what tomorrow starts on
