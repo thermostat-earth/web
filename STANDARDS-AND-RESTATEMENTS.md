@@ -124,6 +124,37 @@ restatement to notice.
 **Timing.** A structural change part-way through a year is recalculated for the whole of that year,
 and may be deferred to the following year only where the data does not exist yet.
 
+## Scope 3 Standard chapter 9 — the trigger the Corporate Standard does not have
+
+_Read 2026-09-02 from the Corporate Value Chain (Scope 3) Standard, section 9.3. Quotes exact._
+
+The Corporate Standard lists three triggers for recalculation: structural change, methodology or
+accuracy change, and significant error. The Scope 3 Standard adds a fourth, and it is the one that
+decides reclassification:
+
+> Companies are required to recalculate base year emissions when the following changes occur and
+> have a significant impact on the inventory: [...] Changes in the categories or activities included
+> in the scope 3 inventory
+
+Table 9.5 splits it. For a company with a single base year and target for total scope 3 — which is
+the normal case — both *adding entire categories* and *adding or changing activities within
+categories* require recalculation where the cumulative effect is significant. Only a company with
+separate base years per category escapes it, and only for adding whole categories.
+
+The reason is given in the same section, and it is our sentence again:
+
+> The company should ensure that changes in the inventory over time are a result of actual emissions
+> increases or decreases, not changes in methodology, so that the company tracks "like with like"
+> over time.
+
+And on divestment, why the recalculation exists at all:
+
+> [It] allows the company and its stakeholders to understand that the apparent decrease in emissions
+> in the third year of reporting is a result of a structural change rather than a change in GHG
+> management practices.
+
+Organic growth is excluded in the same words as the Corporate Standard, so the two agree.
+
 ---
 
 ## Sources
@@ -134,6 +165,10 @@ and may be deferred to the following year only where the data does not exist yet
   <https://ghgptechassistance.zendesk.com/hc/en-us/articles/37791741554580-In-what-scenarios-would-I-need-to-recalculate-base-year-emissions>
 - GHG Protocol, *Base Year Adjustments* guidance —
   <https://ghgprotocol.org/sites/default/files/2022-12/Base%20Year%20Adjustments.pdf>
+- GHG Protocol, *Corporate Value Chain (Scope 3) Accounting and Reporting Standard*, section 9.3 —
+  <https://ghgprotocol.org/sites/default/files/standards/Corporate-Value-Chain-Accounting-Reporing-Standard_041613_2.pdf>
+- GHG Protocol, *A Corporate Accounting and Reporting Standard*, chapter 5 —
+  <http://pdf.wri.org/ghg_protocol_2004_chp005.pdf>
 - SBTi Corporate Net-Zero Standard criteria —
   <https://files.sciencebasedtargets.org/production/files/Net-Zero-Standard-Criteria.pdf>
 - SBTi Corporate Near-Term criteria —
