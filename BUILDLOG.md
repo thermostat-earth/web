@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-02  Read the whole of Microsoft's 2025 fact sheet, not just the lines that had moved
 - 2026-09-02  A publication we have read less of than the company's others is flagged, not assumed complete
 - 2026-09-02  Step 3 scenario one settled: applied to every year, and a third outcome when we have not read enough
 - 2026-09-02  The ITV finding is fixed, and the fix is a constraint rather than a note
