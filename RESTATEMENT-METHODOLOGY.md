@@ -1,7 +1,7 @@
 # Restatement methodology
 
-> **Status: steps 1, 2 and 4 are settled, and all six of step 3's scenarios. One gap: no verdict
-> exists for "not explained", so step 2's consequence cannot be recorded.**
+> **Status: steps 1, 2 and 4 are settled, and all six of step 3's scenarios. Every outcome can now
+> be recorded. Nothing yet carries a recorded judgement through to a score.**
 > Written 2026-08-28 with Felix, from the H&M worked example. This is the internal rule; the
 > public wording for thermostat.earth is a separate job and needs his sign-off.
 
@@ -402,12 +402,20 @@ kind of change, and moves the figure about 1 percent. Thin, but it reaches. Comp
 change in one of scenarios one to four. If it does not say what kind of change it was, it cannot be
 judged, and an unjudgeable explanation is the same as none.
 
-⚠️ **We have the rule and no way to record its outcome.** The reviewer's verdicts are basis change,
-better calculation and category move. There is **no verdict meaning "there is no acceptable
-explanation"** — so step 2's consequence, the one that excludes a category or fails a year, cannot
-be recorded at all today. H&M's category 11 has sat unjudged since 27 August for exactly this
-reason: none of the three available answers is true. **This is the gap to close next**, and it is
-the only place in steps 1 to 4 where a settled rule has no mechanism behind it.
+**Built 2026-09-02.** Until that afternoon the reviewer's verdicts were basis change, better
+calculation and category move — all three of which assert that the company explained itself. There
+was no way to record step 2's consequence at all, which is why H&M's category 11 sat unjudged from
+27 August: none of the available answers was true.
+
+There is now a fourth verdict, **no acceptable explanation**, covering all three ways an explanation
+fails. One verdict rather than three, because they share a consequence and sorting failures into
+bins that change nothing is work for its own sake. The page states the consequence for the row in
+front of you rather than leaving it to be recalled — optional, so it drops from every year and the
+score survives; or required, so the year cannot be scored.
+
+⚠️ **Recording it does not yet apply it.** Judgements live in the ops database and the readings live
+in ThermoStat, and nothing writes `basis_id` across the gap. This is a decision on the record, not
+an effect on a score — stage 7 of the map in `HANDOVER-2026-08-28.md`.
 
 ### How a judgement gets made
 
