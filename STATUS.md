@@ -173,6 +173,36 @@ and the rest are settled with one sign-off that lapses when a new restatement ap
 every scope 1 candidate out of detection, allowed a scope 1 restatement to be judged twice, and
 made the upsert unusable through PostgREST. Fixed for good by storing `category_key`.
 
+## Restatements and H&M — where this stands after 2026-09-03
+
+**Every restatement in the database now carries a reason.** It was 30 without one, out of 40; it is
+3, and those 3 are ITV's and need its 2023 report. The cause was not that nobody read the reports:
+`restatement_reason` was missing from the scope-3 INSERT in `commit-company.mjs` and present in the
+scope-12 one directly above it, so every scope-3 reason ever staged was dropped in transit. The tell
+was that every H&M restatement arriving via the 2024 report had a reason and every one via the 2025
+report did not.
+
+H&M's 27 were backfilled from H&M's own wording, and its own percentages match what we hold to the
+decimal on four separate checks — business travel +46% for 2024 and +126% for 2019 against our +46.2
+and +126.1; end-of-life +46% and +38% against our +46.2 and +38.4. **Category 11 is recorded as *not
+explained by the company*** rather than left null: it moves in every restated year, by up to 28
+percent, and neither the 2025 nor the 2024 report accounts for it. "They never said" and "we never
+asked" look identical in a null and only one of them is a finding.
+
+**A commit that moves an already-published figure is now refused unless a reason is recorded**, with
+no `--force`. Microsoft is blocked by it on 25 figures, which is the gate working.
+
+**Migration 045: an empty scoring window names its real cause.** H&M would have published as
+"unknown — no_scope12_data" while holding five years of scope 1 and 2. The real cause is category 2,
+which it reports as N/A in every year, so every year is rejected and the window comes back empty.
+`score_company` already had the right logic — the block commented *"name the cause, not the
+symptom"* — but it sat after the empty-window early exit, so it fired when a missing category cost
+*some* years and never when it cost *all* of them. The worse case was the one it could not reach.
+
+**H&M itself:** figures committed under the lock, published score held at 1.5095, basis break
+confirmed, sources all resolving, figures spot-checked. One thing outstanding and it is a judgement,
+not a build: the category 2 (capital goods) determination.
+
 ## What is next
 
 > **It is not here.** ThermoStat's epics, features and items live in **Product Development**
@@ -197,6 +227,31 @@ Three separate defects turned out to be the same thing: **code that was correct 
 **A check with nothing to check passes, and looks exactly like one that works.** The practical rule
 that came out of it: prove an alarm by making it fire, not by watching it stay quiet. The stuck-break
 monitor was tested that way — held a break unapplied on purpose, saw it alert, then cleared it.
+
+## What 2026-09-03 taught, and it is the 2026-09-02 lesson one level up
+
+Yesterday's lesson was *code that was correct and had never run*. Today produced four defects that
+were all a variant of it, and the variant is worth naming separately:
+
+> **A step that succeeds and cannot record its success is invisible by construction.**
+
+In all four the work ran, produced the right answer, and the answer went nowhere. Nothing failed,
+nothing warned, and every one was found only by going and looking.
+
+1. Restatement reasons were read and staged, and dropped by a missing column in the writer.
+2. `score_company` knew the real cause and could not reach the line that says it (migration 045).
+3. The Internet Archive fallback reached three Chanel documents, printed them as reachable,
+   refreshed `http_status` to 200 — and left `decision = 'unusable'` beside it, so Chanel stayed
+   stuck. That fallback was itself a fix for *a guard placed after the gate it was meant to open*.
+4. The downstream traceability field was a type and some styling that nothing ever wrote.
+
+The practical consequence: **the joins between steps need checks that fail, not steps that are
+individually correct.** Automating a silent join only makes the silence faster.
+
+Corollary, learned twice in ten minutes on the same evening: a check you have only ever seen stay
+quiet has not been shown to work. A deploy-wait matched the *previous* deployment and would have
+reported the site live before it was; a new alarm printed "nothing to report", which is also exactly
+what it prints when broken. Both were only trusted after being made to fire.
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
