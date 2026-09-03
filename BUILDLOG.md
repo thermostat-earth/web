@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-03  An empty window names its real cause instead of blaming scope 1 and 2
 - 2026-09-03  A company under review does not move its published score
 - 2026-09-03  Decision 0002: we contest whether an activity happens, not whether it is material
 - 2026-09-03  Every score change is kept, because history cannot be captured afterwards
