@@ -315,5 +315,28 @@ which points a reader at the part of the disclosure that is missing rather than 
 fine. The same fix found the chart rendering as an empty box with the reasons only in `title`
 attributes, unreachable on a phone; when nothing is complete the causes are written out under it.
 
+## The chain ran end to end, 2026-09-04
+
+**H&M published without anyone typing a command.** This is what step 8 was for, and it is done.
+
+| | |
+|---|---|
+| 09:25 | Felix records the capital goods determination on the review page |
+| 09:41–09:43 | judges the four category 11 restatements as *not explained* |
+| ~10:05 | accepts the flagged category 1 figure, adopting the assistant's written reasoning |
+| **10:08** | **presses Approve. Nothing further is typed by anyone.** |
+| 10:19:58 | `thermostat-apply-approvals.timer` writes category 2 as `required` on 10 rows while the lock is still on, then `unlock_and_score` |
+
+Score moved `scored · 1.5095` → `unknown (category_not_disclosed)`, and
+thermostat-eta.vercel.app now reads **"Not scored — a required Scope 3 category is not disclosed"**.
+
+**That is the honest outcome, not a failure.** H&M reports capital goods as N/A in every year while
+its own consolidated cash flow statement shows SEK 10,679m spent acquiring capital assets. An
+immateriality argument might have been available; an absence-of-activity one is not, and H&M makes
+the second. So the disclosure has a hole and the site says so rather than scoring around it.
+
+Every join that was silent that morning is now automatic and watched by something that fails when
+the handover does not happen.
+
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
