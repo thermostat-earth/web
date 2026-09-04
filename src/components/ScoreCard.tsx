@@ -1,5 +1,6 @@
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
+import { unscoredLabel } from "@/lib/unknown-reason";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
@@ -14,7 +15,7 @@ export function ScoreCard({ c, soloSector = false }: { c: CompanyScore; soloSect
       <div className="rounded-lg border border-border bg-card p-6">
         <div className="text-sm font-medium">{c.company_name}</div>
         <div className="text-xs text-muted-foreground">{meta}</div>
-        <div className="mt-3 font-mono text-sm text-muted-foreground">Not yet scored</div>
+        <div className="mt-3 font-mono text-sm text-muted-foreground">{unscoredLabel(c.unknown_reason)}</div>
       </div>
     );
   }

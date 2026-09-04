@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-04  An unscored company says why, instead of 'not yet'
 - 2026-09-04  A company we cannot score publishes no number, whatever wrote the row
 - 2026-09-03  STATUS: every restatement has a reason, and the lesson one level up from yesterday's
 - 2026-09-03  Handover: tomorrow starts on H&M's capital goods decision, and the joins are the real work

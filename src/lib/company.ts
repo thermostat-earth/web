@@ -29,6 +29,7 @@ export type CompanyHeader = {
   assessment_year_start: number | null;
   assessment_year_end: number | null;
   soloSector: boolean; // true when we track only this one company in its sector
+  unknown_reason: string | null; // why there is no score, when there is none
   location: BasisScore;
   market: BasisScore;
 };
@@ -96,7 +97,7 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
   const { data: h } = await supabase
     .from("company_scores_public")
     .select(
-      "company_id, company_name, sector, country_hq, assessment_year_start, assessment_year_end, thermostat_score_location, thermostat_score_market, sector_median_score_location, sector_median_score_market, score_location_available, score_market_available, score_above_max_location, score_above_max_market, score_below_min_location, score_below_min_market",
+      "company_id, company_name, sector, country_hq, assessment_year_start, assessment_year_end, thermostat_score_location, thermostat_score_market, sector_median_score_location, sector_median_score_market, score_location_available, score_market_available, score_above_max_location, score_above_max_market, score_below_min_location, score_below_min_market, unknown_reason",
     )
     .eq("company_id", companyId)
     .maybeSingle();
@@ -230,6 +231,7 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     assessment_year_start: num(head.assessment_year_start),
     assessment_year_end: num(head.assessment_year_end),
     soloSector,
+    unknown_reason: (head.unknown_reason as string) ?? null,
     location: {
       score: num(head.thermostat_score_location),
       sectorMedian: num(head.sector_median_score_location),

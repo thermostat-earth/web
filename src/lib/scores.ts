@@ -8,6 +8,7 @@ export type CompanyScore = {
   thermostat_score_location: number | null;
   sector_median_score_location: number | null;
   score_status: string;
+  unknown_reason: string | null;
   score_location_available: boolean | null;
   score_above_max_location: boolean | null;
   score_below_min_location: boolean | null;
@@ -16,7 +17,7 @@ export type CompanyScore = {
 };
 
 const COLUMNS =
-  "company_id, company_name, sector, country_hq, thermostat_score_location, sector_median_score_location, score_status, score_location_available, score_above_max_location, score_below_min_location, assessment_year_start, assessment_year_end";
+  "company_id, company_name, sector, country_hq, thermostat_score_location, sector_median_score_location, score_status, unknown_reason, score_location_available, score_above_max_location, score_below_min_location, assessment_year_start, assessment_year_end";
 
 export async function getScores(): Promise<CompanyScore[]> {
   const { data, error } = await supabase

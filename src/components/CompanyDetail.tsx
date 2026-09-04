@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HorizontalThermometer } from "@/components/HorizontalThermometer";
 import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
+import { unscoredLabel } from "@/lib/unknown-reason";
 import type {
   Basis,
   CompanyDetail as CompanyDetailData,
@@ -202,7 +203,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             <span className="text-3xl sm:text-4xl"> °C</span>
           </div>
         ) : (
-          <div className="font-mono text-sm text-muted-foreground">Not yet scored</div>
+          <div className="font-mono text-sm text-muted-foreground">{unscoredLabel(h.unknown_reason)}</div>
         )}
       </div>
 
