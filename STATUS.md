@@ -294,6 +294,19 @@ rather than a failure: H&M reports capital goods as N/A in every year while its 
 cash flow statement shows SEK 10,679m spent acquiring capital assets, so there is a hole in the
 disclosure and we say so instead of scoring around it.
 
+⚠️ **And the applying itself was wrong.** H&M was `score_locked` — mid-review — the entire time,
+and the published score moved anyway. Migration 044 put that lock on `trg_rescore_row`, the trigger
+on scope12 and scope3, which guards the door figures come through. `apply-determinations.mjs` does
+not use that door: it writes the override and calls `score_company()` directly. Felix caught it on
+the public card within the hour: *"how has that got through before I've finished the review for
+H&M? Doesn't feel like the mechanics are working."*
+
+Migration 047 moves the lock inside `score_company`, which every path has to go through, and the
+applier now prints HOLD and waits rather than stamping a decision as delivered. H&M is restored to
+the frozen row it was holding. **Caveat: `score_history` does not record the four availability
+flags**, so those four were reconstructed rather than restored — worth adding to the history table
+before the re-runs in step 9 move any more scores.
+
 ⚠️ **Still wrong on H&M's company page:** it says every year is "outside the most recent unbroken
 run" while the header says the window is 2022–2024. Both cannot be true. It is a consequence of the
 window being empty and has not been fixed.
