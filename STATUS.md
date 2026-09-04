@@ -253,5 +253,50 @@ quiet has not been shown to work. A deploy-wait matched the *previous* deploymen
 reported the site live before it was; a new alarm printed "nothing to report", which is also exactly
 what it prints when broken. Both were only trusted after being made to fire.
 
+## What 2026-09-04 taught, and it is the same lesson a third time
+
+Carrying Felix's H&M capital-goods determination into ThermoStat took four minutes. Finding out why
+it had not happened by itself, and fixing what that exposed, took the rest of the morning.
+
+**The decision sat unapplied for nineteen hours.** `apply-determinations.mjs` was written on
+2026-09-02, is correct, and had **no timer, no cron line, nothing**. AGENTS.md already names this
+exact shape — "a tier-2 check nobody runs is a tier-4 rule wearing a hat" — and it was written about
+`check-links.mjs`, not this. The same hole existed twice and only one of them was known about.
+
+Two more defects were sitting behind it, both in the last mile between the score and the reader:
+
+1. **A company we cannot score was still publishing a number.** All four unknown paths in
+   `score_company` set `score_status = 'unknown'` and leave `thermostat_score_location` in the row
+   beside it. H&M went to unknown and thermostat-eta.vercel.app went on showing 1.51 °C. Fixed as a
+   trigger (migration 046) rather than four edits inside the function: four edits fix the four paths
+   that exist today and say nothing about the fifth.
+2. **Both pages said "Not yet scored"**, which says we have not got round to it. We had assessed six
+   years. `unknown_reason` was already written and already correct and reached neither page, because
+   neither query selected it.
+
+So the running lesson, now three days deep:
+
+| | Lesson |
+|---|---|
+| 02-09 | Code that was correct and had never run |
+| 03-09 | A step that succeeds and cannot record its success is invisible by construction |
+| 04-09 | **A join that nothing invokes is indistinguishable from one that works** |
+
+The third is not a new failure mode, it is where the second one lives. Every one of these was found
+by a person going and looking, and none of them by anything we own. What now exists for this one:
+`thermostat-apply-determinations.timer` every fifteen minutes, and
+`thermostat-determinations-monitor.timer` hourly, which alerts when a decision has been unapplied
+for forty-five. **Proved by firing it** — the applied stamp was cleared on purpose, the alarm went
+off, and it was restored.
+
+**H&M is now unknown / category_not_disclosed and publishes no number.** That is the honest outcome
+rather than a failure: H&M reports capital goods as N/A in every year while its own consolidated
+cash flow statement shows SEK 10,679m spent acquiring capital assets, so there is a hole in the
+disclosure and we say so instead of scoring around it.
+
+⚠️ **Still wrong on H&M's company page:** it says every year is "outside the most recent unbroken
+run" while the header says the window is 2022–2024. Both cannot be true. It is a consequence of the
+window being empty and has not been fixed.
+
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
