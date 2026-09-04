@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-04  STATUS: correct a fix that was recorded as done and was not, and what reading a report can do
 - 2026-09-04  Handover: tomorrow starts on ITV, and the gathering half now runs itself
 - 2026-09-04  An undated document only counts when it is the only source for its year
 - 2026-09-04  An unscored company shows no assessment window

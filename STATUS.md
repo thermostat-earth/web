@@ -244,6 +244,12 @@ nothing warned, and every one was found only by going and looking.
    refreshed `http_status` to 200 — and left `decision = 'unusable'` beside it, so Chanel stayed
    stuck. That fallback was itself a fix for *a guard placed after the gate it was meant to open*.
 4. The downstream traceability field was a type and some styling that nothing ever wrote.
+   **(Recorded as fixed on 03-09 and it was not — H&M's was filled in BY HAND, which is what made it
+   look solved. Every other company got the page's default, so it told a reviewer the company
+   "never addresses downstream traceability" without anyone having looked. Genuinely produced by
+   `assess-business.mjs` from 2026-09-04, with its quotations checked against the documents like
+   every other claim, and a value outside the three allowed answers dropped rather than rendered as
+   the fallback. First real run: ITV, `can_trace`, 102 of 102 quotations located.)**
 
 The practical consequence: **the joins between steps need checks that fail, not steps that are
 individually correct.** Automating a silent join only makes the silence faster.
@@ -337,6 +343,27 @@ the second. So the disclosure has a hole and the site says so rather than scorin
 
 Every join that was silent that morning is now automatic and watched by something that fails when
 the handover does not happen.
+
+## Reading a report: what the pipeline can and cannot do (2026-09-04)
+
+**Annual reports come in as standard now.** The fetcher accepts HTML as well as PDF — it required a
+file starting with `%PDF`, which silently discarded most 10-Ks — and for annual reports it falls
+back to **SEC EDGAR** when a company's own site refuses this server. EDGAR returns nothing unless
+the company name resolves to exactly one filer, so a lookalike name gets nothing rather than
+somebody else's accounts. Microsoft's investor-relations host 403s us and the Internet Archive has
+no copy of its static-file URL, so both previous doors were shut on a filing EDGAR serves freely.
+
+**One tool reads any company's restatement reasons** (`read-restatement-reasons.mjs`), replacing a
+hand-written file per company. The model gives the company's words and the script finds them in the
+document; a quotation it cannot locate is discarded and reported. A sentence offered for several
+categories at once is rejected as a blanket methodology note rather than an account of any
+particular figure moving.
+
+⚠️ **What defeats it today:** a report whose emissions table is laid out in magazine columns. Apple
+publishes two different scope 3 boundaries in one report — a corporate scope 3 and a product life
+cycle scope 3 — and flattening the PDF interleaves the table with unrelated prose, so the reader
+folds both into one set of categories and the reconciliation correctly refuses to stage it. The
+guard is working; the reading is not.
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
