@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-04  The review lock guards scoring, not one door
 - 2026-09-04  STATUS: the nineteen-hour decision, and the same lesson for the third day running
 - 2026-09-04  An unscored company says why, instead of 'not yet'
 - 2026-09-04  A company we cannot score publishes no number, whatever wrote the row
