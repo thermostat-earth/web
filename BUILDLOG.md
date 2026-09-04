@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-04  An empty chart says why on the page, not in hover text
 - 2026-09-04  A year says why it was excluded, instead of blaming a window it is inside
 - 2026-09-04  A recorded non-explanation is not an explanation
 - 2026-09-04  STATUS: the lock guarded one door, and what the history table still cannot restore

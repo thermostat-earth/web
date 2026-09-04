@@ -268,7 +268,17 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
             reasonFor={(t) => excludedReason(t, basis, scope3ByYear,
               h.assessment_year_start != null && h.assessment_year_end != null
                 && t.year >= h.assessment_year_start && t.year <= h.assessment_year_end)} />
-          {(h.assessment_year_start || h.assessment_year_end) && (
+          {/* When NOTHING is complete the chart is an empty box, and the per-year reasons live in
+              hover text that a phone cannot reach. So the cause is written out instead. Found on
+              2026-09-04: H&M's chart rendered blank with the explanation reachable only by
+              hovering, which is the same thing as no explanation for most readers. */}
+          {trajectory.length > 0 && !trajectory.some((t) => yearComplete(t, basis, scope3ByYear)) ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              No year can be totalled on this basis, so there is nothing to plot.{" "}
+              {Array.from(new Set(trajectory.map((t) => excludedReason(t, basis, scope3ByYear, true))))
+                .join("; ")}.
+            </p>
+          ) : (h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
             </p>
