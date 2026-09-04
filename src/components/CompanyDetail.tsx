@@ -275,8 +275,18 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           {trajectory.length > 0 && !trajectory.some((t) => yearComplete(t, basis, scope3ByYear)) ? (
             <p className="mt-2 text-xs text-muted-foreground">
               No year can be totalled on this basis, so there is nothing to plot.{" "}
-              {Array.from(new Set(trajectory.map((t) => excludedReason(t, basis, scope3ByYear, true))))
-                .join("; ")}.
+              {(() => {
+                // Grouped by reason and named with its years, because a bare list of causes makes
+                // the reader work out which year each one belongs to.
+                const byReason = new Map<string, number[]>();
+                for (const t of trajectory) {
+                  const why = excludedReason(t, basis, scope3ByYear, true);
+                  byReason.set(why, [...(byReason.get(why) ?? []), t.year]);
+                }
+                return Array.from(byReason.entries())
+                  .map(([why, ys]) => `${ys.join(", ")}: ${why}`)
+                  .join(". ");
+              })()}.
             </p>
           ) : (h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
