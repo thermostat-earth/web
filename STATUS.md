@@ -307,9 +307,13 @@ the frozen row it was holding. **Caveat: `score_history` does not record the fou
 flags**, so those four were reconstructed rather than restored — worth adding to the history table
 before the re-runs in step 9 move any more scores.
 
-⚠️ **Still wrong on H&M's company page:** it says every year is "outside the most recent unbroken
-run" while the header says the window is 2022–2024. Both cannot be true. It is a consequence of the
-window being empty and has not been fixed.
+**Fixed later the same day:** H&M's company page said every year was "outside the most recent
+unbroken run" while the header gave the window as 2022–2024. Both could not be true. The years were
+inside the window and excluded because category 2 has no figure, so no year is complete — that was
+the fallback text firing for every case it could not otherwise explain. It now names the category,
+which points a reader at the part of the disclosure that is missing rather than at data that is
+fine. The same fix found the chart rendering as an empty box with the reasons only in `title`
+attributes, unreachable on a phone; when nothing is complete the causes are written out under it.
 
 ## Build journal (build-in-public)
 Ops Supabase `build_log`; daily draft → Telegram → review/approve on ops.felixep.com → publish. ThermoStat commits now auto-flagged `social=true` (backstop) so they reach the pipeline. See memory `bip-pipeline-architecture`.
