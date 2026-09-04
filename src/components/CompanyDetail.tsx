@@ -27,14 +27,36 @@ function hostname(url: string): string {
 
 // Lists exactly what a year is missing, for the current basis, so the reason is
 // accurate (e.g. H&M 2021 lacks Scope 2 location AND Scope 3).
-function excludedReason(t: TrajectoryYear, basis: Basis): string {
+//
+// The fallback used to be "outside the most recent unbroken run" for every year it could not
+// otherwise explain, which on 2026-09-04 had H&M's page saying all five years were outside a
+// window its own header gave as 2022–2024. Both cannot be true. The years were in the window and
+// excluded for a different reason: category 2 has no figure and is material, so no year is
+// complete. A page that says the wrong thing confidently is worse than one that says nothing —
+// it sends a reader looking at the wrong part of the disclosure, which is the same failure
+// migration 045 fixed on the score itself.
+function excludedReason(
+  t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[], insideWindow: boolean,
+): string {
   const missing: string[] = [];
   const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
   if (t.scope1 == null) missing.push("Scope 1");
   if (s2 == null) missing.push(`Scope 2 (${basis})`);
   if (!t.scope3Reported) missing.push("Scope 3");
-  return missing.length
-    ? `missing ${missing.join(" and ")}`
+  if (missing.length) return `missing ${missing.join(" and ")}`;
+
+  // The scopes are all there, so what is missing is a material Scope-3 category. Naming it is the
+  // whole value of this line: "category 2 has no figure" tells a reader where to look, and
+  // "outside the run" tells them to look somewhere the data is fine.
+  const gaps = s3
+    .filter((r) => r.cells[t.year]?.material && !r.cells[t.year]?.reported)
+    .map((r) => r.category);
+  if (gaps.length) {
+    return `no figure for ${gaps.length === 1 ? "category" : "categories"} ${gaps.join(", ")}`;
+  }
+
+  return insideWindow
+    ? "not counted — the assessment window needs an unbroken run"
     : "outside the most recent unbroken run";
 }
 
@@ -64,12 +86,14 @@ function TrajectoryChart({
   color,
   getValue,
   included,
+  reasonFor,
 }: {
   trajectory: TrajectoryYear[];
   basis: Basis;
   color: string;
   getValue: (t: TrajectoryYear) => number | null;
   included: (t: TrajectoryYear) => boolean;
+  reasonFor: (t: TrajectoryYear) => string;
 }) {
   const W = Math.max(320, trajectory.length * 64);
   const H = 190;
@@ -99,7 +123,7 @@ function TrajectoryChart({
           <g key={t.year}>
             <rect x={x - slotW / 2} y={padTop} width={slotW} height={plotH} fill="transparent">
               <title>
-                {isInc ? `${t.year}: ${fmt(v)} tCO₂e` : `${t.year}: total not shown — ${excludedReason(t, basis)}`}
+                {isInc ? `${t.year}: ${fmt(v)} tCO₂e` : `${t.year}: total not shown — ${reasonFor(t)}`}
               </title>
             </rect>
             {isInc && (
@@ -240,7 +264,10 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} included={(t) => yearComplete(t, basis, scope3ByYear)} />
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} included={(t) => yearComplete(t, basis, scope3ByYear)}
+            reasonFor={(t) => excludedReason(t, basis, scope3ByYear,
+              h.assessment_year_start != null && h.assessment_year_end != null
+                && t.year >= h.assessment_year_start && t.year <= h.assessment_year_end)} />
           {(h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
@@ -257,7 +284,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                     <th
                       key={t.year}
                       className={`py-2 pl-4 text-right font-normal ${t.inWindow ? "" : "text-muted-foreground/50"}`}
-                      title={t.inWindow ? undefined : `Excluded — ${excludedReason(t, basis)}`}
+                      title={t.inWindow ? undefined : `Excluded — ${excludedReason(t, basis, scope3ByYear, false)}`}
                     >
                       {t.year}
                       {!t.inWindow && <span className="ml-0.5">*</span>}
