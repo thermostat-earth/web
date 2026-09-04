@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-04  An undated document only counts when it is the only source for its year
 - 2026-09-04  An unscored company shows no assessment window
 - 2026-09-04  STATUS: the chain ran end to end, and H&M published on its own
 - 2026-09-04  STATUS: the company-page contradiction is fixed, not outstanding
