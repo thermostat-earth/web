@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-05  a year nobody printed is not a year we failed to read
 - 2026-09-05  a new company is private until it is approved
 - 2026-09-04  STATUS: correct a fix that was recorded as done and was not, and what reading a report can do
 - 2026-09-04  Handover: tomorrow starts on ITV, and the gathering half now runs itself
