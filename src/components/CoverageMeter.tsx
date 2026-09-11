@@ -78,16 +78,21 @@ export function CoverageMeter({
           <span key={i} className={`h-2 w-2 shrink-0 rounded-[2px] ${style[kind]}`} />
         ))}
       </div>
+      {/* THE COUNT AND THE BREAKDOWN ARE TWO LINES, not one wrapped one. Felix, 2026-09-11: "Can we
+          put the '2 not reported' on the line below please". Run together they broke mid-phrase on
+          a narrow card — "7 of 9 reported · 2 not / disclosed" — which reads as a stray fragment
+          rather than as the second half of a sentence. On its own line the breakdown is also free
+          to carry both reasons without pushing the card taller by another wrap, so the first line
+          gets the word "categories" back. Each reason takes its own line rather than sharing one
+          with a separator: Amazon has both, and joined up they wrapped again as "9 too few /
+          years", which is the same fault one level down. Only one card is a line taller for it. */}
       {showLabel && (
-        <div className="mt-1.5 text-[11px] text-muted-foreground">
-          {completenessCount(completeness)} reported
+        <div className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
+          <div>{completenessCount(completeness)} categories reported</div>
           {splitAddsUp && notDisclosed > 0 && (
-            <span className="text-amber-600 dark:text-amber-500">
-              {" · "}
-              {notDisclosed} not disclosed
-            </span>
+            <div className="text-amber-600 dark:text-amber-500">{notDisclosed} not disclosed</div>
           )}
-          {splitAddsUp && shortHistory > 0 && <>{" · "}{shortHistory} too new</>}
+          {splitAddsUp && shortHistory > 0 && <div>{shortHistory} too few years</div>}
         </div>
       )}
     </div>
