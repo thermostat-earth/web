@@ -16,7 +16,15 @@ export function ScoreCard({
   soloSector?: boolean;
   completeness?: Completeness;
 }) {
-  const score = c.thermostat_score_location;
+  // WHICHEVER BASIS THIS COMPANY ACTUALLY HAS. A basis counts only if it is present in every year
+  // of the window, so a company can hold a market-based score and no location-based one. This card
+  // read the location score alone, so Apple, Amazon, Nike and Foxconn rendered as "Not yet scored"
+  // while holding real numbers — the same mistake as the unscoredLabel note above, made one level
+  // up. Location is shown where both exist, because it is the basis that does not move with a
+  // company's electricity contracts; where only market exists it is shown AND NAMED, since a
+  // market-based figure presented as if it were location-based is the misleading half of this.
+  const useMarket = c.thermostat_score_location == null && c.thermostat_score_market != null;
+  const score = useMarket ? c.thermostat_score_market : c.thermostat_score_location;
   const meta = [c.sector, c.country_hq].filter(Boolean).join(" · ");
 
   if (score == null) {
@@ -31,9 +39,10 @@ export function ScoreCard({
 
   const color = scoreColor(score);
   // Solo sector → no meaningful average; drop the comparison visual + swap the label.
-  const median = soloSector ? null : c.sector_median_score_location;
-  const aboveMax = !!c.score_above_max_location;
-  const belowMin = !!c.score_below_min_location;
+  const median = soloSector ? null
+    : useMarket ? c.sector_median_score_market : c.sector_median_score_location;
+  const aboveMax = useMarket ? !!c.score_above_max_market : !!c.score_above_max_location;
+  const belowMin = useMarket ? !!c.score_below_min_market : !!c.score_below_min_location;
   const diff = median != null ? score - median : null;
   const approx = diff != null && Math.abs(diff) < 0.05;
   const vsSector = soloSector
@@ -53,6 +62,9 @@ export function ScoreCard({
           {formatScore(score, aboveMax, belowMin).replace(/\s+/g, "")}
           <span className="ml-1 text-2xl font-medium">°C</span>
         </div>
+        {useMarket && (
+          <div className="mt-1 font-mono text-[11px] text-muted-foreground">market-based</div>
+        )}
         <CoverageTag completeness={completeness} />
         {vsSector && (
           <div className="mt-2.5 text-xs" style={{ color: approx || soloSector ? undefined : color }}>

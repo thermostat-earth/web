@@ -130,9 +130,11 @@ function Dashboard({
   completeness: Record<string, Completeness>;
 }) {
   if (rows.length === 0) return <Empty />;
-  const sorted = [...rows].sort(
-    (a, b) => (a.thermostat_score_location ?? 99) - (b.thermostat_score_location ?? 99),
-  );
+  // Sort on the score each card actually shows. Sorting on the location score alone pushed every
+  // market-only company to the end regardless of its number, so Apple at 1.40 sat below four
+  // companies above 4.0 — "coolest first" is the promise at the top of the page.
+  const shown = (c: CompanyScore) => c.thermostat_score_location ?? c.thermostat_score_market ?? 99;
+  const sorted = [...rows].sort((a, b) => shown(a) - shown(b));
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {sorted.map((c) => (
