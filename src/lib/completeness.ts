@@ -29,6 +29,15 @@ export type Completeness = {
   categories_in_boundary: number;
   has_not_reported: boolean;
   has_short_history: boolean;
+  /** Reported before, and no longer. A different finding from a short history and it must not be
+   *  folded into one — a company that withdraws a disclosure is not waiting for time to pass. */
+  has_stopped: boolean;
+  // Counts behind those flags, so a display can show the shape of what is missing and not only
+  // that something is. DERIVED LIVE, unlike the two totals, which the scorer wrote — so a caller
+  // must check they add up to (boundary − window) before drawing them separately.
+  categories_not_reported: number;
+  categories_short_history: number;
+  categories_stopped: number;
   /** True when today's figures would produce a different answer from the published one. Normal for
    *  a company under review, whose score is frozen on purpose — and the one thing a reader has no
    *  way to work out for themselves. */
@@ -56,7 +65,7 @@ export type SectorShare = {
 };
 
 const COMPLETENESS_COLUMNS =
-  "company_id, completeness_tag, categories_in_window, categories_in_boundary, has_not_reported, has_short_history, stale";
+  "company_id, completeness_tag, categories_in_window, categories_in_boundary, categories_not_reported, categories_short_history, categories_stopped, has_not_reported, has_short_history, has_stopped, stale";
 
 // READ FROM WHAT THE SCORER WROTE, NOT FROM A FRESH CALCULATION BESIDE IT.
 //
@@ -133,6 +142,7 @@ export function completenessCount(c: Pick<Completeness, "categories_in_window" |
 export function incompleteReasons(c: Completeness): string[] {
   const out: string[] = [];
   if (c.has_not_reported) out.push("categories it does not report");
+  if (c.has_stopped) out.push("categories it used to report and no longer does");
   if (c.has_short_history) out.push("categories without enough years yet");
   return out;
 }

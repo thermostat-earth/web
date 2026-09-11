@@ -6,6 +6,7 @@ import { HorizontalThermometer } from "@/components/HorizontalThermometer";
 import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import { unscoredLabel } from "@/lib/unknown-reason";
+import { CoverageMeter } from "@/components/CoverageMeter";
 import { SCOPE3_CATEGORIES } from "@/lib/company";
 import type {
   Basis,
@@ -245,6 +246,11 @@ function CoverageSection({
             </span>
           )}
         </div>
+        {/* The same blocks as the scores list, so the shape of what is missing is recognisable
+            before the reader has read a word of the list below it. showLabel is off because the
+            count and the sentence are both already on this page — repeating them under the blocks
+            would be three statements of one fact. */}
+        <CoverageMeter completeness={completeness} showLabel={false} />
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
           {complete ? (
             <>

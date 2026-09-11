@@ -1,7 +1,8 @@
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
 import { unscoredLabel } from "@/lib/unknown-reason";
-import { completenessCount, type Completeness } from "@/lib/completeness";
+import { type Completeness } from "@/lib/completeness";
+import { CoverageMeter } from "@/components/CoverageMeter";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
@@ -95,10 +96,18 @@ export function ScoreCard({
  * sector share for each missing category is given.
  */
 function CoverageTag({ completeness }: { completeness?: Completeness }) {
-  if (!completeness) return null;
+  // A SCORED COMPANY WITH NO COVERAGE RECORD IS NOT A COMPLETE ONE, and a bare card next to six
+  // carrying blocks reads exactly like one. This happens to a company frozen mid-review: its score
+  // is held at what it was, and the record of what that score covered predates this design. Saying
+  // so is the only honest option — Chanel and ITV are both in that state today.
+  if (!completeness) {
+    return (
+      <div className="mt-2.5 text-[11px] text-muted-foreground">Coverage not yet recorded</div>
+    );
+  }
   const complete = completeness.completeness_tag === "complete";
   return (
-    <div className="mt-2.5 flex items-center gap-1.5 text-xs">
+    <div className="mt-2.5 text-xs">
       <span
         className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
           complete
@@ -108,7 +117,7 @@ function CoverageTag({ completeness }: { completeness?: Completeness }) {
       >
         {complete ? "Complete" : "Incomplete"}
       </span>
-      <span className="text-muted-foreground">{completenessCount(completeness)} categories reported</span>
+      <CoverageMeter completeness={completeness} />
     </div>
   );
 }
