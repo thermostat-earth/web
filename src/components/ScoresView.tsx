@@ -5,17 +5,36 @@ import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
+import type { Completeness, CompletenessTag } from "@/lib/completeness";
 
 type View = "thermometer" | "dashboard";
+type Coverage = "all" | CompletenessTag;
+
+// Felix, 2026-09-11: "i will want to have a button that filter between complete and incomplete, but
+// the scales will be the same." The scale deliberately does NOT change between them — an incomplete
+// company's score is on the same axis as a complete one, and the filter is there to let a reader
+// look only at the companies whose score rests on a full boundary, not to grade on a curve.
+const COVERAGE_LABEL: Record<Coverage, string> = {
+  all: "All",
+  complete: "Complete",
+  incomplete: "Incomplete",
+};
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
 const GAP = 40; // min vertical spacing between labels on one side
 const TICKS = [1.4, 2, 3, 4];
 
-export function ScoresView({ scores }: { scores: CompanyScore[] }) {
+export function ScoresView({
+  scores,
+  completeness = {},
+}: {
+  scores: CompanyScore[];
+  completeness?: Record<string, Completeness>;
+}) {
   const [view, setView] = useState<View>("dashboard");
   const [sector, setSector] = useState("All");
+  const [coverage, setCoverage] = useState<Coverage>("all");
 
   // Allow deep-linking a view, e.g. /scores?view=thermometer
   useEffect(() => {
@@ -27,10 +46,15 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
     () => ["All", ...Array.from(new Set(scores.map((s) => s.sector))).sort()],
     [scores],
   );
-  const filtered = useMemo(
-    () => (sector === "All" ? scores : scores.filter((s) => s.sector === sector)),
-    [scores, sector],
-  );
+  const filtered = useMemo(() => {
+    let rows = sector === "All" ? scores : scores.filter((s) => s.sector === sector);
+    if (coverage !== "all") {
+      // A company with no tag has no window, so it has no score either. It belongs in neither
+      // bucket rather than defaulting into one of them.
+      rows = rows.filter((s) => completeness[s.company_id]?.completeness_tag === coverage);
+    }
+    return rows;
+  }, [scores, sector, coverage, completeness]);
   // Sectors where we track only one scored company — no meaningful average yet.
   const soloSectors = useMemo(() => {
     const count = new Map<string, number>();
@@ -63,6 +87,19 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
             </button>
           ))}
         </div>
+        <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
+          {(["all", "complete", "incomplete"] as Coverage[]).map((c) => (
+            <button
+              key={c}
+              onClick={() => setCoverage(c)}
+              className={`px-3 py-1.5 font-medium transition-colors ${
+                coverage === c ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {COVERAGE_LABEL[c]}
+            </button>
+          ))}
+        </div>
         <div className="flex flex-wrap gap-1">
           {sectors.map((s) => (
             <button
@@ -78,12 +115,20 @@ export function ScoresView({ scores }: { scores: CompanyScore[] }) {
         </div>
       </div>
 
-      {view === "dashboard" ? <Dashboard rows={filtered} soloSectors={soloSectors} /> : <Thermometer rows={filtered} />}
+      {view === "dashboard" ? <Dashboard rows={filtered} soloSectors={soloSectors} completeness={completeness} /> : <Thermometer rows={filtered} />}
     </div>
   );
 }
 
-function Dashboard({ rows, soloSectors }: { rows: CompanyScore[]; soloSectors: Set<string> }) {
+function Dashboard({
+  rows,
+  soloSectors,
+  completeness,
+}: {
+  rows: CompanyScore[];
+  soloSectors: Set<string>;
+  completeness: Record<string, Completeness>;
+}) {
   if (rows.length === 0) return <Empty />;
   const sorted = [...rows].sort(
     (a, b) => (a.thermostat_score_location ?? 99) - (b.thermostat_score_location ?? 99),
@@ -92,7 +137,7 @@ function Dashboard({ rows, soloSectors }: { rows: CompanyScore[]; soloSectors: S
     <div className="grid gap-4 md:grid-cols-2">
       {sorted.map((c) => (
         <Link key={c.company_id} href={`/company/${c.company_id}`} className="block transition hover:opacity-90">
-          <ScoreCard c={c} soloSector={soloSectors.has(c.sector)} />
+          <ScoreCard c={c} soloSector={soloSectors.has(c.sector)} completeness={completeness[c.company_id]} />
         </Link>
       ))}
     </div>

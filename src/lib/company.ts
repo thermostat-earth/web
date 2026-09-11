@@ -1,4 +1,12 @@
 import { supabase } from "@/lib/supabase";
+import {
+  getCompanyCompleteness,
+  getBoundaryLines,
+  getSectorShares,
+  type Completeness,
+  type BoundaryLine,
+  type SectorShare,
+} from "@/lib/completeness";
 
 // GHG Protocol scope-3 category names, indexed 1–15.
 export const SCOPE3_CATEGORIES: Record<number, string> = {
@@ -64,7 +72,15 @@ export type Scope3Category = {
   notes: string | null;
 };
 
-export type Scope3Cell = { ghg: number | null; reported: boolean; material: boolean };
+export type Scope3Cell = {
+  ghg: number | null;
+  reported: boolean;
+  material: boolean;
+  // The company gave this number, inside another category's line, so it cannot be printed on its
+  // own row. Distinct from "no data": the table used to show both as n/a, which contradicted the
+  // coverage section above it saying the same category WAS reported.
+  aggregated: boolean;
+};
 export type Scope3ByYear = { category: number; name: string; cells: Record<number, Scope3Cell> };
 
 export type SourceItem = { url: string; notes: string | null };
@@ -80,6 +96,11 @@ export type CompanyDetail = {
   scope3: Scope3Category[];
   scope3ByYear: Scope3ByYear[];
   sources: YearSources[];
+  // What the score rests on. Null where the company has no scoring window, in which case there is
+  // no score either and there is nothing for the section to describe.
+  completeness: Completeness | null;
+  boundaryLines: BoundaryLine[];
+  sectorShares: Record<number, SectorShare>;
 };
 
 const num = (v: unknown): number | null =>
@@ -202,7 +223,12 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     cells: Object.fromEntries(
       s3Years.map((y) => {
         const r = cellByKey.get(`${cat}|${y}`);
-        return [y, { ghg: r ? num(r.ghg) : null, reported: r ? r.reported === true : false, material: r ? r.effective_required === true : false }];
+        return [y, {
+          ghg: r ? num(r.ghg) : null,
+          reported: r ? r.reported === true : false,
+          material: r ? r.effective_required === true : false,
+          aggregated: r ? r.not_reported_reason === "aggregated_not_split" : false,
+        }];
       }),
     ),
   }));
@@ -248,5 +274,23 @@ export async function getCompany(companyId: string): Promise<CompanyDetail | nul
     },
   };
 
-  return { header, trajectory, latestYear, scope3, scope3ByYear, sources };
+  // Fetched last and in parallel: none of the three depend on the work above, and the sector is
+  // only known once the header has been read.
+  const [completeness, boundaryLines, sectorShares] = await Promise.all([
+    getCompanyCompleteness(companyId),
+    getBoundaryLines(companyId),
+    getSectorShares(header.sector),
+  ]);
+
+  return {
+    header,
+    trajectory,
+    latestYear,
+    scope3,
+    scope3ByYear,
+    sources,
+    completeness,
+    boundaryLines,
+    sectorShares: Object.fromEntries(sectorShares),
+  };
 }

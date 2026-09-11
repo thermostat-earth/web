@@ -1,12 +1,21 @@
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
 import type { CompanyScore } from "@/lib/scores";
 import { unscoredLabel } from "@/lib/unknown-reason";
+import { completenessCount, type Completeness } from "@/lib/completeness";
 
 const TUBE_GRADIENT =
   "linear-gradient(to top, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";
 const TICKS = [1.4, 2, 3, 4];
 
-export function ScoreCard({ c, soloSector = false }: { c: CompanyScore; soloSector?: boolean }) {
+export function ScoreCard({
+  c,
+  soloSector = false,
+  completeness,
+}: {
+  c: CompanyScore;
+  soloSector?: boolean;
+  completeness?: Completeness;
+}) {
   const score = c.thermostat_score_location;
   const meta = [c.sector, c.country_hq].filter(Boolean).join(" · ");
 
@@ -44,6 +53,7 @@ export function ScoreCard({ c, soloSector = false }: { c: CompanyScore; soloSect
           {formatScore(score, aboveMax, belowMin).replace(/\s+/g, "")}
           <span className="ml-1 text-2xl font-medium">°C</span>
         </div>
+        <CoverageTag completeness={completeness} />
         {vsSector && (
           <div className="mt-2.5 text-xs" style={{ color: approx || soloSector ? undefined : color }}>
             {vsSector}
@@ -59,6 +69,34 @@ export function ScoreCard({ c, soloSector = false }: { c: CompanyScore; soloSect
         approxSector={approx}
         color={color}
       />
+    </div>
+  );
+}
+
+/**
+ * What the score rests on, stated next to the score rather than buried on the detail page.
+ *
+ * A count, not a percentage, and not a bar: "12 of 14 lines reported". A bar or a percentage
+ * invites the reader to treat 86% as nearly-complete, when the missing line might be the largest
+ * part of the company's footprint — which is precisely the thing we cannot know, because they did
+ * not report it. The count says what is true and leaves the weighing to the detail page, where the
+ * sector share for each missing category is given.
+ */
+function CoverageTag({ completeness }: { completeness?: Completeness }) {
+  if (!completeness) return null;
+  const complete = completeness.completeness_tag === "complete";
+  return (
+    <div className="mt-2.5 flex items-center gap-1.5 text-xs">
+      <span
+        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+          complete
+            ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400"
+            : "bg-amber-500/12 text-amber-700 dark:text-amber-500"
+        }`}
+      >
+        {complete ? "Complete" : "Incomplete"}
+      </span>
+      <span className="text-muted-foreground">{completenessCount(completeness)} lines reported</span>
     </div>
   );
 }

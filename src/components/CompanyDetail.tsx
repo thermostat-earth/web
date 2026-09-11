@@ -6,12 +6,20 @@ import { HorizontalThermometer } from "@/components/HorizontalThermometer";
 import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import { unscoredLabel } from "@/lib/unknown-reason";
+import { SCOPE3_CATEGORIES } from "@/lib/company";
 import type {
   Basis,
   CompanyDetail as CompanyDetailData,
   TrajectoryYear,
   Scope3ByYear,
 } from "@/lib/company";
+import {
+  completenessCount,
+  incompleteReasons,
+  type Completeness,
+  type BoundaryLine,
+  type SectorShare,
+} from "@/lib/completeness";
 
 const fmt = (n: number | null): string =>
   n == null ? "—" : Math.round(n).toLocaleString("en-GB");
@@ -48,8 +56,16 @@ function excludedReason(
   // The scopes are all there, so what is missing is a material Scope-3 category. Naming it is the
   // whole value of this line: "category 2 has no figure" tells a reader where to look, and
   // "outside the run" tells them to look somewhere the data is fine.
+  // An AGGREGATED category is not a gap. Its number was given, inside another category's line, so
+  // the categories still sum correctly and the year is still totallable — which is exactly what the
+  // scoring function concludes. Before this, Chanel's page called category 9 "no figure" and blanked
+  // all four of its totals, while the score it was printing at the top of the same page had been
+  // computed from those years. Two answers to one question, and the page was giving the wrong one.
   const gaps = s3
-    .filter((r) => r.cells[t.year]?.material && !r.cells[t.year]?.reported)
+    .filter((r) => {
+      const c = r.cells[t.year];
+      return c?.material && !c?.reported && !c?.aggregated;
+    })
     .map((r) => r.category);
   if (gaps.length) {
     return `no figure for ${gaps.length === 1 ? "category" : "categories"} ${gaps.join(", ")}`;
@@ -67,7 +83,10 @@ function yearComplete(t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[]): bool
   const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
   if (s2 == null) return false;
   const material = s3.filter((r) => r.cells[t.year]?.material);
-  return material.length > 0 && material.every((r) => r.cells[t.year]?.reported);
+  // Aggregated counts as reported here for the same reason it does in excludedReason: the figure
+  // exists inside another category, so the year can be totalled.
+  return material.length > 0
+    && material.every((r) => r.cells[t.year]?.reported || r.cells[t.year]?.aggregated);
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
@@ -154,8 +173,154 @@ function TrajectoryChart({
   );
 }
 
+
+/**
+ * WHAT THIS SCORE COVERS — the boundary, line by line.
+ *
+ * The whole point of scoring every company rather than only the well-disclosed ones is that the
+ * score has to be readable alongside what it rests on. So this section is not an appendix: it is
+ * the part that stops a 1.5°C built on two lines being read the same way as a 1.5°C built on
+ * sixteen.
+ *
+ * Three groups, in the order a reader needs them:
+ *   1. counted    — reported for every year we score
+ *   2. missing    — applies to this company, but not in the window, with WHY and what the category
+ *                   is typically worth in this sector
+ *   3. no apply   — ruled out of the boundary, named rather than silently dropped
+ *
+ * The wording of each line's status comes from the database column, not from this file, so the
+ * public page and the internal review page cannot describe the same line differently.
+ */
+function CoverageSection({
+  completeness,
+  lines,
+  shares,
+  sector,
+  windowStart,
+  windowEnd,
+}: {
+  completeness: Completeness | null;
+  lines: BoundaryLine[];
+  shares: Record<number, SectorShare>;
+  sector: string;
+  windowStart: number | null;
+  windowEnd: number | null;
+}) {
+  if (!completeness || lines.length === 0) return null;
+
+  const label = (l: BoundaryLine) =>
+    l.line === "scope1" ? "Scope 1"
+      : l.line === "scope2" ? "Scope 2"
+      : `Category ${l.category} · ${SCOPE3_CATEGORIES[l.category ?? 0] ?? ""}`;
+
+  const order = (l: BoundaryLine) =>
+    l.line === "scope1" ? -2 : l.line === "scope2" ? -1 : (l.category ?? 99);
+  const sorted = [...lines].sort((a, b) => order(a) - order(b));
+
+  const counted = sorted.filter((l) => l.position === "in_window");
+  const missing = sorted.filter((l) => l.position === "outside_window" && l.reason !== "outside_boundary");
+  const notApplicable = sorted.filter((l) => l.reason === "outside_boundary");
+  const complete = completeness.completeness_tag === "complete";
+  const reasons = incompleteReasons(completeness);
+
+  return (
+    <>
+      <SectionHeading>What this score covers</SectionHeading>
+
+      <div className="rounded-lg border border-border bg-card p-5">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${
+              complete
+                ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400"
+                : "bg-amber-500/12 text-amber-700 dark:text-amber-500"
+            }`}
+          >
+            {complete ? "Complete" : "Incomplete"}
+          </span>
+          <span className="text-sm font-medium">{completenessCount(completeness)} lines reported</span>
+          {windowStart != null && windowEnd != null && (
+            <span className="text-xs text-muted-foreground">
+              scored over {windowStart}–{windowEnd}
+            </span>
+          )}
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          {complete ? (
+            <>
+              Every line that applies to this company was reported for every year of the scoring
+              window.
+            </>
+          ) : (
+            <>
+              This score is built on {completeness.lines_in_window} of the{" "}
+              {completeness.lines_in_boundary} lines that apply to this company — it has{" "}
+              {reasons.join(" and ")}. We cannot know what an undisclosed category is worth, so each
+              one below is shown with what that category is typically worth to other companies in{" "}
+              {sector}.
+            </>
+          )}
+        </p>
+      </div>
+
+      {missing.length > 0 && (
+        <div className="mt-4">
+          <div className="mb-2 text-xs font-medium text-muted-foreground">Not in the score</div>
+          <ul className="divide-y divide-border rounded-lg border border-border">
+            {missing.map((l) => {
+              const share = l.category != null ? shares[l.category] : undefined;
+              return (
+                <li key={l.line} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="text-sm">{label(l)}</div>
+                    <div className="text-xs text-muted-foreground">{l.status_text}</div>
+                  </div>
+                  {share != null && (
+                    // Each category on its own. These are NOT added up: they are averages taken over
+                    // different samples, so a total would be a number we invented rather than one we
+                    // measured. The reader can weigh them.
+                    <div className="shrink-0 text-right text-xs text-muted-foreground">
+                      <span className="font-mono text-foreground">{share.avg_pct_of_scope3}%</span>{" "}
+                      of scope 3 on average in {sector}
+                      <div className="text-[10px] opacity-70">
+                        {share.companies_sampled} {share.companies_sampled === 1 ? "company" : "companies"} sampled
+                      </div>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      {counted.length > 0 && (
+        <div className="mt-4">
+          <div className="mb-2 text-xs font-medium text-muted-foreground">Counted in the score</div>
+          <ul className="divide-y divide-border rounded-lg border border-border">
+            {counted.map((l) => (
+              <li key={l.line} className="flex flex-wrap items-baseline justify-between gap-x-4 px-4 py-2.5">
+                <span className="text-sm">{label(l)}</span>
+                <span className="text-xs text-muted-foreground">{l.status_text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {notApplicable.length > 0 && (
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          <span className="font-medium">Outside this company&rsquo;s boundary:</span>{" "}
+          {notApplicable.map((l) => `Category ${l.category}`).join(", ")}. These were judged not to
+          apply, so they are not counted against it.
+        </p>
+      )}
+    </>
+  );
+}
+
 export function CompanyDetail({ data }: { data: CompanyDetailData }) {
-  const { header: h, trajectory, scope3ByYear, sources } = data;
+  const { header: h, trajectory, scope3ByYear, sources, completeness, boundaryLines, sectorShares } = data;
   const bothAvailable = h.location.available && h.market.available;
   const initial: Basis = h.location.available ? "location" : "market";
   const [basis, setBasis] = useState<Basis>(initial);
@@ -347,6 +512,15 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </>
       )}
 
+      <CoverageSection
+        completeness={completeness}
+        lines={boundaryLines}
+        shares={sectorShares}
+        sector={h.sector}
+        windowStart={h.assessment_year_start}
+        windowEnd={h.assessment_year_end}
+      />
+
       {/* Scope-3 by category over years, heat-mapped by size */}
       <SectionHeading>Scope 3 by category (tCO₂e)</SectionHeading>
       <div className="overflow-x-auto">
@@ -382,6 +556,10 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                       bg = `hsl(${heatHue} 58% ${light}%)`;
                       textColor = light > 58 ? "#0f172a" : "#f8fafc";
                       content = compact(c.ghg);
+                    } else if (c?.aggregated) {
+                      // Reported, but inside another category's number. Showing n/a here would
+                      // contradict the coverage section above, which counts this line as reported.
+                      content = <span className="font-medium text-muted-foreground" title="Reported, but folded into another category">incl.</span>;
                     } else if (rowMaterial) {
                       content = <span className="font-medium text-amber-600">n/a</span>;
                     } else {
@@ -404,7 +582,8 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         </table>
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-        Cells shaded by size. <span className="font-medium text-amber-600">n/a</span> = material to this company, data not available for that year.
+        Cells shaded by size. <span className="font-medium text-amber-600">n/a</span> = material to this company, data not available for that year.{" "}
+        <span className="font-medium">incl.</span> = reported, but folded into another category&rsquo;s figure, so it has no separate number.
         Greyed-out rows are categories not material to this company.
       </p>
 
