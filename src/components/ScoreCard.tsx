@@ -88,7 +88,7 @@ export function ScoreCard({
 /**
  * What the score rests on, stated next to the score rather than buried on the detail page.
  *
- * A count, not a percentage, and not a bar: "12 of 14 lines reported". A bar or a percentage
+ * A count, not a percentage, and not a bar: "10 of 12 categories reported". A bar or a percentage
  * invites the reader to treat 86% as nearly-complete, when the missing line might be the largest
  * part of the company's footprint — which is precisely the thing we cannot know, because they did
  * not report it. The count says what is true and leaves the weighing to the detail page, where the
@@ -108,7 +108,7 @@ function CoverageTag({ completeness }: { completeness?: Completeness }) {
       >
         {complete ? "Complete" : "Incomplete"}
       </span>
-      <span className="text-muted-foreground">{completenessCount(completeness)} lines reported</span>
+      <span className="text-muted-foreground">{completenessCount(completeness)} categories reported</span>
     </div>
   );
 }

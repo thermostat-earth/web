@@ -238,7 +238,7 @@ function CoverageSection({
           >
             {complete ? "Complete" : "Incomplete"}
           </span>
-          <span className="text-sm font-medium">{completenessCount(completeness)} lines reported</span>
+          <span className="text-sm font-medium">{completenessCount(completeness)} categories reported</span>
           {windowStart != null && windowEnd != null && (
             <span className="text-xs text-muted-foreground">
               scored over {windowStart}–{windowEnd}
@@ -248,13 +248,14 @@ function CoverageSection({
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
           {complete ? (
             <>
-              Every line that applies to this company was reported for every year of the scoring
-              window.
+              Every scope 3 category that applies to this company was reported for every year of
+              the scoring window, alongside its scope 1 and scope 2.
             </>
           ) : (
             <>
-              This score is built on {completeness.lines_in_window} of the{" "}
-              {completeness.lines_in_boundary} lines that apply to this company — it has{" "}
+              This score is built on {completeness.categories_in_window} of the{" "}
+              {completeness.categories_in_boundary} scope 3 categories that apply to this company,
+              alongside its scope 1 and scope 2 — it has{" "}
               {reasons.join(" and ")}. We cannot know what an undisclosed category is worth, so each
               one below is shown with what that category is typically worth to other companies in{" "}
               {sector}.

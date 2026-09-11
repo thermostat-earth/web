@@ -11,7 +11,11 @@ import { supabase } from "@/lib/supabase";
 //   WINDOW    the run of years being scored.
 //
 // A line is "in window" when the company reported it for every year of the window. Completeness is
-// a COUNT of those lines against the boundary — "12 of 14" — never a percentage. Felix was explicit:
+// a COUNT of the scope 3 CATEGORIES in window against the ones that apply — "10 of 12" — never a
+// percentage. Felix, 2026-09-11: "Can we change 'lines' to 'categories'". Scope 1 and scope 2 are
+// deliberately out of that fraction: the window cannot exist without them, so they are in it for
+// every company always, and counting them added one to each side and said nothing. They are still
+// shown as rows with their own status. Felix was explicit:
 // a percentage of the company's own emissions is circular, because the missing categories are
 // exactly the ones whose size is unknown. The only percentage on the page is the sector share, which
 // is a share of other companies' emissions and so is not circular.
@@ -21,8 +25,8 @@ export type CompletenessTag = "complete" | "incomplete";
 export type Completeness = {
   company_id: string;
   completeness_tag: CompletenessTag;
-  lines_in_window: number;
-  lines_in_boundary: number;
+  categories_in_window: number;
+  categories_in_boundary: number;
   has_not_reported: boolean;
   has_short_history: boolean;
   /** True when today's figures would produce a different answer from the published one. Normal for
@@ -52,7 +56,7 @@ export type SectorShare = {
 };
 
 const COMPLETENESS_COLUMNS =
-  "company_id, completeness_tag, lines_in_window, lines_in_boundary, has_not_reported, has_short_history, stale";
+  "company_id, completeness_tag, categories_in_window, categories_in_boundary, has_not_reported, has_short_history, stale";
 
 // READ FROM WHAT THE SCORER WROTE, NOT FROM A FRESH CALCULATION BESIDE IT.
 //
@@ -116,9 +120,9 @@ export async function getSectorShares(sector: string): Promise<Map<number, Secto
   return out;
 }
 
-/** "12 of 14 lines reported" — the count, spelled the same way everywhere it appears. */
-export function completenessCount(c: Pick<Completeness, "lines_in_window" | "lines_in_boundary">): string {
-  return `${c.lines_in_window} of ${c.lines_in_boundary}`;
+/** "10 of 12 categories reported" — the count, spelled the same way everywhere it appears. */
+export function completenessCount(c: Pick<Completeness, "categories_in_window" | "categories_in_boundary">): string {
+  return `${c.categories_in_window} of ${c.categories_in_boundary}`;
 }
 
 /**
