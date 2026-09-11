@@ -246,6 +246,43 @@ is what the lock is for, so their published numbers are frozen and carry no comp
 will be recomputed when they are submitted. The monitor names them every run rather than treating
 them as a fault.
 
+## A withdrawn disclosure, and a chart that plots what the score used (2026-09-11, later)
+
+**A sixth reason code: `stopped_reporting`, "Reported before, but no longer".** `short_history` was
+carrying two unrelated stories — a company that started disclosing a category recently, which time
+fixes, and one that printed a category and then took it out of the table, which is a finding about
+them. ITV's category 11 ran at 485,171 and 487,910 tonnes and then left the SECR table; under the
+old labels the public page would have said "not for enough years yet". The test is deliberately the
+dumbest one that works: **does the last year of the window have a figure?** No thresholds, nothing
+to tune, and the order of the gaps cannot game it. Fourteen categories across two companies moved —
+ITV's one, and eleven of Disney's, which reports no scope 3 at all in the most recent year of its
+window. The closed list is closed again at six.
+
+**The counts are of CATEGORIES, and scope 1 and scope 2 are out of the fraction** (ts-060). Felix
+asked for the word change and the word forced the number to be honest: scope 1 is not a category, so
+a fraction labelled categories cannot contain it — and those two were in every window by
+construction, adding one to each side and saying nothing. "12 of 14" became "10 of 12". Amazon reads
+**0 of 13**, which is the honest version of the 2 of 15 it showed an hour earlier.
+
+**Coverage is drawn as blocks on the cards**, one per category that applies: filled is in the score,
+amber hollow is not disclosed, faint hollow is too few years. Deliberately not a bar and not a
+percentage — a proportion invites "10 of 12, 86%, nearly there", and it is not nearly there if the
+two missing are purchased goods and use of sold products. The two totals are read from what the
+scorer wrote; the per-reason split is derived live, so where they do not add up every missing block
+falls back to one neutral style rather than drawing a breakdown that contradicts its own total.
+
+⚠️ **The trajectory chart was still applying the pre-ts-057 scoring rule.** It demanded every
+material category have a figure or the year could not be totalled — so Amazon printed a temperature
+above 4.0 °C above an empty box reading "no year can be totalled on this basis", and Disney, Netflix,
+Nike and Foxconn would have done the same on release. `yearComplete` now takes the set of categories
+the scorer actually summed and requires only those. Amazon plots six bars rising 11.26M to 17.93M —
+the story its score was already telling. **Where a page and a score disagree, check which rule the
+page is using before assuming the data is wrong.**
+
+**A total has to say what is in it.** The chart caption now names the coverage: Amazon's reads
+"totals are scope 1 and scope 2 only", H&M's names the 10 of 12. A bar chart is the most quotable
+thing on the page and an incomplete company's bars are smaller than its real footprint.
+
 ## What is next
 
 > **It is not here.** ThermoStat's epics, features and items live in **Product Development**
