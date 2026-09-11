@@ -203,6 +203,49 @@ symptom"* — but it sat after the empty-window early exit, so it fired when a m
 confirmed, sources all resolving, figures spot-checked. One thing outstanding and it is a judgement,
 not a build: the category 2 (capital goods) determination.
 
+## Every company is scored now, and tagged for what it covers (2026-09-11)
+
+`score_company_unlocked` used to refuse a year unless EVERY boundary category had a figure in it.
+One missing category in one year threw that whole year off the list, and a run falling below three
+years meant no score at all — which would have left 20 of 24 companies unscorable. Migration
+**ts-057** moves that test rather than removing it: it now decides which LINES are in window, not
+which YEARS are usable. A year needs scope 1, a scope 2 basis and no basis break. The score is
+summed over the in-window lines at BOTH ends of the trend, and the tag and counts are written by
+the scorer onto `company_scores_public` — never recomputed on read.
+
+**Eight companies carry a score where two did.** H&M 1.77 °C on 12 of 14 lines, Apple under 1.4 °C
+market-based on 9 of 11, Google, Microsoft and Nvidia above 4.0, Amazon above 4.0 on 2 of 15 — which
+is scope 1 and 2 and nothing else. The score maths is untouched; seven of the function's ten stages
+are byte-identical.
+
+⚠️ **ITV was scoring 1.469 on a 62% fall in emissions that never happened.** Its category 11 printed
+485,171 and 487,910 for 2022 and 2023 and then dropped out of the SECR table, and because a
+folded-in category counts as reported the year still qualified while contributing nothing to the
+sum. The total "fell" from 839,859 to 324,240. **A line is now in window only if it is the same KIND
+of present in every year** — a figure every year, or folded in every year. Mixed presentation is not
+comparable with itself. On a rolled-back rescore ITV reads 362,284 / 351,949 / 324,240 / 260,186 and
+scores 1.496.
+
+⚠️ **A classifier must not be shown its own previous answer.** `classifyReason` was passed the stored
+`not_reported_reason` along with the company's words, and the code `aggregated_not_split` contains
+the stem "aggregat", so every row already carrying it matched the combining test on its own code and
+re-derived itself. Twenty-eight rows were provably wrong and the sweep printed "nothing to change" —
+Inditex's four categories "analysed but not included in this inventory", ITV's two, and fourteen
+Paramount categories nobody had read. A checker that confirms whatever it is shown is worse than no
+checker, because it is trusted.
+
+⚠️ **A view's comment is not a test.** `scoring_window` said it required "scope 1, a scope 2 basis
+and no basis break" and tested `s12_status = 'ok'`, which a row disclosing no scope 2 satisfies. It
+handed out windows the scorer then refused. **17 of 24 companies clear the floor, not 18** — Chanel
+drops out, because its FY2025 report does not restate scope 2 for 2021, 2024 or 2025. Fixed in
+ts-058, and `thermostat-score-lines-monitor.timer` now checks hourly that no published score
+disagrees with its own completeness record.
+
+**Chanel and ITV hold scores today's figures would not produce.** Both are locked mid-review, which
+is what the lock is for, so their published numbers are frozen and carry no completeness tag. They
+will be recomputed when they are submitted. The monitor names them every run rather than treating
+them as a fault.
+
 ## What is next
 
 > **It is not here.** ThermoStat's epics, features and items live in **Product Development**

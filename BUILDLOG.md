@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-11  STATUS: every company is scored now, and the three faults found doing it
 - 2026-09-11  a company with only a market-based score is scored, and the list said it was not
 - 2026-09-11  the public page reads the completeness the scorer wrote, not a fresh one computed beside it
 - 2026-09-11  public pages say what each score covers, line by line
