@@ -25,6 +25,10 @@ export type Completeness = {
   lines_in_boundary: number;
   has_not_reported: boolean;
   has_short_history: boolean;
+  /** True when today's figures would produce a different answer from the published one. Normal for
+   *  a company under review, whose score is frozen on purpose — and the one thing a reader has no
+   *  way to work out for themselves. */
+  stale: boolean;
 };
 
 export type LinePosition = "in_window" | "outside_window";
@@ -48,11 +52,24 @@ export type SectorShare = {
 };
 
 const COMPLETENESS_COLUMNS =
-  "company_id, completeness_tag, lines_in_window, lines_in_boundary, has_not_reported, has_short_history";
+  "company_id, completeness_tag, lines_in_window, lines_in_boundary, has_not_reported, has_short_history, stale";
+
+// READ FROM WHAT THE SCORER WROTE, NOT FROM A FRESH CALCULATION BESIDE IT.
+//
+// company_completeness recomputes the tag live from today's figures. That is the right thing for the
+// ops review page, which has to show what a rescore WOULD do while someone is still deciding. It is
+// the wrong thing here, where the job is to say what the number ON THIS PAGE rests on.
+//
+// They already disagree. Chanel is published at 4.00 from a 2021-2024 window, and its FY2025 report
+// does not restate scope 2 for three of those years, so the live view says it has no window at all.
+// Reading the live view here would have rendered a score with no tag beside it — the one combination
+// this whole design exists to prevent. company_completeness_published (ts-059) reads the counts the
+// scorer recorded at the moment it summed those lines.
+const COMPLETENESS_VIEW = "company_completeness_published";
 
 /** Every company's tag, keyed by id, for the scores list. */
 export async function getCompleteness(): Promise<Map<string, Completeness>> {
-  const { data, error } = await supabase.from("company_completeness").select(COMPLETENESS_COLUMNS);
+  const { data, error } = await supabase.from(COMPLETENESS_VIEW).select(COMPLETENESS_COLUMNS);
   if (error) throw error;
   const out = new Map<string, Completeness>();
   for (const row of (data ?? []) as Completeness[]) out.set(row.company_id, row);
@@ -62,7 +79,7 @@ export async function getCompleteness(): Promise<Map<string, Completeness>> {
 /** One company's tag, or null where it has no window and so no score. */
 export async function getCompanyCompleteness(companyId: string): Promise<Completeness | null> {
   const { data } = await supabase
-    .from("company_completeness")
+    .from(COMPLETENESS_VIEW)
     .select(COMPLETENESS_COLUMNS)
     .eq("company_id", companyId)
     .maybeSingle();
