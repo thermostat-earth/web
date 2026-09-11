@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-11  the trajectory chart plots the years the score was actually computed over
 - 2026-09-11  show what a score covers as blocks, not just a number
 - 2026-09-11  the public page counts categories, not lines
 - 2026-09-11  STATUS: every company is scored now, and the three faults found doing it

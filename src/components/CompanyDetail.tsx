@@ -45,7 +45,7 @@ function hostname(url: string): string {
 // it sends a reader looking at the wrong part of the disclosure, which is the same failure
 // migration 045 fixed on the score itself.
 function excludedReason(
-  t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[], insideWindow: boolean,
+  t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[], insideWindow: boolean, summed?: Set<number>,
 ): string {
   const missing: string[] = [];
   const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
@@ -62,9 +62,13 @@ function excludedReason(
   // scoring function concludes. Before this, Chanel's page called category 9 "no figure" and blanked
   // all four of its totals, while the score it was printing at the top of the same page had been
   // computed from those years. Two answers to one question, and the page was giving the wrong one.
+  // Only the categories the score summed can be a gap. One the scorer left out is named on the
+  // coverage list above with its own reason, and repeating it here as a reason the YEAR failed
+  // would say the year is unusable when the score used it.
   const gaps = s3
     .filter((r) => {
       const c = r.cells[t.year];
+      if (summed) return summed.has(r.category) && !c?.reported && !c?.aggregated;
       return c?.material && !c?.reported && !c?.aggregated;
     })
     .map((r) => r.category);
@@ -79,15 +83,40 @@ function excludedReason(
 
 // A year's Total is only meaningful when everything relevant is reported:
 // Scope 1, Scope 2 (for the current basis), and every material Scope-3 category.
-function yearComplete(t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[]): boolean {
+/**
+ * Can this year be plotted — meaning, is it a year the SCORE was computed over?
+ *
+ * It used to demand that every material category had a figure, which was the scoring rule until
+ * 2026-09-11 and stopped being it that day: a year now qualifies on scope 1 and a scope 2 basis,
+ * and a category missing from it is left out of the sum instead of throwing the year away. This
+ * function did not move with it, so the chart and the score disagreed — Amazon printed a temperature
+ * above 4.0 °C above an empty box reading "no year can be totalled on this basis", and the same
+ * would have happened to Disney, Netflix, Nike and Foxconn on release. Two answers to one question
+ * again, and the page was giving the one the score did not use.
+ *
+ * `summed` is the set of categories the scorer actually added up. Where it is known, those are the
+ * only ones a year needs; a category outside it contributes nothing to either end of the trend, so
+ * its absence cannot unbalance the year. Where it is not known — a company with no coverage record
+ * — the old stricter test still applies, because showing a total we cannot vouch for is worse than
+ * showing none.
+ */
+function yearComplete(
+  t: TrajectoryYear, basis: Basis, s3: Scope3ByYear[], summed?: Set<number>,
+): boolean {
   if (t.scope1 == null) return false;
   const s2 = basis === "location" ? t.scope2_location : t.scope2_market;
   if (s2 == null) return false;
-  const material = s3.filter((r) => r.cells[t.year]?.material);
-  // Aggregated counts as reported here for the same reason it does in excludedReason: the figure
-  // exists inside another category, so the year can be totalled.
-  return material.length > 0
-    && material.every((r) => r.cells[t.year]?.reported || r.cells[t.year]?.aggregated);
+  const required = summed
+    ? s3.filter((r) => summed.has(r.category))
+    : s3.filter((r) => r.cells[t.year]?.material);
+  // A category the scorer summed is present in every year of the window by construction, so this
+  // normally passes; it is kept as a test rather than assumed, because the alternative is plotting
+  // a total whose composition nobody checked.
+  // Aggregated counts as reported: the figure exists inside another category, so the year still
+  // totals correctly.
+  if (summed && required.length === 0) return true;
+  return required.length > 0
+    && required.every((r) => r.cells[t.year]?.reported || r.cells[t.year]?.aggregated);
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
@@ -328,6 +357,15 @@ function CoverageSection({
 
 export function CompanyDetail({ data }: { data: CompanyDetailData }) {
   const { header: h, trajectory, scope3ByYear, sources, completeness, boundaryLines, sectorShares } = data;
+  // The categories the score was actually summed over. Undefined where there is no coverage record,
+  // which keeps the old stricter behaviour for a company whose score predates this design.
+  const summedCategories = completeness
+    ? new Set(
+        boundaryLines
+          .filter((l) => l.position === "in_window" && l.category != null)
+          .map((l) => l.category as number),
+      )
+    : undefined;
   const bothAvailable = h.location.available && h.market.available;
   const initial: Basis = h.location.available ? "location" : "market";
   const [basis, setBasis] = useState<Basis>(initial);
@@ -436,15 +474,16 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
         <p className="text-sm text-muted-foreground">No trajectory data yet.</p>
       ) : (
         <>
-          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} included={(t) => yearComplete(t, basis, scope3ByYear)}
+          <TrajectoryChart trajectory={trajectory} basis={basis} color={color} getValue={(t) => (basis === "location" ? t.total_location : t.total_market)} included={(t) => yearComplete(t, basis, scope3ByYear, summedCategories)}
             reasonFor={(t) => excludedReason(t, basis, scope3ByYear,
               h.assessment_year_start != null && h.assessment_year_end != null
-                && t.year >= h.assessment_year_start && t.year <= h.assessment_year_end)} />
+                && t.year >= h.assessment_year_start && t.year <= h.assessment_year_end,
+              summedCategories)} />
           {/* When NOTHING is complete the chart is an empty box, and the per-year reasons live in
               hover text that a phone cannot reach. So the cause is written out instead. Found on
               2026-09-04: H&M's chart rendered blank with the explanation reachable only by
               hovering, which is the same thing as no explanation for most readers. */}
-          {trajectory.length > 0 && !trajectory.some((t) => yearComplete(t, basis, scope3ByYear)) ? (
+          {trajectory.length > 0 && !trajectory.some((t) => yearComplete(t, basis, scope3ByYear, summedCategories)) ? (
             <p className="mt-2 text-xs text-muted-foreground">
               No year can be totalled on this basis, so there is nothing to plot.{" "}
               {(() => {
@@ -452,7 +491,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                 // the reader work out which year each one belongs to.
                 const byReason = new Map<string, number[]>();
                 for (const t of trajectory) {
-                  const why = excludedReason(t, basis, scope3ByYear, true);
+                  const why = excludedReason(t, basis, scope3ByYear, true, summedCategories);
                   byReason.set(why, [...(byReason.get(why) ?? []), t.year]);
                 }
                 return Array.from(byReason.entries())
@@ -463,6 +502,19 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
           ) : (h.assessment_year_start || h.assessment_year_end) && (
             <p className="mt-2 text-xs text-muted-foreground">
               Solid bars are inside the assessment window ({h.assessment_year_start}–{h.assessment_year_end}); faded bars are excluded.
+              {/* A TOTAL HAS TO SAY WHAT IS IN IT. Since 2026-09-11 a score is summed over only the
+                  categories present in every year, so an incomplete company's bars are smaller than
+                  its real footprint — Amazon's are scope 1 and scope 2 and nothing else. The
+                  coverage panel below says so, but a reader who looks at the chart and leaves would
+                  never reach it, and a bar chart is the most quotable thing on the page. */}
+              {completeness && completeness.categories_in_window < completeness.categories_in_boundary && (
+                <>
+                  {" "}
+                  {completeness.categories_in_window === 0
+                    ? "Totals are scope 1 and scope 2 only — none of this company's scope 3 categories are reported for every year we score."
+                    : `Totals cover scope 1, scope 2 and the ${completeness.categories_in_window} of ${completeness.categories_in_boundary} scope 3 categories reported for every year we score, so they are smaller than this company's full footprint.`}
+                </>
+              )}
             </p>
           )}
 
@@ -476,7 +528,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                     <th
                       key={t.year}
                       className={`py-2 pl-4 text-right font-normal ${t.inWindow ? "" : "text-muted-foreground/50"}`}
-                      title={t.inWindow ? undefined : `Excluded — ${excludedReason(t, basis, scope3ByYear, false)}`}
+                      title={t.inWindow ? undefined : `Excluded — ${excludedReason(t, basis, scope3ByYear, false, summedCategories)}`}
                     >
                       {t.year}
                       {!t.inWindow && <span className="ml-0.5">*</span>}
@@ -490,7 +542,7 @@ export function CompanyDetail({ data }: { data: CompanyDetailData }) {
                     { label: "Scope 1", tip: GLOSSARY.scope1, get: (t: TrajectoryYear) => t.scope1 },
                     { label: "Scope 2", tip: GLOSSARY.scope2, get: (t: TrajectoryYear) => (basis === "location" ? t.scope2_location : t.scope2_market) },
                     { label: "Scope 3", tip: GLOSSARY.scope3, get: (t: TrajectoryYear) => (t.scope3Reported ? t.scope3 : null) },
-                    { label: "Total", tip: null as string | null, get: (t: TrajectoryYear) => (yearComplete(t, basis, scope3ByYear) ? (basis === "location" ? t.total_location : t.total_market) : null), bold: true },
+                    { label: "Total", tip: null as string | null, get: (t: TrajectoryYear) => (yearComplete(t, basis, scope3ByYear, summedCategories) ? (basis === "location" ? t.total_location : t.total_market) : null), bold: true },
                   ]
                 ).map((row) => (
                   <tr key={row.label} className="border-b border-border/50">
