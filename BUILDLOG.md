@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-14  name the missing environment variable, and catch what the route boundary cannot
 - 2026-09-14  make the site say what went wrong instead of printing a digest
 - 2026-09-11  the coverage breakdown sits on its own line under the count
 - 2026-09-11  STATUS: the sixth reason code, categories not lines, and the chart that plotted nothing
