@@ -175,6 +175,16 @@ export default function MethodologyPage() {
             We would rather show &ldquo;not yet scored&rdquo; than estimate missing
             data and risk being wrong.
           </Choice>
+          <Choice title="Categories reported as one line are counted together, or not at all.">
+            Companies sometimes publish two categories on a single line without
+            splitting them &mdash; &ldquo;capital goods and use of sold
+            products&rdquo;, for example. If every category in that line applies to
+            the business, we count the combined figure. If any one of them does not
+            apply, we leave the whole line out of the score, whatever its size. We
+            cannot separate what the company has not separated, and we would rather
+            drop a number than quietly include emissions we have judged irrelevant,
+            or split one on an assumption of our own.
+          </Choice>
           <Choice title="Every figure is sourced.">
             Each company page links to the company&apos;s own published reports, so
             you can check our inputs.
