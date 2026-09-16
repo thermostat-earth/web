@@ -48,3 +48,35 @@ export async function getScores(): Promise<CompanyScore[]> {
   }
   return (data ?? []) as CompanyScore[];
 }
+
+// --- Brands -----------------------------------------------------------------------------------
+//
+// Felix, 2026-09-16: "split up companies into their subsidiaries that are included in their score
+// (e.g. COS for H&M)". People search for COS, Zara or Sky; nobody searches for "H&M Group",
+// "Inditex" or "Comcast". The search box matched company_name only, so a visitor typing the name
+// they actually recognise got nothing from a site that holds the answer.
+//
+// A brand is NOT a company and has no score of its own. It is a name that points at a parent's
+// score, with the relationship stated. company_brands is a separate table for exactly that reason,
+// and its read policy only exposes rows Felix has confirmed — so nothing here can show a brand he
+// has not agreed to.
+
+export type Brand = { brand_name: string; company_id: string };
+
+export async function getBrands(): Promise<Brand[]> {
+  const { data } = await supabase
+    .from("company_brands")
+    .select("brand_name, company_id")
+    .order("brand_name");
+  return (data ?? []) as Brand[];
+}
+
+/** The brands one company's score covers, for its own page. */
+export async function getBrandsFor(companyId: string): Promise<string[]> {
+  const { data } = await supabase
+    .from("company_brands")
+    .select("brand_name")
+    .eq("company_id", companyId)
+    .order("brand_name");
+  return (data ?? []).map((r) => (r as { brand_name: string }).brand_name);
+}

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
-import type { CompanyScore } from "@/lib/scores";
+import type { CompanyScore, Brand } from "@/lib/scores";
 import type { Completeness, CompletenessTag } from "@/lib/completeness";
 
 type View = "thermometer" | "dashboard";
@@ -28,13 +28,16 @@ const TICKS = [1.4, 2, 3, 4];
 export function ScoresView({
   scores,
   completeness = {},
+  brands = [],
 }: {
   scores: CompanyScore[];
   completeness?: Record<string, Completeness>;
+  brands?: Brand[];
 }) {
   const [view, setView] = useState<View>("dashboard");
   const [sector, setSector] = useState("All");
   const [coverage, setCoverage] = useState<Coverage>("all");
+  const [query, setQuery] = useState("");
 
   // Allow deep-linking a view, e.g. /scores?view=thermometer
   useEffect(() => {
@@ -46,15 +49,41 @@ export function ScoresView({
     () => ["All", ...Array.from(new Set(scores.map((s) => s.sector))).sort()],
     [scores],
   );
+  // SEARCHING A BRAND HAS TO FIND THE COMPANY THAT REPORTS IT.
+  //
+  // Felix, 2026-09-16: people search for COS, Zara or Sky — not for "H&M Group", "Inditex" or
+  // "Comcast". Until now this page had no search at all, so a visitor typing a name they recognise
+  // had to scroll a list of parent companies and hope.
+  //
+  // The match is on the brand name; the RESULT is still the parent. A brand never becomes a row of
+  // its own, because that would imply it had been assessed separately and would make the site look
+  // as though it covers several times more companies than it does.
+  const matchedBrands = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return new Map<string, string[]>();
+    const hits = new Map<string, string[]>();
+    for (const b of brands) {
+      if (!b.brand_name.toLowerCase().includes(q)) continue;
+      hits.set(b.company_id, [...(hits.get(b.company_id) ?? []), b.brand_name]);
+    }
+    return hits;
+  }, [brands, query]);
+
   const filtered = useMemo(() => {
     let rows = sector === "All" ? scores : scores.filter((s) => s.sector === sector);
+    const q = query.trim().toLowerCase();
+    if (q) {
+      rows = rows.filter(
+        (s) => s.company_name.toLowerCase().includes(q) || matchedBrands.has(s.company_id),
+      );
+    }
     if (coverage !== "all") {
       // A company with no tag has no window, so it has no score either. It belongs in neither
       // bucket rather than defaulting into one of them.
       rows = rows.filter((s) => completeness[s.company_id]?.completeness_tag === coverage);
     }
     return rows;
-  }, [scores, sector, coverage, completeness]);
+  }, [scores, sector, coverage, completeness, query, matchedBrands]);
   // Sectors where we track only one scored company — no meaningful average yet.
   const soloSectors = useMemo(() => {
     const count = new Map<string, number>();
@@ -73,6 +102,22 @@ export function ScoresView({
           ? "Every company on one temperature scale — coolest at the bottom."
           : "Every company's climate temperature score against IPCC pathways — coolest first."}
       </p>
+      <div className="mb-6">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search a company or a brand — try COS, or Zara"
+          aria-label="Search for a company or a brand"
+          className="h-10 w-full rounded-lg border border-border bg-card px-4 text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+        {query.trim() && matchedBrands.size > 0 && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Showing the companies that report emissions for the brands you searched. A brand does not
+            have a score of its own — it is covered by its parent&apos;s.
+          </p>
+        )}
+      </div>
+
       <div className="mb-10 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex overflow-hidden rounded-lg border border-border text-xs">
           {(["dashboard", "thermometer"] as View[]).map((v) => (

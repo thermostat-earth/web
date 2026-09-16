@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-09-16  a brand finds its parent: search and the company page
 - 2026-09-15  methodology: categories reported as one line are counted together or not at all
 - 2026-09-14  name the missing environment variable, and catch what the route boundary cannot
 - 2026-09-14  make the site say what went wrong instead of printing a digest
