@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
-import type { CompanyScore, Brand } from "@/lib/scores";
+import type { CompanyScore } from "@/lib/scores";
 
 type SortKey = "low" | "high" | "name";
 
-export function ScoresExplorer({ scores, brands = [] }: { scores: CompanyScore[]; brands?: Brand[] }) {
+export function ScoresExplorer({ scores }: { scores: CompanyScore[] }) {
   const [query, setQuery] = useState("");
   const [sector, setSector] = useState("All");
   const [sort, setSort] = useState<SortKey>("low");
@@ -17,28 +17,9 @@ export function ScoresExplorer({ scores, brands = [] }: { scores: CompanyScore[]
     [scores],
   );
 
-  // WHICH COMPANIES A SEARCH TERM REACHES THROUGH A BRAND.
-  //
-  // Typing "COS" has to find H&M Group, because COS is inside what H&M reported. The match is on the
-  // brand name and the RESULT is still the parent — a brand never becomes a row of its own here, or
-  // the page would imply COS was assessed separately and the site would appear to cover far more
-  // companies than it does.
-  const matchedBrands = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return new Map<string, string[]>();
-    const hits = new Map<string, string[]>();
-    for (const b of brands) {
-      if (!b.brand_name.toLowerCase().includes(q)) continue;
-      hits.set(b.company_id, [...(hits.get(b.company_id) ?? []), b.brand_name]);
-    }
-    return hits;
-  }, [brands, query]);
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    let rows = scores.filter(
-      (s) => s.company_name.toLowerCase().includes(q) || matchedBrands.has(s.company_id),
-    );
+    let rows = scores.filter((s) => s.company_name.toLowerCase().includes(q));
     if (sector !== "All") rows = rows.filter((s) => s.sector === sector);
     const val = (s: CompanyScore) =>
       s.thermostat_score_location ?? Number.POSITIVE_INFINITY;
@@ -46,7 +27,7 @@ export function ScoresExplorer({ scores, brands = [] }: { scores: CompanyScore[]
       if (sort === "name") return a.company_name.localeCompare(b.company_name);
       return sort === "low" ? val(a) - val(b) : val(b) - val(a);
     });
-  }, [scores, query, sector, sort, matchedBrands]);
+  }, [scores, query, sector, sort]);
 
   return (
     <div>
@@ -95,18 +76,6 @@ export function ScoresExplorer({ scores, brands = [] }: { scores: CompanyScore[]
               href={`/company/${c.company_id}`}
               className="block transition hover:opacity-90"
             >
-              {/* Say WHY this result came back when it was reached through a brand. Without this line
-                  someone searching COS sees a card headed "H&M Group" and reasonably thinks the
-                  search is broken. It also has to be unambiguous that the score belongs to the
-                  parent — this is the sentence that stops one score under two names reading as two
-                  assessments, or as double counting. */}
-              {matchedBrands.has(c.company_id) && (
-                <p className="mb-1 text-xs text-muted-foreground">
-                  {matchedBrands.get(c.company_id)!.join(", ")} —{" "}
-                  {matchedBrands.get(c.company_id)!.length === 1 ? "part of" : "all part of"}{" "}
-                  {c.company_name}, which reports emissions for the whole group.
-                </p>
-              )}
               <ScoreCard c={c} />
             </Link>
           ))}
