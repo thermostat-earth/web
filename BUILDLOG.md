@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-10-23  next 16.4.2: close five unauthenticated RCE advisories
 - 2026-09-16  Revert "a brand finds its parent: search and the company page"
 - 2026-09-16  a brand finds its parent: search and the company page
 - 2026-09-15  methodology: categories reported as one line are counted together or not at all
