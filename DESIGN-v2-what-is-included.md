@@ -92,6 +92,11 @@ company ought to measure.
 
 ### Does the relevance assessment get deleted?
 
+> ⚠️ **SUPERSEDED BY SECTION 12.** The answer below is half a decision: it keeps relevance
+> "internally for the completeness tag", and the completeness tag is PUBLISHED as "10 of 12",
+> whose denominator is the boundary assertion this spec is removing. Read section 12 before
+> acting on this subsection.
+
 **No — it stops being published.** Recommendation, and it is a judgement call so it is flagged
 rather than assumed:
 
@@ -511,3 +516,179 @@ every future client automatically instead of this one case — system rather tha
 
 Half an hour of work, and **it is not V2.** It is a safety catch on what is already live, so it
 is not blocked by anything in §5. Awaiting Felix.
+
+---
+
+## 12. Relevance — the decision Felix asked for, and the hole in section 2
+
+Added 2026-11-23, after Felix read section 2 and said it had not landed:
+
+> "eh, no we need to decide on relevance. either we remove completely and do not assess, or
+> assess but only have data internally and do not publish. score just scores on reported
+> categories. can you make sure the methodology is completely updated - it doesn't feel like
+> you've full grasped this yet and want to make sure we build the right thing"
+
+He is right that it had not been grasped, and the specific thing section 2 gets wrong is worth
+stating before the options, because it is the reason the section reads as half a decision.
+
+### THE HOLE: "keep relevance internally for the completeness tag" still publishes the judgement
+
+Section 2 removes the fifth reason — "does not apply to this company" — and its mirror, and then
+keeps the relevance assessment internally "for the completeness tag". That is not a coherent
+position. **The completeness tag is published, and its denominator IS the boundary assertion.**
+
+A company page today reads **"10 of 12 categories reported"**. The 12 is not a fact about the
+company's report. It is our judgement that twelve categories apply to it. Publishing "10 of 12"
+asserts "there are twelve you should have reported" in exactly the way publishing "does not apply
+to this company" does — in a number instead of a sentence, which is harder to contest rather than
+less contestable.
+
+So section 2 removes 92 boundary assertions by wording and leaves the same assertion standing as
+arithmetic on every company page, plus the Complete/Incomplete badge, the coverage meter, and the
+Complete/Incomplete filter on the scores list, all of which are computed from that denominator.
+
+### THREE WAYS RELEVANCE REACHES THE OUTPUT TODAY, counted rather than estimated
+
+**1. It removes reported tonnes from the score.** Where a category is judged not applicable, the
+scorer drops the figure the company DID publish for it. Counted in ThermoStat on 2026-11-23:
+5 rows, 1 company — Kering, category 13, 2022–24, 1,553 / 1,391 / 1,409 tCO₂e. Kering is
+unpublished, so nothing public is wrong today. The mechanism is live for all 22 companies with
+relevance rows and would do the same to a large category. **This is the direct contradiction of
+"score just scores on reported categories", and it is the half that is a bug rather than a
+decision.**
+
+**2. It sets the denominator of the published completeness count**, so judging a category away
+makes a company look MORE complete. 433 rows are marked `not_required` across 22 companies.
+Complete/Incomplete is therefore partly a measure of our own judgement calls.
+
+**3. It is published directly as the per-category `material` flag** — the greyed rows, and the
+amber `n/a` legend reading "material to this company, data not available for that year". That is
+the 92 assertions section 2 already agreed to remove.
+
+### WHAT THE STANDARD SAYS, which makes the clean answer available
+
+Checked against the primary PDFs on 2026-11-23 rather than remembered:
+
+- Scope 3 Standard §6.2 (Ch.6 requirements box, p.60): *"Companies shall account for all scope 3
+  emissions and disclose and justify any exclusions."*
+- §5.4 (p.31): *"Companies are required to report scope 3 emissions by scope 3 category."*
+- §11.1 Required information (p.119): a reporter must give *"A list of scope 3 categories or
+  activities excluded from the inventory with justification of their exclusion"*.
+- §6.3 (p.60): non-applicable categories should be reported as zero or "not applicable".
+- No completeness threshold exists in the 2011 standard. SBTi has one (C5 exclusions ≤5%, C6 near-
+  term coverage ≥67% of reported AND excluded scope 3, C7 long-term 90%). GHG Protocol's March
+  2026 revision proposes 95%/5% but every page of it reads "This is not a GHG Protocol Standard;
+  all content is draft."
+
+The consequence is the useful part: **the duty to say what was left out, and why, is the
+company's.** We do not need a relevance judgement to show a reader an incomplete disclosure. We
+can show the company's own list of exclusions and its own justification, because the standard
+obliges them to publish it. Where a company has not published it, that absence is itself a
+checkable fact about their report and not an opinion of ours.
+
+And the denominator has a factual value available: **15**. The number of scope 3 categories is
+defined by the standard, not by us. "Reported 7 of 15 scope 3 categories" is a fact. "Reported 10
+of 12 that apply to it" is an assertion.
+
+### THE TWO OPTIONS AS FELIX PUT THEM
+
+Both produce the SAME public output. That is the finding that makes this decision cheap, and it
+was not visible until the three mechanisms above were counted.
+
+| | A — remove it, do not assess | B — assess, internal only, never published |
+|---|---|---|
+| Score | reported categories only | reported categories only |
+| Public completeness | "reported 7 of 15", a fact | "reported 7 of 15", a fact |
+| Public reasons for a gap | the company's own stated reason, or "no reason published" | same |
+| `material` flag, amber `n/a`, Complete/Incomplete badge and filter | removed | removed |
+| Review gate | relevance step deleted | step kept, informational, blocks nothing |
+| Internal warning that a score rests on a thin boundary | none | kept |
+| Evidence base for V2 | none | accumulates |
+
+### RECOMMENDATION: B, and it is close to free
+
+The assessment already runs as part of step 3 for every company and costs nothing extra to keep.
+What changes is that it stops touching the score, stops setting a published denominator, and
+stops blocking the gate.
+
+The reason not to choose A is narrow and specific. A score computed only on reported categories
+cannot tell the difference between a company that discloses everything and one that discloses its
+three best categories, and the trend of a flattering subset can be genuinely better than the trend
+of the whole. The published "7 of 15" count makes a thin boundary visible, which is most of the
+defence — but it cannot tell us whether the seven that are missing are the large ones. The
+internal assessment can, and that is the thing that stops us publishing a flattering number
+without knowing it is flattering. It costs nothing to keep and cannot be rebuilt retrospectively.
+
+**The hiding problem is not solved by either option**, and the honest position is Felix's own, from
+2026-09-11: *"The hiding reward is what it is, it's what they don't disclose and there's nothing we
+can do about it except maybe giving an average % of how much that category comprises of total
+emissions from other companies in the sector."* That sector share is built and live. Note that it
+currently sits NEXT TO a missing category under the heading "Not in the score", which is part of
+the boundary assertion being removed — under A or B it has to be re-framed as context on the
+reader's side rather than a measure of the hole a company left, or removed with the rest.
+
+### WHAT THE GATE HAS COST, which is the other half of the decision
+
+- 25 relevance decisions recorded, across 8 companies, all between 4 and 11 September.
+- On the 15 where the AI's view was also stored, Felix agreed with it **15 times out of 15**. He
+  has never overruled it. The learning loop built to capture disagreements has never fired.
+- About **72 undecided categories across roughly 20 of 26 companies** are holding the Submit
+  button today — Quanta 13, Adidas 8, Warner Bros Discovery 8, ITV 5, Paramount 5. (Reconstructed
+  from the live payloads, not read from the page, so close rather than exact.)
+- Toyota is never asked the question at all, because we hold no sector rules for Automotive and
+  the grid does not render. Same product, no gate, on an accident of sector.
+- The gate is **UI-only**: `approve()` in the ops app sets the stage and does not re-check
+  readiness. The block exists in the page, not in the system.
+
+Under either option those 72 decisions disappear, which is the single largest unblocking available
+before launch.
+
+### THE METHODOLOGY IS NOT CONSISTENT TODAY, AND "COMPLETELY UPDATED" MEANS ALL OF THIS
+
+Felix asked for the methodology to be completely updated. It cannot be done by editing one page:
+there are eleven places where two documents answer the same question differently, and the public
+methodology page is the most wrong of them. Full list, so none is quietly skipped:
+
+1. **The core rule, live and public.** `src/app/methodology/page.tsx` still says *"A year only
+   counts if Scope 1, Scope 2 and all material Scope 3 categories are reported"*. `ts-057`
+   abolished that on 2026-09-11 — four days before the page was last edited.
+2. **"Incomplete reporting means no score"** on the same public page, while Amazon is published at
+   >4.0 °C on "0 of 13 categories".
+3. **The ops review page still gates on the abolished rule** (`src/lib/review.ts`, `basketComplete`
+   in `completeYears`, and the reviewer-facing line "every required category present" in
+   `Review.tsx` / `ReviewSteps.tsx`). Its own comment justifies itself with "the scoring function
+   already does this", which stopped being true the day it was written.
+4. **PD item 243 is still Ready** and asks for the opposite of what shipped in item 236 the same
+   day. Close as superseded. Items 203 and 217 likewise pose as open the question 236 answered.
+5. **Completeness as a share of emissions** survives in item 236's description above Felix's own
+   correction, and will be read first.
+6. **Sector-level materiality** is still the stated methodology in `DATA-PROTOCOLS.md` and,
+   publicly, on `about/page.tsx` — *"any emissions category deemed relevant and material"* and
+   *"a human climate expert ensures all relevant Scope 3 emissions categories have been
+   included"* — against three documents saying sector plays no role and materiality is explicitly
+   not ours to assert.
+7. **Scope 2**: the public page says location-based is headlined; the scorer computes and stores
+   both, and Apple is published on a market-based number.
+8. **The combined-line rule is published and not implemented** — `SCRAPER-ASSESSMENT.md` says so
+   in terms: "Published on the methodology page 15 September. The scoring window does NOT yet
+   enforce it."
+9. **The window**: "longest" is live, "most complete" is the agreed rule, built as
+   `scoring_window_v2` and never swapped in. Amazon's "0 of 13" is a consequence.
+10. **The base year** on the public page describes the first year of the window; section 3 of this
+    spec moves it to the company's stated baseline.
+11. **A dead reader-facing string**: "Not scored — a required Scope 3 category is not disclosed"
+    describes a state that can no longer occur.
+
+Order to fix them in, once the decision below is made: the public methodology page first (1, 2, 7,
+8, 9, 10 all land there), then `about/page.tsx` (6), then the ops review page and the scorer
+together (3) — they must land in one go or the page and the score disagree, which is the fault
+class that cost 11 September. Then `DATA-PROTOCOLS.md`, then the PD items, then the dead string.
+
+### WHAT IS BLOCKED ON FELIX
+
+Only one thing, and it is the choice between A and B above. Everything else in this section is
+either a bug with an obvious direction (relevance must stop subtracting reported tonnes from the
+score) or documentation that follows from the choice.
+
+Not building until he picks — Felix, 2026-11-23: *"dont build anything yet before we've decided
+the plan pls."*
