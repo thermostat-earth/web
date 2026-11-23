@@ -692,3 +692,83 @@ score) or documentation that follows from the choice.
 
 Not building until he picks — Felix, 2026-11-23: *"dont build anything yet before we've decided
 the plan pls."*
+
+### HOW EVERY OTHER RATER HANDLES THIS, checked against primary documents 2026-11-23
+
+The finding, and it is the one that makes option B safe rather than merely defensible: **no
+established rater scores scope 3 inventory completeness.** Every one of them does something else.
+
+**CDP gives identical credit for calculating a category and for explaining it away.** Full
+Corporate Scoring Methodology 2025, question 7.8, p.346: Route A ("Relevant, calculated" plus a
+figure and a methodology) scores **1 point**; Route B ("Not relevant, explanation provided" plus
+text) scores **1 point**. Max 15/15. A company can score full marks at Disclosure having
+calculated nothing. "Not evaluated" — admitting it has not looked — still earns half a point. The
+entire Management-level substance test (pp.348-350) is one non-zero figure **in any one of six
+categories**. For oil and gas (p.352) a **zero** in use-of-sold-products passes the same test as
+the real figure. CDP's only hard exclusion cap, ≤5%, applies to scope 1 and 2 only (p.334); there
+is no scope 3 equivalent.
+
+**TPI tests one category, and says so in terms.** MQ v5.0 Q12 requires disclosure of a single
+sector-designated category, and applies to 8 of 60+ sectors. The v6.0 consultation, p.18:
+*"Disclosing at least one material Scope 3 category signals that a company has begun reporting on
+what matters. The indicator recognises this positive step in climate-management maturity, rather
+than assessing the completeness of its Scope 3 disclosure."*
+
+**CA100+ only ever looks at 4 of the 15 categories** (1, 3, 10, 11), via a fixed sector map. A
+company covering 14 of 15 but missing the designated one scores No; one covering 1 of 15 scores
+Yes. Its only numeric threshold, 95%, applies to scope 1 and 2.
+
+**MSCI, S&P, ISS and Sustainalytics model the gap, so the question disappears.** MSCI Implied
+Temperature Rise, Oct 2026, p.30: *"Scope 3 emissions are always estimated for consistency across
+peer companies"* — reported scope 3 is not used at all. ISS: *"approximately 70% of data used for
+the emissions-based sector classification is modelled, mainly pertaining to scope 3."* S&P fills
+any undisclosed category **unless CDP carries an explained exclusion**, and uses partial disclosure
+*"if higher than assumed zero/bottom-up/top-down estimate"*. S&P's CSA is the one exception that
+scores completeness as a disclosure duty, and its point allocation is not public.
+
+**The one precedent for exactly what Felix is proposing.** Net Zero Tracker's codebook, field C8:
+*"Note we focus on companies' claims, not an objective assessment of the boundaries of their Scope
+3 emissions."* Its "Partial" is defined as *"only certain categories of Scope 3 being covered (e.g.
+a target only reports on 8 out of the 15 categories)"*. A published tracker, used by investors,
+that refuses to make its own boundary judgement and counts out of 15. That is the position this
+section recommends, and it is not novel.
+
+**Why this makes option B right rather than optional.** The hiding problem is real, large, and
+documented by CDP against its own data — Technical Note on scope 3 relevance by sector, v3.0:
+
+> *"Companies may end up measuring and reporting emissions in categories which are easy to
+> calculate (e.g., business travel) rather than categories where the bulk of their emissions occur
+> but which are more difficult to calculate."*
+
+With the numbers: category 11 is **91% of oil and gas sector scope 3** and only just over half of
+94 companies calculated it (p.43); category 15 is **over 99% of financial services scope 3** and
+only 37% of 377 companies reported it (p.32). Categories 6 and 7 — business travel and commuting,
+the easy ones — average 0.10% and 0.20% (p.7).
+
+So a score computed on reported categories alone, with no internal view of what is missing, can be
+built on 0.3% of a company's actual value chain and we would not know. The published "7 of 15"
+count makes that visible to a reader as a count; only the internal assessment tells US whether the
+eight missing are the large ones. Keeping it is the difference between publishing a number we know
+to be thin and publishing one we merely hope is not.
+
+**And the honest denominator question has an answer from SBTi.** Corporate Net-Zero Standard
+v1.3.2, C6: near-term targets must cover *"at least 67% of total reported **and excluded** scope 3
+emissions"*. SBTi is the only body here whose denominator is not the company's own reporting
+choice — CDP's version of the same 40%/66% rule drops the "and excluded", which is why its
+materiality gate is self-referential: a company reporting only its small categories computes a low
+scope 3 share and escapes the scope 3 target requirement entirely.
+
+We cannot use SBTi's denominator, because it needs the company to have quantified what it excluded
+and most have not. **Which is the whole argument for "7 of 15": the count out of 15 is the only
+denominator available that is neither our opinion nor the company's choice.**
+
+**A differentiation point worth recording**, since none of this is scored by anyone else: a
+factual, published "reported 7 of 15 scope 3 categories, here is what they said about the rest" is
+something no rater in this set offers. It is also the cheapest thing on this list to defend,
+because every element of it is a quotation.
+
+**Not verified, flagged rather than relied on:** CDP's % weight for the Scope 3 scoring category
+(published only as a bar-chart image), CDP's full 2026 dropdown list for the new "reason not
+relevant" column, MSCI's actual estimation model (behind a form), S&P's CSA point allocation, and
+CA100+'s own statement of how it decides sector materiality (on a web page that refuses direct
+retrieval).

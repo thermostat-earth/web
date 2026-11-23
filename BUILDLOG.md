@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-11-23  V2: nobody else scores scope 3 completeness — the evidence for option B
 - 2026-11-23  V2: relevance — the hole in section 2, and the decision costed both ways
 - 2026-11-23  V2: remove Chanel rather than the fashion sector — and the hole neither option fixes
 - 2026-11-23  V2: read the Chanel NDA — option B is impossible, not just awkward
