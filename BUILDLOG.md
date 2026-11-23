@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-11-23  V2: read the Chanel NDA — option B is impossible, not just awkward
 - 2026-11-23  V2: the plan of action, and the client conflict
 - 2026-11-23  V2: record the exposure that has nothing to do with wording
 - 2026-11-23  V2: the temperature stays, and the risk reduction is not in the units

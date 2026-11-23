@@ -404,14 +404,59 @@ internal: it is the artefact that answers the allegation.
 | | | Cost |
 |---|---|---|
 | **A** | **Do not score clients.** State it publicly as policy — "ThermoStat does not score Dawn Sustainability's clients." Clean, easy to explain, visibly principled. | Loses Chanel from the index, and any future client. A flag on the company record and a line on the methodology page. |
-| **B** | **Score them, disclose the relationship on the company page.** "Dawn Sustainability Ltd, which publishes ThermoStat, has provided consulting services to this company." Keeps coverage. | A disclosure field and the wording. Does not remove the commercial awkwardness, only the concealment of it. |
+| **B** | ~~Score them, disclose the relationship on the company page.~~ **RULED OUT 2026-11-23 — it would breach the NDA.** See below. | — |
 | **C** | **Separate entity for ThermoStat.** Walls the consulting business off from a ThermoStat claim and makes the conflict structural rather than incidental. | Incorporation, separate insurance, separate contracts. Real admin. Does not on its own answer the conflict — still needs A or B. |
 
-**Recommendation, and it is a judgement call so it is flagged rather than assumed: A, plus B's
-disclosure for any company that becomes a client later.** A is the only one that is simple enough
-to state in a sentence on the site, and a published index whose credibility is its whole product
-cannot afford an explanation that takes a paragraph. C is worth a separate look on its own
-merits, because a defamation claim against ThermoStat currently reaches the consulting business's
-assets and client relationships.
+### What the NDA actually says
 
-**Not urgent** — Chanel is not published. It becomes urgent the moment it is approved.
+Read 2026-11-23, after Felix asked whether he is even permitted to say he works for them. He is
+not, and the document is clearer about it than he expected. Read as a careful reader, not a
+lawyer.
+
+**Clause 1 defines Confidential Information to include "the fact that discussions are taking
+place for the Purpose and any terms or conditions with respect to the Purpose."** The existence
+of the engagement is itself confidential, and clause 2(b) forbids disclosing it to any third
+party. A line on a public page saying Dawn Sustainability has consulted for this company would
+breach it directly. **Option B is therefore impossible, not merely awkward.** A separate
+undertaking also bars referring to Chanel's name or trademark "for its own marketing purpose".
+
+**Option A survives.** A general policy — "ThermoStat does not score companies that are
+consulting clients of Dawn Sustainability Ltd" — names nobody and discloses nothing. An
+inference drawn by a reader who notices Chanel missing from a fashion index is their inference,
+not his disclosure. That is defensible rather than watertight and belongs on the list for the
+legal review.
+
+### Three findings from the NDA that go beyond the client question
+
+1. **It expressly grants an injunction route.** Clause 8: breach causes "irreparable harm which
+   monetary damages will not be sufficient to remedy", and Chanel is entitled to injunctive
+   relief. §9 and §10 above describe this as a route that skips the warning letter. Here it is
+   not theoretical — it is written into a signed agreement.
+2. **The governing law is blank.** Clause 9(e) reads "the laws of [place where the Chanel entity
+   is located]" — the template placeholder is still in the executed document, as is the matching
+   jurisdiction clause. Which law and which courts is therefore an open question, against Chanel
+   Asia. Cheap to fix now by agreement; expensive to argue later. For the lawyer.
+3. **A seven-day destruction obligation.** Clause 2(e): on completion, or within seven days of a
+   request, return or destroy all Confidential Information *and* every note, analysis and record
+   based on it. The Chanel project material needs to be findable and deletable at that notice.
+   Clause 6: all obligations survive the end of the work, indefinitely.
+
+### Recommendation
+
+**A, and remove Chanel from the index now rather than at approval.** Judgement call, flagged.
+
+A is the only option left that can be stated in one sentence on the site, and an index whose
+entire product is credibility cannot afford a position that needs a paragraph. Beyond the
+disclosure question, clause 2(a) limits use of Confidential Information to the Purpose and 2(d)
+bars using it "to compete or obtain any competitive or other advantage with respect to Chanel"
+or "to carry out service for other clients". Publishing a public assessment of Chanel while
+holding their confidential capital goods data invites the allegation that one informed the
+other. The evidence trail answers it — all 12 documents came from public chanel.com URLs — but
+clause 8 means the allegation can arrive as an injunction rather than as a letter, and clause
+9(e) means nobody currently knows which court would hear it.
+
+**It is currently sitting at Review, where an approval publishes it.** That is one click away
+from the thing this section exists to prevent, so the removal should not wait for the rest of V2.
+
+**C is worth a separate look on its own merits**, because a defamation claim against ThermoStat
+currently reaches the consulting business's assets and client relationships.
