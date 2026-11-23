@@ -460,3 +460,54 @@ from the thing this section exists to prevent, so the removal should not wait fo
 
 **C is worth a separate look on its own merits**, because a defamation claim against ThermoStat
 currently reaches the consulting business's assets and client relationships.
+
+---
+
+## 11. Removing Chanel vs removing the fashion sector
+
+Felix, 2026-11-23: *"thoughts on removing chanel vs just removing fashion as a sector for now?"*
+The worry behind it is sound — one company missing from a list of its peers is a conspicuous
+absence, and a whole missing sector hides it.
+
+**Remove Chanel. Not the sector.** Checked against the data rather than reasoned in the
+abstract:
+
+- Fashion is **9 of 27** companies: Adidas, Chanel, Fast Retailing, H&M, Inditex, Kering, LVMH,
+  Nike, Shenzhou. A third of the index.
+- Of the **7 published scores, 6 are Tech and exactly 1 is Fashion — H&M.** Removing the sector
+  means **withdrawing a live published score**. Taking down something already public is a far
+  more visible act than never publishing Chanel, and H&M is the company the whole pipeline was
+  proved on (plan step 8).
+- **The concealment inverts.** A climate index covering Tech, Media and Automotive with no
+  Fashion at all is a louder question than one with eight fashion names and no Chanel.
+- **Chanel needs no explanation at all.** 20 of 27 are unpublished because they have not been
+  through review. Chanel is one of them. Nothing to explain, nobody has to notice.
+
+**Policy wording, when it is published:** frame it as conflicts governance, not as clients.
+"ThermoStat does not publish a score where Dawn Sustainability Ltd has a commercial relationship
+or other conflict of interest." That reads as governance. "We do not score our clients" reads as
+a hint and invites someone to go looking — which is the inference risk, created by the wording
+rather than by the absence.
+
+### Neither option fixes the actual hole: there is no "do not publish" block
+
+Looked for one on the assumption it existed. **It does not.** What exists is the opposite:
+
+- `score_locked` sounds like a hold and is not one. It means "figures committed from the ops
+  review", and `sync-review-stage.mjs` **promotes** locked companies. Setting it on Chanel would
+  advance it, not stop it.
+- `apply-approvals.mjs` runs on `thermostat-apply-approvals.timer` every fifteen minutes, reads
+  companies at stage `Approved`, and releases their score to the public site. No confirmation
+  step.
+
+**So Chanel is one click plus about fifteen minutes from publication, with nothing in between.**
+The only control today is Felix remembering not to click — tier 4, the weakest rung on the
+ladder in AGENTS.md, protecting the single most consequential action in the product.
+
+**What is wanted** is an explicit `do_not_publish` flag with a required reason, checked by
+`apply-approvals.mjs`, which refuses and says why. Tier 2: the wrong thing fails and stops rather
+than being remembered. Reversible, loses none of the work already done on Chanel, and it covers
+every future client automatically instead of this one case — system rather than instance.
+
+Half an hour of work, and **it is not V2.** It is a safety catch on what is already live, so it
+is not blocked by anything in §5. Awaiting Felix.
