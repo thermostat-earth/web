@@ -269,3 +269,49 @@ unarguable, and it is already built. It should be visible on the public page, no
 ## 8. The decision that is still open
 
 None blocking. §6 settles the question §5 was waiting on, so A–G can proceed in order.
+
+---
+
+## 9. Exposure that is not about wording at all
+
+Felix, 2026-11-23: *"could there be a situation where i get legal bills regardless of whether i
+take something down ie will i always get a warning before i face a proper legal risk?"*
+
+**No guaranteed warning, and a warning costs money by itself.** Not legal advice — the shape of
+it, so the pre-launch legal conversation starts from the right place.
+
+- The expected route for defamation is a letter of claim first, and most disputes end there. But
+  replying to a letter from a company's firm properly costs real money even where the page comes
+  down the same morning, and they usually want more than a takedown.
+- A takedown does not extinguish a claim. The cause of action arises on publication; removal
+  limits ongoing harm and is strong mitigation, nothing more.
+- Routes that skip the warning: a data-protection complaint to the regulator, a trademark or
+  copyright complaint to the host or registrar. **Both doors are currently shut** — checked
+  2026-11-23: ThermoStat publishes no personal data, only company names, and uses no company
+  logos. Both of those are worth keeping shut deliberately rather than by accident. Naming a
+  company's sustainability officer, or adding comments, reopens the first.
+- **The asymmetry is the risk, not the merits.** Loser pays, defamation costs are
+  disproportionate, and a sole publisher against a listed company's legal department is not an
+  even fight regardless of who is right.
+
+### What caps it, in order
+
+1. **Media liability insurance including defamation cover.** Converts an unbounded risk into a
+   known annual premium, and it pays for the lawyer from the first letter — which is exactly
+   where the cost actually lands. This is the single largest lever available and it is not a
+   code change.
+2. **Publishing from a limited company rather than personally.** Not absolute, and real.
+3. §7 above, all of which helps and none of which substitutes for 1 and 2.
+
+### Two gaps found while checking, both cheap
+
+- **No publisher is named anywhere on the site.** No entity, no registered number, no address.
+  That is a disclosure requirement for a limited company, and practically it means an annoyed
+  company has nobody to write to and goes to a solicitor first.
+- **There is no contact or correction route at all.** The footer disclaimer is decent — *"one
+  factual measure, not financial advice, an endorsement, or a judgement of a company's overall
+  sustainability performance"* — but there is no way for anyone to say a figure is wrong. That is
+  the cheapest protection available and it should go in whatever else is decided.
+
+**Neither is blocked by the V2 decisions.** They are worth doing before launch regardless of
+which way the methodology goes.
