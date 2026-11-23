@@ -152,34 +152,86 @@ state that reads as a fact about the data rather than a judgement about the comp
 
 ---
 
-## 5. What actually gets built
+## 5. THE PLAN OF ACTION
 
-Ordered by what blocks what.
+Agreed with Felix 2026-11-23: keep the temperatures, do the risk-reduction steps, legal review
+before launch. His read — *"will mostly be around the relevance assessment stuff i guess"* — is
+right about the bulk of the code. It is not right about the bulk of the RISK, which is phase 0
+and costs almost no engineering at all. That is the one thing worth correcting before anyone
+starts.
 
-**A. Data** — a `score_baseline` per company: the year, where it came from (stated vs first
-reporting), the company's wording, the source link. One migration.
-
-**B. Scorer** — change the base year the index divides by, and let the period run from baseline to
-latest comparable year rather than from a 3-year window. The summing and the pathway comparison
-are untouched. This is the smallest code change in the whole document and it is the one that
-moves every published number.
-
-**C. Published output** — add the plain figure: *down 23% since 2019*. It falls straight out of
-the index that already exists. Add the included/not-included list with its rationales.
-
-**D. Ops review page** — the relevance step is reworded and the determination screen changes.
-2,019 lines in that one file today; this is the biggest single piece of UI work.
-
-**E. Public site** — company page, scores page, methodology page. The methodology page has to be
-rewritten rather than edited: it currently explains and defends the boundary judgement.
-
-**F. Design** — Felix: *"obviously will be a lot of design changes too."* The headline changes
-from one number to a number plus a trend, which changes the company page's whole shape.
-
-**G. Re-score and re-check** — every published company moves. 7 live scores, 27 companies.
-Nothing goes public until each has been looked at, because every one of them changes.
+Four phases and a gate. **Phase 0 runs now and in parallel with everything** — nothing in it
+waits on a methodology decision.
 
 ---
+
+### PHASE 0 — the things that are not code
+
+The largest reductions in exposure are here, and none of them is a build task. Doing phase 1
+first and these later would be getting the order exactly backwards.
+
+| | | Blocked by |
+|---|---|---|
+| **0.1** | **Media liability insurance, including defamation cover, in Dawn Sustainability Ltd's name.** Converts an unbounded risk into a known annual premium and pays for the lawyer from the first letter, which is where the cost actually lands. | nothing — Felix |
+| **0.2** | **Name the publisher on the site.** Registered name, company number, registered office. Currently absent entirely. It is a disclosure requirement for a limited company, and practically it gives a complainant somebody to write to instead of a solicitor to instruct. | Felix supplying the details |
+| **0.3** | **A contact and correction route.** There is none at all today. Cheapest protection available: most disputes end when a figure can be fixed without lawyers. Wire it to the existing `score_history` so a correction is recorded, not just made. | nothing |
+| **0.4** | **Decide how clients are handled.** See §10. Chanel is an active client and queued to be scored. | Felix's decision |
+
+### PHASE 1 — the relevance change
+
+The bulk of the code, and the thing Felix is actually worried about.
+
+| | | Blocked by |
+|---|---|---|
+| **1.1** | Stop publishing the 92 boundary assertions — 43 "applies to you and you did not report it", 49 "does not apply to you". | — |
+| **1.2** | Replace with the included / not-included list and its four permitted rationales (§2), each in the company's own terms with a source link. | 1.1 |
+| **1.3** | Rework the ops review step: "is this relevant" becomes "would including this change what our number means". ~2,000 lines in one file; the largest single piece of UI work in the project. | 1.2 |
+| **1.4** | Keep relevance INTERNALLY, feeding the completeness tag only. The tag is about our number, not the company's duty. | 1.3 |
+
+### PHASE 2 — baseline and scorer
+
+| | | Blocked by |
+|---|---|---|
+| **2.1** | A `score_baseline` per company: year, whether stated or inferred, the company's wording, the source link. One migration. | — |
+| **2.2** | Scorer divides by the baseline year and runs baseline→latest comparable year instead of a 3-year window. The summing and pathway comparison are untouched. | 2.1 |
+| **2.3** | Re-score all 27 and look at every one. Every published number moves. | 2.2, 1.4 |
+
+### PHASE 3 — the public pages
+
+Each of these is a risk-reduction step as much as a design one.
+
+| | | Blocked by |
+|---|---|---|
+| **3.1** | Lead with the company's own checkable fact — "reported emissions down 23% against their stated 2019 baseline" — with the temperature beside it. | 2.2 |
+| **3.2** | Workings beside every number: these years, these figures, this baseline, this pathway. | 3.1 |
+| **3.3** | Attribute and bound every claim. "ThermoStat's assessment, based on the emissions H&M reports, covering 10 of the 12 categories it discloses" — not "H&M is a 2.8°C company". | 3.1 |
+| **3.4** | Coverage caveat beside the score itself, not elsewhere on the page. | 3.3 |
+| **3.5** | Surface the evidence trail. Every figure already links to its source document; it is internal only. This is what defeats "you made it up" — and, per §10, what defeats a confidence claim from a client. | — |
+| **3.6** | Rewrite the methodology page. It currently explains and defends the boundary judgement being removed, so it is a rewrite rather than an edit. | 1.2 |
+
+### PHASE 4 — design
+
+Felix: *"obviously will be a lot of design changes too."* The company page changes shape: one
+number becomes a fact, a trend and a temperature. Scoped once 3.1–3.4 are settled, because the
+content decides the layout rather than the other way round.
+
+### THE GATE — legal review before launch
+
+Agreed 2026-11-23. Not a formality and not a rubber stamp at the end: phases 0 and 3 exist to
+make that review short and cheap, so it happens **after** phase 3 and **before** thermostat.earth
+points anywhere.
+
+Worth paying for specifically: whether the score reads as protected honest opinion given how the
+workings are shown; whether the wording in 3.3 holds up; the client position in §10; and whether
+the insurance in 0.1 actually covers what we do.
+
+### What can run at once
+
+- **Phase 0 is independent of all of it** and should start today.
+- **Phase 2 (baseline/scorer) does not depend on phase 1.** Different files, different people's
+  attention. 2.3 is the only join — it needs both.
+- **3.5 depends on nothing** and can be built whenever.
+- **3.6 cannot start before 1.2**, because it documents what 1.2 decides.
 
 ## 6. DECIDED — the temperature stays
 
@@ -266,9 +318,16 @@ unarguable, and it is already built. It should be visible on the public page, no
 
 ---
 
-## 8. The decision that is still open
+## 8. The decisions that are still open
 
-None blocking. §6 settles the question §5 was waiting on, so A–G can proceed in order.
+The temperature question that blocked §5 is settled in §6. Two remain, both Felix's:
+
+1. **How clients are handled** — §10. Blocks 0.4, and blocks Chanel ever being published.
+2. **Whether ThermoStat publishes from Dawn Sustainability Ltd or its own entity** — §10.
+   Answered as Dawn Sustainability Ltd on 2026-11-23, and §10 is the reason it is worth one more
+   look rather than being closed.
+
+Neither blocks phases 1, 2 or 3.
 
 ---
 
@@ -315,3 +374,44 @@ it, so the pre-launch legal conversation starts from the right place.
 
 **Neither is blocked by the V2 decisions.** They are worth doing before launch regardless of
 which way the methodology goes.
+
+---
+
+## 10. The client conflict
+
+Found 2026-11-23 while checking which entity publishes. **Chanel is an active consulting client
+of Dawn Sustainability Ltd and is also sitting at Review on the ThermoStat board, waiting to be
+scored and published.** One active project: Chanel Asia Capital Goods Forecasting.
+
+Same company on both sides. Whichever way the score lands it is awkward: a poor score and the
+client asks why the company it pays published it; a good score and everybody else asks whether
+it was bought. It is not currently disclosed anywhere.
+
+**Checked, and it is the reassuring half:** all 12 Chanel documents held came from public
+chanel.com URLs. Nothing came from the consulting engagement. That is the difference between
+reading a published report and using what was learned inside a client's business, and only the
+first is true here.
+
+**It does open a route I had written off.** §9 says the two routes that skip a warning letter —
+a regulator complaint and a host-level takedown — are both shut. There is a third: breach of
+confidence, which unlike defamation can get a page down fast, and which a commercial
+relationship is exactly what opens. Here the evidence trail closes it, because every figure
+links to the public document it came from. That is why 3.5 is worth building rather than leaving
+internal: it is the artefact that answers the allegation.
+
+### The options, for Felix
+
+| | | Cost |
+|---|---|---|
+| **A** | **Do not score clients.** State it publicly as policy — "ThermoStat does not score Dawn Sustainability's clients." Clean, easy to explain, visibly principled. | Loses Chanel from the index, and any future client. A flag on the company record and a line on the methodology page. |
+| **B** | **Score them, disclose the relationship on the company page.** "Dawn Sustainability Ltd, which publishes ThermoStat, has provided consulting services to this company." Keeps coverage. | A disclosure field and the wording. Does not remove the commercial awkwardness, only the concealment of it. |
+| **C** | **Separate entity for ThermoStat.** Walls the consulting business off from a ThermoStat claim and makes the conflict structural rather than incidental. | Incorporation, separate insurance, separate contracts. Real admin. Does not on its own answer the conflict — still needs A or B. |
+
+**Recommendation, and it is a judgement call so it is flagged rather than assumed: A, plus B's
+disclosure for any company that becomes a client later.** A is the only one that is simple enough
+to state in a sentence on the site, and a published index whose credibility is its whole product
+cannot afford an explanation that takes a paragraph. C is worth a separate look on its own
+merits, because a defamation claim against ThermoStat currently reaches the consulting business's
+assets and client relationships.
+
+**Not urgent** — Chanel is not published. It becomes urgent the moment it is approved.
