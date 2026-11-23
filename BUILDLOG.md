@@ -2,6 +2,7 @@
 
 _Auto-generated from git history on every commit (post-commit hook). Do not edit by hand._
 
+- 2026-11-23  scope the V2 methodology change: say what is included, not what ought to be
 - 2026-11-23  every company page on the live site was broken, and nothing could see it
 - 2026-10-23  next 16.4.2: close five unauthenticated RCE advisories
 - 2026-09-16  Revert "a brand finds its parent: search and the company page"
