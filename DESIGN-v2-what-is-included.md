@@ -181,28 +181,91 @@ Nothing goes public until each has been looked at, because every one of them cha
 
 ---
 
-## 6. The decision that blocks everything else
+## 6. DECIDED — the temperature stays
 
-**Does the temperature score survive?**
+*The question §5 was waiting on: does the temperature stay the headline with the percentage
+beside it as the workings, or does the trend become the headline and the temperature move to a
+supporting role?*
 
-The maths produces a temperature because it compares the company's normalised area against IPCC
-pathways normalised the same way. "How much have they increased or reduced" is the *input* to
-that comparison — it is already computed, one step before the temperature.
+Felix, 2026-11-23: *"do you think companies could put a legal case against temperature, and it's
+better to show just a normalised number between -1 and 1, or do you think that has the same
+amount of legal risk. if it's similar i would prefer to keep the temp scores but i want to
+minimise legal risk."*
 
-So there are two readable products here and they are not the same:
+**Similar risk. Arguably the index is slightly worse. So the temperature stays**, and his stated
+preference holds.
 
-1. **Temperature stays the headline**, and the percentage change is shown beside it as the
-   workings. The product is unchanged in identity — a thermometer, a climate temperature score,
-   a comparison against 1.5°C pathways. The legal change is real but invisible to a casual reader.
-2. **The trend becomes the headline** — "H&M, down 23% since its 2019 baseline" — and the
-   temperature either moves to a supporting role or goes. This is a different product. It is
-   also a much harder product to argue with, which is the point of the whole change: a
-   percentage against a company's own stated baseline is nearly unarguable, where a temperature
-   is a claim.
+**I am not a lawyer and this is not legal advice.** It is a reading of where the exposure sits,
+and §7 below is the part worth acting on either way. A real opinion is needed before launch.
 
-Option 2 is the one that actually answers the worry that started this. Option 1 keeps the
-identity, including the name.
+### Why changing the unit does not change the risk
 
-Everything in §5 can be built either way. The order of §5 does not change. But C, E and F are
-substantially different jobs depending on the answer, so this is worth settling before any of
-them start.
+The risk does not attach to the scale. It attaches to **whether a published statement about a
+named trading company is a checkable fact or a contestable assertion**, and to whether the basis
+for it is shown. "2.8°C" and "−0.4" are both inferences drawn by us from their numbers. Both are
+capable of causing a company commercial harm if wrong. Renaming the output does not convert an
+inference into a fact.
+
+Three reasons the index is, if anything, the weaker position:
+
+1. **It is less explicable.** A temperature maps to a published IPCC AR6 pathway that anyone can
+   go and read. −0.4 maps to a scale we invented. Where a defence depends on showing the basis of
+   an opinion, inventing the units cuts against you.
+2. **It is harder for the company to check, and therefore harder for them to be satisfied by.**
+   Most complaints are resolved before they are complaints, by a company being able to reproduce
+   the number. An opaque index makes every query a letter.
+3. **It looks like a rating.** A bare signed number between −1 and 1 with no stated meaning reads
+   as a grade awarded by us. A temperature reads as a comparison against a named external
+   benchmark. The second is a better characterisation of what we actually do.
+
+### What the real exposure was, and it is already being removed
+
+The genuinely exposed statement was never the score. It was the boundary judgement — 92 published
+assertions that a company ought to be measuring something it does not. That imputes a failing,
+it is about their conduct rather than their arithmetic, and it is ours rather than theirs.
+
+Removing it, which is the change already agreed, is the large risk reduction here. Changing the
+unit of the score afterwards would have been motion without much movement.
+
+---
+
+## 7. What actually reduces the risk
+
+In the order they are worth doing. All are buildable alongside the rest of §5.
+
+**1. Every number shows its workings, on the page, next to it.**
+The strongest position available is that each score is a stated opinion whose entire basis is
+published: these years, these figures, this baseline, this pathway, this arithmetic. A reader who
+disagrees should be able to find the exact step they disagree with. This is also just a better
+product, which is why it is first.
+
+**2. Lead with the company's own fact, not with our inference.**
+"Reported emissions down 23% against their stated 2019 baseline" is checkable against their own
+report and is close to unassailable. The temperature sits beside it as the comparison. This is
+what Felix asked for anyway, for product reasons — it also happens to be the single best
+protective framing available, because the first thing a reader meets is a fact rather than a
+judgement.
+
+**3. Attribute and bound every claim.**
+"ThermoStat's assessment, based on the emissions H&M reports, covering 10 of the 12 scope 3
+categories it discloses" — not "H&M is a 2.8°C company". Same number, and the second sentence
+asserts something about the company while the first describes our calculation of their data.
+
+**4. Say what the score does not cover, in the same breath as the score.**
+Currently the completeness tag is a label elsewhere on the page. If a score rests on partial
+disclosure, that belongs beside the number, every time, unprompted. It is also the honest thing.
+
+**5. A correction route that is easy to find and quick to act on.**
+Most disputes end when a company can get a figure corrected without a lawyer. A visible "tell us
+this is wrong" that reaches Felix, and a recorded history of what changed and why, is worth more
+than any wording. `score_history` already records changes — this is the front door to it.
+
+**6. Keep the evidence trail that already exists.**
+Every figure links to the document it came from. That is the thing that makes "we made it up"
+unarguable, and it is already built. It should be visible on the public page, not just internally.
+
+---
+
+## 8. The decision that is still open
+
+None blocking. §6 settles the question §5 was waiting on, so A–G can proceed in order.
