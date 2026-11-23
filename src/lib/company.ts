@@ -8,24 +8,14 @@ import {
   type SectorShare,
 } from "@/lib/completeness";
 
-// GHG Protocol scope-3 category names, indexed 1–15.
-export const SCOPE3_CATEGORIES: Record<number, string> = {
-  1: "Purchased goods & services",
-  2: "Capital goods",
-  3: "Fuel- & energy-related activities",
-  4: "Upstream transportation & distribution",
-  5: "Waste generated in operations",
-  6: "Business travel",
-  7: "Employee commuting",
-  8: "Upstream leased assets",
-  9: "Downstream transportation & distribution",
-  10: "Processing of sold products",
-  11: "Use of sold products",
-  12: "End-of-life treatment of sold products",
-  13: "Downstream leased assets",
-  14: "Franchises",
-  15: "Investments",
-};
+/* SCOPE3_CATEGORIES moved to public-shapes.ts and is re-exported here.
+   It is a plain list of fifteen strings, and importing it from a client component is exactly
+   what broke every company page on the live site: this module imports lib/supabase.ts, which
+   builds a database client at the top level, so one constant dragged the whole thing into the
+   browser bundle where the environment variable it needs does not exist. */
+export { SCOPE3_CATEGORIES } from "@/lib/public-shapes";
+import { SCOPE3_CATEGORIES } from "@/lib/public-shapes";
+
 
 export type Basis = "location" | "market";
 

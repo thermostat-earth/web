@@ -1,7 +1,7 @@
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
-import type { CompanyScore } from "@/lib/scores";
+import type { CompanyScore } from "@/lib/public-shapes";
 import { unscoredLabel } from "@/lib/unknown-reason";
-import { type Completeness } from "@/lib/completeness";
+import type { Completeness } from "@/lib/public-shapes";
 import { CoverageMeter } from "@/components/CoverageMeter";
 
 const TUBE_GRADIENT =

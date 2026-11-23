@@ -7,20 +7,24 @@ import { InfoTip, GLOSSARY } from "@/components/InfoTip";
 import { scoreColor, formatScore } from "@/lib/temperature";
 import { unscoredLabel } from "@/lib/unknown-reason";
 import { CoverageMeter } from "@/components/CoverageMeter";
-import { SCOPE3_CATEGORIES } from "@/lib/company";
+import { SCOPE3_CATEGORIES } from "@/lib/public-shapes";
 import type {
   Basis,
   CompanyDetail as CompanyDetailData,
   TrajectoryYear,
   Scope3ByYear,
 } from "@/lib/company";
+/* FROM public-shapes, NOT FROM lib/completeness. These two are pure functions, but importing
+   them BY VALUE from the database module is what put a Supabase client in the browser bundle and
+   replaced every company page with an error. lib/supabase.ts is "server-only" now, so the build
+   fails if this ever points back at it. */
 import {
   completenessCount,
   incompleteReasons,
   type Completeness,
   type BoundaryLine,
   type SectorShare,
-} from "@/lib/completeness";
+} from "@/lib/public-shapes";
 
 const fmt = (n: number | null): string =>
   n == null ? "—" : Math.round(n).toLocaleString("en-GB");

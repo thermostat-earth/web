@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
-import type { CompanyScore } from "@/lib/scores";
+import type { CompanyScore } from "@/lib/public-shapes";
 
 const H_GRADIENT =
   "linear-gradient(to right, hsl(145 60% 42%), hsl(48 90% 50%), hsl(0 72% 51%))";

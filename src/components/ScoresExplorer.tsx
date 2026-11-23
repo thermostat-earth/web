@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
-import type { CompanyScore } from "@/lib/scores";
+import type { CompanyScore } from "@/lib/public-shapes";
 
 type SortKey = "low" | "high" | "name";
 

@@ -1,3 +1,19 @@
+/* SERVER ONLY, AND THE BUILD ENFORCES IT.
+   Felix, 2026-11-23: every company page on the live site was replaced by "This page could not
+   load its data" as soon as the browser ran its JavaScript. The server HTML was correct, curl
+   reported 200, and the deploy was green — the only way to see it was to open a real browser.
+
+   The cause was that CompanyDetail, a client component, imported one constant from lib/company.ts,
+   which imports this file, which calls createClient at the top level and throws by design when
+   the environment variable is missing. The browser does not have that variable, so the throw ran
+   on every page load and the error boundary ate the page.
+
+   The fault is not that the variable is missing from the browser. It is that a database client
+   had any business being in the browser bundle at all. "server-only" makes that a BUILD failure
+   naming the offending file, instead of a site that fails silently in front of a reader. The
+   pure constants and shapes a client component legitimately needs live in lib/public-shapes.ts,
+   which imports nothing. */
+import "server-only";
 import { createClient } from "@supabase/supabase-js";
 
 // Public read-only client. The publishable key is safe in the browser:

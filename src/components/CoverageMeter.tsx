@@ -1,4 +1,4 @@
-import { completenessCount, type Completeness } from "@/lib/completeness";
+import { completenessCount, type Completeness } from "@/lib/public-shapes";
 
 /**
  * How much of a company's scope 3 the score covers, as a row of blocks.

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
-import type { CompanyScore } from "@/lib/scores";
+import type { CompanyScore } from "@/lib/public-shapes";
 
 const H = 620; // thermometer height in px
 const LABEL_GAP = 34; // min vertical spacing between labels

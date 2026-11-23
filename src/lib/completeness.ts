@@ -20,49 +20,20 @@ import { supabase } from "@/lib/supabase";
 // exactly the ones whose size is unknown. The only percentage on the page is the sector share, which
 // is a share of other companies' emissions and so is not circular.
 
-export type CompletenessTag = "complete" | "incomplete";
+/* The shapes and the two pure helpers now live in public-shapes.ts, which imports nothing.
+   They were moved because CompanyDetail — a client component — imports two of them by value, and
+   importing a value out of THIS file pulled the Supabase client into the browser bundle, where
+   it threw on every page load. Re-exported so nothing that reads the database has to change. */
+export type {
+  CompletenessTag,
+  Completeness,
+  LinePosition,
+  BoundaryLine,
+  SectorShare,
+} from "@/lib/public-shapes";
+export { completenessCount, incompleteReasons } from "@/lib/public-shapes";
 
-export type Completeness = {
-  company_id: string;
-  completeness_tag: CompletenessTag;
-  categories_in_window: number;
-  categories_in_boundary: number;
-  has_not_reported: boolean;
-  has_short_history: boolean;
-  /** Reported before, and no longer. A different finding from a short history and it must not be
-   *  folded into one — a company that withdraws a disclosure is not waiting for time to pass. */
-  has_stopped: boolean;
-  // Counts behind those flags, so a display can show the shape of what is missing and not only
-  // that something is. DERIVED LIVE, unlike the two totals, which the scorer wrote — so a caller
-  // must check they add up to (boundary − window) before drawing them separately.
-  categories_not_reported: number;
-  categories_short_history: number;
-  categories_stopped: number;
-  /** True when today's figures would produce a different answer from the published one. Normal for
-   *  a company under review, whose score is frozen on purpose — and the one thing a reader has no
-   *  way to work out for themselves. */
-  stale: boolean;
-};
-
-export type LinePosition = "in_window" | "outside_window";
-
-export type BoundaryLine = {
-  company_id: string;
-  line: string;
-  category: number | null;
-  position: LinePosition;
-  reason: string | null;
-  // The wording comes from the database, not from this file. It is rendered identically by the ops
-  // review page, and the only way to guarantee that is for there to be one copy of the string. Do
-  // not restate these sentences in a component.
-  status_text: string;
-};
-
-export type SectorShare = {
-  category: number;
-  companies_sampled: number;
-  avg_pct_of_scope3: number;
-};
+import type { Completeness, BoundaryLine, SectorShare } from "@/lib/public-shapes";
 
 const COMPLETENESS_COLUMNS =
   "company_id, completeness_tag, categories_in_window, categories_in_boundary, categories_not_reported, categories_short_history, categories_stopped, has_not_reported, has_short_history, has_stopped, stale";
@@ -129,20 +100,4 @@ export async function getSectorShares(sector: string): Promise<Map<number, Secto
   return out;
 }
 
-/** "10 of 12 categories reported" — the count, spelled the same way everywhere it appears. */
-export function completenessCount(c: Pick<Completeness, "categories_in_window" | "categories_in_boundary">): string {
-  return `${c.categories_in_window} of ${c.categories_in_boundary}`;
-}
 
-/**
- * Why a company is tagged incomplete. BOTH reasons show when both apply — Felix was explicit that
- * a company missing a category AND short of years must not have one of those facts hidden by the
- * other, because they are different failings and a reader should see both.
- */
-export function incompleteReasons(c: Completeness): string[] {
-  const out: string[] = [];
-  if (c.has_not_reported) out.push("categories it does not report");
-  if (c.has_stopped) out.push("categories it used to report and no longer does");
-  if (c.has_short_history) out.push("categories without enough years yet");
-  return out;
-}

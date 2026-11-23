@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ScoreCard } from "@/components/ScoreCard";
 import { scalePosition, scoreColor, formatScore } from "@/lib/temperature";
-import type { CompanyScore } from "@/lib/scores";
-import type { Completeness, CompletenessTag } from "@/lib/completeness";
+import type { CompanyScore } from "@/lib/public-shapes";
+import type { Completeness, CompletenessTag } from "@/lib/public-shapes";
 
 type View = "thermometer" | "dashboard";
 type Coverage = "all" | CompletenessTag;
